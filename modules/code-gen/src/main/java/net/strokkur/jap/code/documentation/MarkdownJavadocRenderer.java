@@ -27,6 +27,10 @@ import java.util.Arrays;
 import java.util.SequencedCollection;
 
 public class MarkdownJavadocRenderer extends StarJavadocRenderer {
+  public MarkdownJavadocRenderer() {
+    super();
+  }
+
   public MarkdownJavadocRenderer(Context context) {
     super(context);
   }
@@ -76,7 +80,7 @@ public class MarkdownJavadocRenderer extends StarJavadocRenderer {
       builder.append('[').append(value.name()).append(']');
     }
 
-    builder.append('[').append(getQualifiedTypeName(value.codeClass().classType())).append(']');
+    builder.append('[').append(getQualifiedTypeName(value.codeClass())).append(']');
   }
 
   @Override

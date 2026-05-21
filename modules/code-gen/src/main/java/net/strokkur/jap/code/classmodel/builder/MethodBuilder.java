@@ -50,7 +50,7 @@ public class MethodBuilder implements ConvertToMethod {
 
   private CodeType returnType = CodePrimitiveType.VOID;
   private @Nullable CodeDocumentation documentation = null;
-  private @Nullable CodeBlock codeBlock = null;
+  private CodeBlock codeBlock = CodeBlock.of();
 
   private final List<CodeGenericTypeDefinition> generics = new ArrayList<>();
   private final List<CodeAnnotation> annotations = new ArrayList<>();

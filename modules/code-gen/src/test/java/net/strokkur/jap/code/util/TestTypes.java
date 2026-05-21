@@ -1,7 +1,7 @@
 /*
  * This file is part of code-gen, licensed under the MIT License.
  *
- * Copyright (c) 2025 Strokkur24
+ * Copyright (c) 2026 Strokkur24
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,31 +21,17 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.strokkur.jap.code.classmodel;
+package net.strokkur.jap.code.util;
 
-import net.strokkur.jap.code.annotations.CodeAnnotated;
-import net.strokkur.jap.code.annotations.CodeAnnotation;
-import net.strokkur.jap.code.convert.ConvertToType;
-import net.strokkur.jap.code.type.CodeType;
-import net.strokkur.jap.code.visitor.CodeVisitable;
-import net.strokkur.jap.code.visitor.CodeVisitor;
+import net.strokkur.jap.code.convert.ConvertToClassType;
+import net.strokkur.jap.code.type.CodeTypes;
 
-import java.util.List;
+public interface TestTypes extends ConvertToClassType {
+  TestTypes JAVA_PLUGIN = create("org.bukkit.plugin.java.JavaPlugin");
+  TestTypes PLUGIN_BOOTSTRAP = create("io.papermc.paper.plugin.bootstrap.PluginBootstrap");
+  TestTypes BOOTSTRAP_CONTEXT = create("io.papermc.paper.plugin.bootstrap.BootstrapContext");
 
-public record CodeParameterDefinition(
-  CodeType type, String name, List<CodeAnnotation> annotations
-) implements CodeVisitable, CodeAnnotated {
-
-  public static CodeParameterDefinition of(ConvertToType type, String name) {
-    return new CodeParameterDefinition(type.toType(), name, List.of());
-  }
-
-  public static CodeParameterDefinition of(ConvertToType type, String name, CodeAnnotation... annotations) {
-    return new CodeParameterDefinition(type.toType(), name, List.of(annotations));
-  }
-
-  @Override
-  public <R> R accept(CodeVisitor<R> visitor) {
-    return visitor.visitParameterDefinition(this);
+  static TestTypes create(String fqn) {
+    return () -> CodeTypes.ofClass(fqn);
   }
 }

@@ -29,6 +29,7 @@ import net.strokkur.jap.code.classmodel.builder.ClassBuilder;
 import net.strokkur.jap.code.convert.ConvertToClassType;
 import net.strokkur.jap.code.documentation.CodeDocumentation;
 import net.strokkur.jap.code.type.CodeClassType;
+import net.strokkur.jap.code.type.CodeTypes;
 import net.strokkur.jap.code.type.generic.CodeGenericTypeDefinition;
 import net.strokkur.jap.code.util.Modifiers;
 import net.strokkur.jap.code.visitor.CodeVisitable;
@@ -50,6 +51,10 @@ public record CodeClass(
 
   @Nullable CodeDocumentation documentation
 ) implements CodeAnnotated, ConvertToClassType, CodeVisitable {
+
+  public static ClassBuilder builder(String fqn) {
+    return builder(CodeTypes.ofClass(fqn));
+  }
 
   public static ClassBuilder builder(CodeClassType type) {
     return new ClassBuilder(type);

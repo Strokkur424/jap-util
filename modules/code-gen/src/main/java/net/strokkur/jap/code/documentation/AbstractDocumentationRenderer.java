@@ -37,6 +37,10 @@ public abstract class AbstractDocumentationRenderer implements DocumentationVisi
   protected final @Nullable CodePackage currentPath;
   protected final @Nullable @Unmodifiable Set<CodeClassType> existingImports;
 
+  public AbstractDocumentationRenderer() {
+    this(emptyContext());
+  }
+
   public AbstractDocumentationRenderer(Context context) {
     this.currentPath = context.currentPath();
     this.existingImports = context.existingImports() != null ? Set.copyOf(context.existingImports()) : Set.of();

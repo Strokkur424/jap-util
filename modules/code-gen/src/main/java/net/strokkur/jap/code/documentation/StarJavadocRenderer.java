@@ -35,6 +35,10 @@ import java.util.SequencedCollection;
 import java.util.stream.Collectors;
 
 public class StarJavadocRenderer extends AbstractDocumentationRenderer {
+  public StarJavadocRenderer() {
+    super();
+  }
+
   public StarJavadocRenderer(Context context) {
     super(context);
   }
@@ -130,7 +134,7 @@ public class StarJavadocRenderer extends AbstractDocumentationRenderer {
 
   @Override
   public void visit(CodeDocumentation.ClassReference value) {
-    builder.append("{@link ").append(getQualifiedTypeName(value.codeClass().classType()));
+    builder.append("{@link ").append(getQualifiedTypeName(value.codeClass()));
     if (value.name() != null) {
       builder.append(" ").append(value.name());
     }
@@ -147,9 +151,7 @@ public class StarJavadocRenderer extends AbstractDocumentationRenderer {
   }
 
   protected String getQualifiedTypeName(CodeClassType type) {
-    if (CodePackage.isRedundantImport(currentPath, type.codePackage())
-      || existingImports != null && existingImports.contains(type)
-    ) {
+    if (CodePackage.isRedundantImport(currentPath, type.codePackage()) || existingImports != null && existingImports.contains(type)) {
       return type.name();
     }
     return type.fullyQualifiedName();
@@ -157,12 +159,9 @@ public class StarJavadocRenderer extends AbstractDocumentationRenderer {
 
   public String javadocName(CodeMethod method) {
     return method.name() + "(" + method.parameters().stream()
-      .map(param -> {
-        if (param.type() instanceof CodeClassType classType) {
-          return getQualifiedTypeName(classType);
-        }
-        return param.type().fullyQualifiedName();
-      })
+      .map(param -> param.type() instanceof CodeClassType classType
+        ? getQualifiedTypeName(classType)
+        : param.type().fullyQualifiedName())
       .collect(Collectors.joining(", "))
       + ")";
   }

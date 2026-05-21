@@ -23,7 +23,6 @@
  */
 package net.strokkur.jap.code.documentation;
 
-import net.strokkur.jap.code.classmodel.CodeClass;
 import net.strokkur.jap.code.classmodel.CodeMethod;
 import net.strokkur.jap.code.convert.ConvertToClassType;
 import net.strokkur.jap.code.convert.ConvertToMethod;
@@ -64,8 +63,8 @@ public interface CodeDocumentation {
     return see(method, description, null);
   }
 
-  static CodeDocumentation see(ConvertToMethod method, @Nullable String description, @Nullable CodeClassType source) {
-    return new MethodReferenceMeta("see", method.toMethod(), description, source);
+  static CodeDocumentation see(ConvertToMethod method, @Nullable String description, @Nullable ConvertToClassType source) {
+    return new MethodReferenceMeta("see", method.toMethod(), description, source == null ? null : source.toClassType());
   }
 
   static CodeDocumentation throwsMeta(ConvertToClassType exception, @Nullable String description) {
@@ -99,12 +98,12 @@ public interface CodeDocumentation {
     return new Url(text, url);
   }
 
-  static CodeDocumentation classReference(CodeClass ref) {
+  static CodeDocumentation classReference(ConvertToClassType ref) {
     return classReference(ref, null);
   }
 
-  static CodeDocumentation classReference(CodeClass ref, @Nullable String description) {
-    return new ClassReference(ref, description);
+  static CodeDocumentation classReference(ConvertToClassType ref, @Nullable String description) {
+    return new ClassReference(ref.toClassType(), description);
   }
 
   static CodeDocumentation methodReference(ConvertToMethod ref) {
@@ -115,12 +114,12 @@ public interface CodeDocumentation {
     return methodReference(ref, description, null);
   }
 
-  static CodeDocumentation methodReference(ConvertToMethod ref, @Nullable CodeClassType source) {
+  static CodeDocumentation methodReference(ConvertToMethod ref, @Nullable ConvertToClassType source) {
     return methodReference(ref, null, source);
   }
 
-  static CodeDocumentation methodReference(ConvertToMethod ref, @Nullable String description, @Nullable CodeClassType source) {
-    return new MethodReference(ref.toMethod(), description, source);
+  static CodeDocumentation methodReference(ConvertToMethod ref, @Nullable String description, @Nullable ConvertToClassType source) {
+    return new MethodReference(ref.toMethod(), description, source == null ? null : source.toClassType());
   }
   //</editor-fold>
 
@@ -214,7 +213,7 @@ public interface CodeDocumentation {
     }
   }
 
-  record ClassReference(CodeClass codeClass, @Nullable String name) implements CodeDocumentation {
+  record ClassReference(CodeClassType codeClass, @Nullable String name) implements CodeDocumentation {
     @Override
     public void accept(DocumentationVisitor visitor) {
       visitor.visit(this);

@@ -25,6 +25,7 @@ package net.strokkur.jap.code.type;
 
 import org.jspecify.annotations.Nullable;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -50,5 +51,18 @@ public record CodePackage(String[] paths) implements Comparable<CodePackage> {
   @Override
   public int compareTo(CodePackage o) {
     return path().compareTo(o.path());
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (!(o instanceof CodePackage(String[] otherPaths))) {
+      return false;
+    }
+    return Objects.deepEquals(paths(), otherPaths);
+  }
+
+  @Override
+  public int hashCode() {
+    return Arrays.hashCode(paths());
   }
 }
