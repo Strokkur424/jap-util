@@ -31,35 +31,35 @@ import org.jspecify.annotations.Nullable;
 
 public final class Statements {
 
-  static ExpressionStatement expressionStatement(ConvertToExpression expression) {
+  public static ExpressionStatement expressionStatement(ConvertToExpression expression) {
     return new ExpressionStatement(expression.toExpression());
   }
 
-  static CodeStatement variableDeclaration(ConvertToType type, String name, @Nullable ConvertToExpression assignment) {
+  public static CodeStatement variableDeclaration(ConvertToType type, String name, @Nullable ConvertToExpression assignment) {
     return new VariableDeclarationStatement(type.toType(), name, assignment == null ? null : assignment.toExpression(), false);
   }
 
-  static CodeStatement variableDeclarationFinal(ConvertToType type, String name, @Nullable ConvertToExpression assignment) {
+  public static CodeStatement variableDeclarationFinal(ConvertToType type, String name, @Nullable ConvertToExpression assignment) {
     return new VariableDeclarationStatement(type.toType(), name, assignment == null ? null : assignment.toExpression(), true);
   }
 
-  static CodeStatement returnStatement(@Nullable ConvertToExpression returnExpression) {
+  public static CodeStatement returnStatement(@Nullable ConvertToExpression returnExpression) {
     return new ReturnStatement(returnExpression == null ? null : returnExpression.toExpression());
   }
 
-  static CodeStatement throwStatement(ConvertToExpression throwExpression) {
+  public static CodeStatement throwStatement(ConvertToExpression throwExpression) {
     return new ThrowStatement(throwExpression.toExpression());
   }
 
-  static CodeStatement blank() {
+  public static CodeStatement blank() {
     return BlankStatement.INSTANCE;
   }
 
-  static IfStatement ifStmt(ConvertToBooleanExpression booleanExpr, CodeStatement... ifTrue) {
+  public static IfStatement ifStmt(ConvertToBooleanExpression booleanExpr, CodeStatement... ifTrue) {
     return ifStmt(booleanExpr, CodeBlock.of(ifTrue), null);
   }
 
-  static IfStatement ifStmt(ConvertToBooleanExpression booleanExpr, CodeBlock ifTrue, @Nullable CodeBlock ifFalse) {
+  public static IfStatement ifStmt(ConvertToBooleanExpression booleanExpr, CodeBlock ifTrue, @Nullable CodeBlock ifFalse) {
     return new IfStatement(
       booleanExpr.toBooleanExpression(),
       ifTrue,

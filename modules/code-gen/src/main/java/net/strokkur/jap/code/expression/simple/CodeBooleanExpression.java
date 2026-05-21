@@ -25,7 +25,7 @@ package net.strokkur.jap.code.expression.simple;
 
 import net.strokkur.jap.code.expression.BooleanExpression;
 
-public record CodeBooleanExpression(boolean value) implements BooleanExpression {
+public record CodeBooleanExpression(boolean value) implements BooleanExpression, SimpleExpression {
   @Override
   public boolean isInverted() {
     // A boolean constant is never inverted by putting a ! in front of it, you just switch out

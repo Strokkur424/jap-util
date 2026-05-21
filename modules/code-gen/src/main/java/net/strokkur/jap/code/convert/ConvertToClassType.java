@@ -24,7 +24,24 @@
 package net.strokkur.jap.code.convert;
 
 import net.strokkur.jap.code.type.CodeClassType;
+import net.strokkur.jap.code.type.CodeType;
+import net.strokkur.jap.code.type.generic.CodeGenericType;
+import net.strokkur.jap.code.type.generic.GenericEnclosure;
 
-public interface ConvertToClassType {
+public interface ConvertToClassType extends ConvertToType, ConvertToGenericType {
   CodeClassType toClassType();
+
+  @Override
+  default CodeType toType() {
+    return toClassType();
+  }
+
+  @Override
+  default CodeGenericType toGenericType() {
+    return new CodeGenericType(null, GenericEnclosure.withType(this));
+  }
+
+  default CodeClassType typed(ConvertToGenericType... types) {
+    return toClassType().typed(types);
+  }
 }

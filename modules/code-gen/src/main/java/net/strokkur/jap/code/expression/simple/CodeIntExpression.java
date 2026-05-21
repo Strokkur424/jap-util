@@ -25,5 +25,5 @@ package net.strokkur.jap.code.expression.simple;
 
 import net.strokkur.jap.code.expression.CodeExpression;
 
-public record CodeIntExpression(int value) implements CodeExpression {
+public record CodeIntExpression(int value) implements CodeExpression, SimpleExpression {
 }

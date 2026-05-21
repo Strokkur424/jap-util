@@ -23,13 +23,14 @@
  */
 package net.strokkur.jap.code.type.generic;
 
+import net.strokkur.jap.code.convert.ConvertToGenericType;
 import net.strokkur.jap.code.type.CodeType;
 import org.jspecify.annotations.Nullable;
 
 public record CodeGenericType(
   @Nullable String genericName,
   @Nullable GenericEnclosure enclosure
-) implements CodeType {
+) implements CodeType, ConvertToGenericType {
 
   public boolean isWildcard() {
     return genericName == null;
@@ -43,5 +44,10 @@ public record CodeGenericType(
   @Override
   public String fullyQualifiedName() {
     return isWildcard() ? "?" : genericName;
+  }
+
+  @Override
+  public CodeGenericType toGenericType() {
+    return this;
   }
 }

@@ -41,11 +41,4 @@ public interface BooleanExpression extends CodeExpression, ConvertToBooleanExpre
   default CodeExpression toExpression() {
     return this;
   }
-
-  record Wrapped(CodeExpression wrapped, boolean isInverted) implements BooleanExpression {
-    @Override
-    public BooleanExpression invert() {
-      return new Wrapped(wrapped(), !isInverted());
-    }
-  }
 }

@@ -31,5 +31,5 @@ public record IfStatement(
   BooleanExpression expression,
   CodeBlock ifTrue,
   @Nullable CodeBlock ifFalse
-) {
+) implements CodeStatement {
 }

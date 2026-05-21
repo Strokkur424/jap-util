@@ -23,25 +23,33 @@
  */
 package net.strokkur.jap.code.type.generic;
 
+import net.strokkur.jap.code.convert.ConvertToType;
 import net.strokkur.jap.code.type.CodeType;
+import net.strokkur.jap.code.visitor.CodeVisitable;
+import net.strokkur.jap.code.visitor.CodeVisitor;
 
-public sealed interface GenericEnclosure {
+public sealed interface GenericEnclosure extends CodeVisitable {
 
   CodeType encloses();
 
+  @Override
+  default <R> R accept(CodeVisitor<R> visitor) {
+    return visitor.visitGenericEnclosure(this);
+  }
+
   /// `Type`
-  static GenericEnclosure typeEnclosure(CodeType encloses) {
-    return new TypeEnclosure(encloses);
+  static GenericEnclosure withType(ConvertToType encloses) {
+    return new TypeEnclosure(encloses.toType());
   }
 
   /// `? extends Type`
-  static GenericEnclosure extendsEnclosure(CodeType encloses) {
-    return new ExtendsEnclosure(encloses);
+  static GenericEnclosure withExtends(ConvertToType encloses) {
+    return new ExtendsEnclosure(encloses.toType());
   }
 
   /// `? super Type`
-  static GenericEnclosure superEnclosure(CodeType encloses) {
-    return new SuperEnclosure(encloses);
+  static GenericEnclosure withSuper(ConvertToType encloses) {
+    return new SuperEnclosure(encloses.toType());
   }
 
   record ExtendsEnclosure(

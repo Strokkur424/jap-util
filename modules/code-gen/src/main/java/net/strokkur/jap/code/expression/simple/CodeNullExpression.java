@@ -25,7 +25,7 @@ package net.strokkur.jap.code.expression.simple;
 
 import net.strokkur.jap.code.expression.CodeExpression;
 
-public final class CodeNullExpression implements CodeExpression {
+public final class CodeNullExpression implements CodeExpression, SimpleExpression {
   public static final CodeNullExpression NULL = new CodeNullExpression();
 
   private CodeNullExpression() {

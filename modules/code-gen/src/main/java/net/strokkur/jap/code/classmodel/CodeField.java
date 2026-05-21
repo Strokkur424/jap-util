@@ -27,6 +27,7 @@ import net.strokkur.jap.code.annotations.CodeAnnotated;
 import net.strokkur.jap.code.annotations.CodeAnnotation;
 import net.strokkur.jap.code.classmodel.builder.FieldBuilder;
 import net.strokkur.jap.code.convert.ConvertToField;
+import net.strokkur.jap.code.convert.ConvertToType;
 import net.strokkur.jap.code.expression.CodeExpression;
 import net.strokkur.jap.code.type.CodeType;
 import net.strokkur.jap.code.util.Modifiers;
@@ -45,8 +46,8 @@ public record CodeField(
   @Nullable CodeExpression initializer
 ) implements CodeAnnotated, ConvertToField, CodeVisitable {
 
-  public static FieldBuilder builder(CodeType type, String name) {
-    return new FieldBuilder(type, name);
+  public static FieldBuilder builder(ConvertToType type, String name) {
+    return new FieldBuilder(type.toType(), name);
   }
 
   @Override

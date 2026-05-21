@@ -31,6 +31,7 @@ import net.strokkur.jap.code.expression.ConstructorInvocation;
 import net.strokkur.jap.code.expression.source.FieldMethodSource;
 import net.strokkur.jap.code.type.CodeClassType;
 import net.strokkur.jap.code.util.StyleConfig;
+import net.strokkur.jap.code.visitor.CodeVisitor;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -76,5 +77,10 @@ public final class ConstructorInvocationBuilder implements ConvertToConstructorI
   @Override
   public CodeExpression toExpression() {
     return toConstructorInvocation();
+  }
+
+  @Override
+  public <R> R accept(CodeVisitor<R> visitor) {
+    return toConstructorInvocation().accept(visitor);
   }
 }

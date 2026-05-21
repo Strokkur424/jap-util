@@ -25,4 +25,4 @@ package net.strokkur.jap.code.expression.simple;
 
 import net.strokkur.jap.code.expression.CodeExpression;
 
-public record CodeFloatExpression(float value) implements CodeExpression {}
+public record CodeFloatExpression(float value) implements CodeExpression, SimpleExpression {}

@@ -38,7 +38,6 @@ import net.strokkur.jap.code.expression.simple.CodeNullExpression;
 import net.strokkur.jap.code.expression.simple.CodeStringExpression;
 import net.strokkur.jap.code.expression.simple.CodeVariableExpression;
 import net.strokkur.jap.code.expression.source.MethodReferenceSource;
-import net.strokkur.jap.code.type.CodeClassType;
 import org.jspecify.annotations.Nullable;
 
 import java.util.List;
@@ -73,6 +72,10 @@ public final class Expressions {
     return new CodeStringExpression(value);
   }
 
+  public static CodeVariableExpression thisExpr() {
+    return new CodeVariableExpression("this");
+  }
+
   public static CodeVariableExpression variable(String name) {
     return new CodeVariableExpression(name);
   }
@@ -82,8 +85,8 @@ public final class Expressions {
       .setName(methodName);
   }
 
-  public static ConstructorInvocationBuilder ctorInvocation(CodeClassType classType) {
-    return new ConstructorInvocationBuilder(classType);
+  public static ConstructorInvocationBuilder ctorInvocation(ConvertToClassType classType) {
+    return new ConstructorInvocationBuilder(classType.toClassType());
   }
 
   public static MethodReference methodReference(MethodReferenceSource source, String name) {
@@ -102,11 +105,11 @@ public final class Expressions {
     return new InstanceOfExpr(source.toExpression(), classType.toClassType(), targetVariable, false);
   }
 
-  public static SingleLineLambda lambda(ConvertToExpression lambdaExpression) {
-    return lambda(List.of(), lambdaExpression);
+  public static SingleLineLambda lambdaInline(ConvertToExpression lambdaExpression) {
+    return lambdaInline(List.of(), lambdaExpression);
   }
 
-  public static SingleLineLambda lambda(List<String> lambdaParameters, ConvertToExpression lambdaExpression) {
+  public static SingleLineLambda lambdaInline(List<String> lambdaParameters, ConvertToExpression lambdaExpression) {
     return new SingleLineLambda(lambdaParameters, lambdaExpression.toExpression());
   }
 

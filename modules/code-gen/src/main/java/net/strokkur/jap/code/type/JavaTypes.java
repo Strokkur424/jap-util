@@ -21,27 +21,21 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.strokkur.jap.code.type.generic;
+package net.strokkur.jap.code.type;
 
-import net.strokkur.jap.code.visitor.CodeVisitable;
-import net.strokkur.jap.code.visitor.CodeVisitor;
-import org.jspecify.annotations.Nullable;
+import net.strokkur.jap.code.convert.ConvertToClassType;
 
-public record CodeGenericTypeDefinition(
-  String name,
-  @Nullable GenericEnclosure enclosure
-) implements CodeVisitable {
+public interface JavaTypes extends ConvertToClassType {
 
-  public static CodeGenericTypeDefinition of(String name) {
-    return new CodeGenericTypeDefinition(name, null);
-  }
+  JavaTypes OBJECT = create("java.lang.Object");
+  JavaTypes STRING = create("java.lang.String");
 
-  public static CodeGenericTypeDefinition of(String name, GenericEnclosure enclosure) {
-    return new CodeGenericTypeDefinition(name, enclosure);
-  }
+  JavaTypes LIST = create("java.util.List");
 
-  @Override
-  public <R> R accept(CodeVisitor<R> visitor) {
-    return visitor.visitGenericTypeDefinition(this);
+  JavaTypes NULL_POINTER_EXCEPTION = create("java.lang.NullPointerException");
+  JavaTypes ILLEGAL_STATE_EXCEPTION = create("java.lang.IllegalStateException");
+
+  static JavaTypes create(String fqn) {
+    return () -> CodeTypes.ofClass(fqn);
   }
 }

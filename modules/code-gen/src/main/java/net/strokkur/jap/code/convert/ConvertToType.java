@@ -23,8 +23,14 @@
  */
 package net.strokkur.jap.code.convert;
 
+import net.strokkur.jap.code.type.CodeArrayType;
 import net.strokkur.jap.code.type.CodeType;
+import net.strokkur.jap.code.type.CodeTypes;
 
 public interface ConvertToType {
   CodeType toType();
+
+  default CodeArrayType toArray() {
+    return CodeTypes.asArray(toType());
+  }
 }

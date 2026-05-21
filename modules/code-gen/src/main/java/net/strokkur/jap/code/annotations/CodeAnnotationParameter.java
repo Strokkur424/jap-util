@@ -37,11 +37,6 @@ public record CodeAnnotationParameter(
     return new CodeAnnotationParameter(name, expression.toExpression());
   }
 
-  /// Shortcut for a parameter value named `value`.
-  public static CodeAnnotationParameter of(ConvertToExpression expression) {
-    return new CodeAnnotationParameter("value", expression.toExpression());
-  }
-
   @Override
   public <R> R accept(CodeVisitor<R> visitor) {
     return visitor.visitAnnotationParameter(this);

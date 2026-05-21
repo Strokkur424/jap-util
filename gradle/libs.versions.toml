@@ -2,12 +2,19 @@
 jspecify = "1.0.0"
 jetbrains-annotations = "24.0.0"
 
+junit = "6.0.3"
+
 # Plugins
-strokk-conventions = "0.1.0"
+strokk-conventions = "0.1.1"
 
 [libraries]
 jetbrains-annotations = { module = "org.jetbrains:annotations", version.ref = "jetbrains-annotations" }
 jspecify = { module = "org.jspecify:jspecify", version.ref = "jspecify" }
+
+# Junit
+junit-bom = { module = "org.junit:junit-bom", version.ref = "junit" }
+junit-jupiter = { module = "org.junit.jupiter:junit-jupiter" }
+junit-platform = { module = "org.junit.platform:junit-platform-launcher" }
 
 [bundles]
 annotations = ["jspecify", "jetbrains-annotations"]

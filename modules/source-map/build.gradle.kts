@@ -6,6 +6,7 @@ plugins {
 }
 
 license.useMIT()
+strokkConventions.javaVersion = 21
 
 repositories {
   mavenCentral()

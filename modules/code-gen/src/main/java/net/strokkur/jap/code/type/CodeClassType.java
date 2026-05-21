@@ -24,16 +24,19 @@
 package net.strokkur.jap.code.type;
 
 import net.strokkur.jap.code.convert.ConvertToClassType;
+import net.strokkur.jap.code.convert.ConvertToGenericType;
 import net.strokkur.jap.code.expression.source.MethodReferenceSource;
+import net.strokkur.jap.code.type.generic.CodeGenericType;
 import org.jspecify.annotations.Nullable;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
 public record CodeClassType(
   CodePackage codePackage,
   String simpleName,
-  @Nullable List<CodeType> genericTypes
+  @Nullable List<CodeGenericType> genericTypes
 ) implements CodeType, ConvertToClassType, MethodReferenceSource {
 
   /// The value returned from [#name()] may differ from one returned from [#simpleName()]
@@ -51,6 +54,22 @@ public record CodeClassType(
   @Override
   public String fullyQualifiedName() {
     return codePackage().path() + "." + simpleName();
+  }
+
+  @Override
+  public CodeClassType typed(ConvertToGenericType... types) {
+    return new CodeClassType(
+      codePackage(),
+      simpleName(),
+      Arrays.stream(types)
+        .map(ConvertToGenericType::toGenericType)
+        .toList()
+    );
+  }
+
+  @Override
+  public CodeType toType() {
+    return this;
   }
 
   @Override

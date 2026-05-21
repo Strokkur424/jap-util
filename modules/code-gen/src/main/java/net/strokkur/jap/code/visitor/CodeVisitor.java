@@ -34,6 +34,8 @@ import net.strokkur.jap.code.classmodel.CodeParameterDefinition;
 import net.strokkur.jap.code.expression.CodeExpression;
 import net.strokkur.jap.code.statement.CodeStatement;
 import net.strokkur.jap.code.type.CodeType;
+import net.strokkur.jap.code.type.generic.CodeGenericTypeDefinition;
+import net.strokkur.jap.code.type.generic.GenericEnclosure;
 
 public interface CodeVisitor<R> {
   R visitAnnotation(CodeAnnotation annotation);
@@ -57,4 +59,8 @@ public interface CodeVisitor<R> {
   R visitType(CodeType type);
 
   R visitCodeBlock(CodeBlock block);
+
+  R visitGenericTypeDefinition(CodeGenericTypeDefinition genericTypeDefinition);
+
+  R visitGenericEnclosure(GenericEnclosure enclosure);
 }

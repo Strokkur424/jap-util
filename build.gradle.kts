@@ -1,4 +1,4 @@
 tasks.updateDaemonJvm {
-  languageVersion = JavaLanguageVersion.of(25)
+  languageVersion = JavaLanguageVersion.of(21)
   vendor = JvmVendorSpec.ORACLE
 }

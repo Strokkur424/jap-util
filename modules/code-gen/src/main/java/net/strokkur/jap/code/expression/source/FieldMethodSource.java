@@ -24,9 +24,10 @@
 package net.strokkur.jap.code.expression.source;
 
 import net.strokkur.jap.code.convert.ConvertToFieldMethodSource;
+import net.strokkur.jap.code.visitor.CodeVisitable;
 
 /// Marker interface for anything you can call a method or retrieve a field value on.
-public interface FieldMethodSource extends ConvertToFieldMethodSource {
+public interface FieldMethodSource extends ConvertToFieldMethodSource, CodeVisitable {
   @Override
   default FieldMethodSource toFieldMethodSource() {
     return this;

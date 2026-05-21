@@ -35,11 +35,11 @@ public record CodeAnnotation(
   List<CodeAnnotationParameter> parameters
 ) implements CodeVisitable {
 
-  public CodeAnnotation of(CodeClassType type, ConvertToExpression valueExpression) {
-    return new CodeAnnotation(type, List.of(CodeAnnotationParameter.of(valueExpression)));
+  public static CodeAnnotation of(CodeClassType type, ConvertToExpression valueExpression) {
+    return new CodeAnnotation(type, List.of(CodeAnnotationParameter.of("value", valueExpression)));
   }
 
-  public CodeAnnotation of(CodeClassType type, CodeAnnotationParameter... parameters) {
+  public static CodeAnnotation of(CodeClassType type, CodeAnnotationParameter... parameters) {
     return new CodeAnnotation(type, List.of(parameters));
   }
 

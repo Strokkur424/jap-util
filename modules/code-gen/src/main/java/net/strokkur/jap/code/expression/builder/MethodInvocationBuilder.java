@@ -26,17 +26,21 @@ package net.strokkur.jap.code.expression.builder;
 import net.strokkur.jap.code.convert.ConvertToExpression;
 import net.strokkur.jap.code.convert.ConvertToFieldMethodSource;
 import net.strokkur.jap.code.convert.ConvertToMethodInvocation;
+import net.strokkur.jap.code.convert.ConvertToStatement;
 import net.strokkur.jap.code.expression.CodeExpression;
 import net.strokkur.jap.code.expression.MethodInvocation;
 import net.strokkur.jap.code.expression.source.FieldMethodSource;
+import net.strokkur.jap.code.statement.CodeStatement;
+import net.strokkur.jap.code.statement.Statements;
 import net.strokkur.jap.code.util.StyleConfig;
+import net.strokkur.jap.code.visitor.CodeVisitor;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public final class MethodInvocationBuilder implements ConvertToMethodInvocation {
+public final class MethodInvocationBuilder implements ConvertToMethodInvocation, ConvertToStatement {
   private @Nullable String name;
   private @Nullable FieldMethodSource source;
   private final List<CodeExpression> parameters = new ArrayList<>();
@@ -77,5 +81,15 @@ public final class MethodInvocationBuilder implements ConvertToMethodInvocation 
   @Override
   public CodeExpression toExpression() {
     return toMethodInvocation();
+  }
+
+  @Override
+  public CodeStatement toStatement() {
+    return Statements.expressionStatement(toExpression());
+  }
+
+  @Override
+  public <R> R accept(CodeVisitor<R> visitor) {
+    return toMethodInvocation().accept(visitor);
   }
 }

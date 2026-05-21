@@ -23,17 +23,20 @@
  */
 package net.strokkur.jap.code.type;
 
+import net.strokkur.jap.code.convert.ConvertToGenericType;
+import net.strokkur.jap.code.convert.ConvertToType;
 import net.strokkur.jap.code.type.generic.CodeGenericType;
 import net.strokkur.jap.code.type.generic.GenericEnclosure;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public final class CodeTypes {
 
-  public static CodeArrayType asArray(CodeType inner) {
-    return new CodeArrayType(inner);
+  public static CodeArrayType asArray(ConvertToType inner) {
+    return new CodeArrayType(inner.toType());
   }
 
   public static CodeGenericType genericWildcard() {
@@ -53,16 +56,18 @@ public final class CodeTypes {
   }
 
   /// A fully qualified name in the form `net.pkg.ClassName$Outer$Inner`.
-  public static CodeClassType ofQualifiedNameTyped(String fullyQualifiedName) {
-    return ofQualifiedName(fullyQualifiedName, null);
+  public static CodeClassType ofClass(String fullyQualifiedName) {
+    return ofClass(fullyQualifiedName, null);
   }
 
   /// A fully qualified name in the form `net.pkg.ClassName$Outer$Inner`.
-  public static CodeClassType ofQualifiedNameTyped(String fullyQualifiedName, CodeType... types) {
-    return ofQualifiedName(fullyQualifiedName, List.of(types));
+  public static CodeClassType ofClassTyped(String fullyQualifiedName, ConvertToGenericType... types) {
+    return ofClass(fullyQualifiedName, Arrays.stream(types)
+      .map(ConvertToGenericType::toGenericType)
+      .toList());
   }
 
-  private static CodeClassType ofQualifiedName(String fullyQualifiedName, @Nullable List<CodeType> types) {
+  private static CodeClassType ofClass(String fullyQualifiedName, @Nullable List<CodeGenericType> types) {
     final List<String> splitInner = List.of(fullyQualifiedName.split("\\$"));
     final List<String> splitPackage = List.of(splitInner.getFirst().split("\\."));
 

@@ -21,27 +21,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.strokkur.jap.code.type.generic;
+package net.strokkur.jap.code.expression.simple;
 
-import net.strokkur.jap.code.visitor.CodeVisitable;
-import net.strokkur.jap.code.visitor.CodeVisitor;
-import org.jspecify.annotations.Nullable;
-
-public record CodeGenericTypeDefinition(
-  String name,
-  @Nullable GenericEnclosure enclosure
-) implements CodeVisitable {
-
-  public static CodeGenericTypeDefinition of(String name) {
-    return new CodeGenericTypeDefinition(name, null);
-  }
-
-  public static CodeGenericTypeDefinition of(String name, GenericEnclosure enclosure) {
-    return new CodeGenericTypeDefinition(name, enclosure);
-  }
-
-  @Override
-  public <R> R accept(CodeVisitor<R> visitor) {
-    return visitor.visitGenericTypeDefinition(this);
-  }
+/// Marker interface for simple/primitive expressions.
+public interface SimpleExpression {
 }

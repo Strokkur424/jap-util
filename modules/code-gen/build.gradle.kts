@@ -6,6 +6,7 @@ plugins {
 }
 
 license.useMIT()
+strokkConventions.javaVersion = 21
 
 repositories {
   mavenCentral()
@@ -13,4 +14,17 @@ repositories {
 
 dependencies {
   compileOnly(libs.bundles.annotations)
+
+  testImplementation(platform(libs.junit.bom))
+  testImplementation(libs.junit.jupiter)
+  testRuntimeOnly(libs.junit.platform)
+}
+
+tasks {
+  test {
+    useJUnitPlatform()
+    testLogging {
+      events("skipped", "failed")
+    }
+  }
 }
