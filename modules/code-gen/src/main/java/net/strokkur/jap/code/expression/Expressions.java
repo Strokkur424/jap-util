@@ -26,6 +26,7 @@ package net.strokkur.jap.code.expression;
 import net.strokkur.jap.code.classmodel.CodeBlock;
 import net.strokkur.jap.code.convert.ConvertToClassType;
 import net.strokkur.jap.code.convert.ConvertToExpression;
+import net.strokkur.jap.code.convert.ConvertToMethodReferenceSource;
 import net.strokkur.jap.code.convert.ConvertToStatement;
 import net.strokkur.jap.code.expression.builder.ConstructorInvocationBuilder;
 import net.strokkur.jap.code.expression.builder.MethodInvocationBuilder;
@@ -37,7 +38,6 @@ import net.strokkur.jap.code.expression.simple.CodeLongExpression;
 import net.strokkur.jap.code.expression.simple.CodeNullExpression;
 import net.strokkur.jap.code.expression.simple.CodeStringExpression;
 import net.strokkur.jap.code.expression.simple.CodeVariableExpression;
-import net.strokkur.jap.code.expression.source.MethodReferenceSource;
 import org.jspecify.annotations.Nullable;
 
 import java.util.List;
@@ -89,12 +89,16 @@ public final class Expressions {
     return new ConstructorInvocationBuilder(classType.toClassType());
   }
 
-  public static MethodReference methodReference(MethodReferenceSource source, String name) {
-    return new MethodReference(source, name);
+  public static MethodReference methodReference(ConvertToMethodReferenceSource source, String name) {
+    return new MethodReference(source.toMethodReferenceSource(), name);
   }
 
   public static FieldAccess fieldAccess(String fieldName) {
     return new FieldAccess(null, fieldName);
+  }
+
+  public static AssignExpression assign(ConvertToExpression left, ConvertToExpression right) {
+    return new AssignExpression(left.toExpression(), right.toExpression());
   }
 
   public static InstanceOfExpr instanceOf(ConvertToExpression source, ConvertToClassType classType) {

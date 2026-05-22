@@ -21,11 +21,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.strokkur.jap.code.documentation;
+package net.strokkur.jap.code.test.documentation;
 
 import net.strokkur.jap.code.classmodel.CodeMethod;
+import net.strokkur.jap.code.documentation.AbstractDocumentationRenderer;
+import net.strokkur.jap.code.documentation.StarJavadocRenderer;
+import net.strokkur.jap.code.test.util.TestTypes;
+import net.strokkur.jap.code.type.CodePrimitiveType;
 import net.strokkur.jap.code.type.CodeTypes;
-import net.strokkur.jap.code.util.TestTypes;
 import org.junit.jupiter.api.Test;
 
 import java.util.Set;
@@ -163,13 +166,16 @@ class JavadocStarVisitorTests extends CommonDocumentationRendererTests {
     // language=java
     final String expected = """
       /**
-       * Use the {@link #builder() builder} for quick access.
+       * Use the {@link #builder(int) builder} for quick access.
        */""";
     checkOutput(
       expected,
       combine(
         text("Use the "),
-        methodReference(CodeMethod.builder("builder"), "builder"),
+        methodReference(CodeMethod.builder("builder")
+            .addParameter(CodePrimitiveType.INT, "val"),
+          "builder"
+        ),
         text(" for quick access.")
       ),
       StarJavadocRenderer::new

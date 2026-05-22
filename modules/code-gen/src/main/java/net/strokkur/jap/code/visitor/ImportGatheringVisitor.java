@@ -31,6 +31,7 @@ import net.strokkur.jap.code.classmodel.CodeConstructor;
 import net.strokkur.jap.code.classmodel.CodeField;
 import net.strokkur.jap.code.classmodel.CodeMethod;
 import net.strokkur.jap.code.classmodel.CodeParameterDefinition;
+import net.strokkur.jap.code.expression.AssignExpression;
 import net.strokkur.jap.code.expression.CodeExpression;
 import net.strokkur.jap.code.expression.ConstructorInvocation;
 import net.strokkur.jap.code.expression.FieldAccess;
@@ -90,7 +91,8 @@ public class ImportGatheringVisitor implements CodeVisitor<Set<CodeClassType>> {
       collect(codeClass.methods()),
       collect(codeClass.constructors()),
       collect(codeClass.fields()),
-      collect(codeClass.annotations())
+      collect(codeClass.annotations()),
+      collect(codeClass.genericTypes())
     );
   }
 
@@ -177,6 +179,11 @@ public class ImportGatheringVisitor implements CodeVisitor<Set<CodeClassType>> {
       case MultilineLambda lamb -> lamb.lambdaBlock().accept(this);
 
       case SingleLineLambda lamb -> lamb.lambdaExpression().accept(this);
+
+      case AssignExpression(CodeExpression leftSide, CodeExpression rightSide) -> join(
+        leftSide.accept(this),
+        rightSide.accept(this)
+      );
 
       default ->
         throw new IllegalArgumentException("Expression of type " + expression.getClass() + " was not handled.");

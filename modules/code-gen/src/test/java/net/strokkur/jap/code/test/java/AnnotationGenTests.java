@@ -21,34 +21,38 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.strokkur.jap.code.annotations;
+package net.strokkur.jap.code.test.java;
 
-import net.strokkur.jap.code.convert.ConvertToClassType;
+import net.strokkur.jap.code.annotations.CodeAnnotation;
+import net.strokkur.jap.code.annotations.CodeAnnotationParameter;
+import net.strokkur.jap.code.expression.Expressions;
+import net.strokkur.jap.code.type.preset.JSpecifyTypes;
+import org.junit.jupiter.api.Test;
 
-import java.util.List;
+import java.util.Set;
 
-public interface CodeAnnotated {
+class AnnotationGenTests extends AbstractGenTest {
 
-  List<CodeAnnotation> annotations();
-
-  default List<CodeAnnotation> annotationsType(ConvertToClassType type) {
-    return annotations().stream()
-      .filter(annotation -> annotation.type().equals(type.toClassType()))
-      .toList();
-  }
-
-  default CodeAnnotation firstAnnotationType(ConvertToClassType type) {
-    return annotations().stream()
-      .filter(annotations -> annotations.type().equals(type.toClassType()))
-      .findFirst().orElseThrow();
-  }
-
-  default boolean hasAnnotations() {
-    return !annotations().isEmpty();
-  }
-
-  default boolean hasAnnotationsType(ConvertToClassType type) {
-    return annotations().stream()
-      .anyMatch(annotation -> annotation.type().equals(type.toClassType()));
+  @Test
+  void test() {
+    check(Set.of(JSpecifyTypes.NULL_MARKED), "@NullMarked", CodeAnnotation.of(JSpecifyTypes.NULL_MARKED));
+    check(Set.of(JSpecifyTypes.NULL_MARKED), "@NullMarked(5)", CodeAnnotation.of(JSpecifyTypes.NULL_MARKED, Expressions.intExpr(5)));
+    check(Set.of(
+        JSpecifyTypes.NULL_MARKED),
+      "@NullMarked(5)",
+      CodeAnnotation.of(
+        JSpecifyTypes.NULL_MARKED,
+        CodeAnnotationParameter.of("value", Expressions.intExpr(5))
+      )
+    );
+    check(Set.of(
+        JSpecifyTypes.NULL_MARKED),
+      "@NullMarked(value = 5, id = 1)",
+      CodeAnnotation.of(
+        JSpecifyTypes.NULL_MARKED,
+        CodeAnnotationParameter.of("value", Expressions.intExpr(5)),
+        CodeAnnotationParameter.of("id", Expressions.intExpr(1))
+      )
+    );
   }
 }

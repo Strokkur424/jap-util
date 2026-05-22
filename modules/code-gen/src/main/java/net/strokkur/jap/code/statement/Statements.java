@@ -40,8 +40,8 @@ public final class Statements {
     return new VariableDeclarationStatement(type.toType(), name, assignment == null ? null : assignment.toExpression(), false);
   }
 
-  public static CodeStatement variableDeclarationFinal(ConvertToType type, String name, @Nullable ConvertToExpression assignment) {
-    return new VariableDeclarationStatement(type.toType(), name, assignment == null ? null : assignment.toExpression(), true);
+  public static CodeStatement variableDeclarationFinal(ConvertToType type, String name, ConvertToExpression assignment) {
+    return new VariableDeclarationStatement(type.toType(), name, assignment.toExpression(), true);
   }
 
   public static CodeStatement returnStmt() {

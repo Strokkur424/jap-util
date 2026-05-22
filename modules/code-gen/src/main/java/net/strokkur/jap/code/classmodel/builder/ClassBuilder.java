@@ -28,6 +28,7 @@ import net.strokkur.jap.code.classmodel.CodeClass;
 import net.strokkur.jap.code.classmodel.CodeConstructor;
 import net.strokkur.jap.code.classmodel.CodeField;
 import net.strokkur.jap.code.classmodel.CodeMethod;
+import net.strokkur.jap.code.convert.ConvertToClassType;
 import net.strokkur.jap.code.convert.ConvertToConstructor;
 import net.strokkur.jap.code.convert.ConvertToField;
 import net.strokkur.jap.code.convert.ConvertToMethod;
@@ -42,6 +43,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Consumer;
 
 public class ClassBuilder {
   private final CodeClassType type;
@@ -73,6 +75,13 @@ public class ClassBuilder {
     return this;
   }
 
+  public ClassBuilder addAnnotations(ConvertToClassType... annotations) {
+    return addAnnotations(Arrays.stream(annotations)
+      .map(CodeAnnotation::of)
+      .toArray(CodeAnnotation[]::new)
+    );
+  }
+
   public ClassBuilder addAnnotations(CodeAnnotation... annotations) {
     this.annotations.addAll(List.of(annotations));
     return this;
@@ -92,6 +101,12 @@ public class ClassBuilder {
       .toList()
     );
     return this;
+  }
+
+  public ClassBuilder addConstructor(Consumer<ConstructorBuilder> consumer) {
+    final ConstructorBuilder builder = CodeConstructor.builder(this.type);
+    consumer.accept(builder);
+    return addConstructor(builder);
   }
 
   public ClassBuilder addConstructor(ConvertToConstructor... constructors) {

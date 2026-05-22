@@ -21,34 +21,28 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.strokkur.jap.code.annotations;
+package net.strokkur.jap.code.test.util;
 
 import net.strokkur.jap.code.convert.ConvertToClassType;
+import net.strokkur.jap.code.type.CodeTypes;
 
-import java.util.List;
+public interface TestTypes extends ConvertToClassType {
+  TestTypes JAVA_PLUGIN = create("org.bukkit.plugin.java.JavaPlugin");
+  TestTypes PLUGIN_BOOTSTRAP = create("io.papermc.paper.plugin.bootstrap.PluginBootstrap");
+  TestTypes BOOTSTRAP_CONTEXT = create("io.papermc.paper.plugin.bootstrap.BootstrapContext");
 
-public interface CodeAnnotated {
+  TestTypes PLAYER = create("org.bukkit.entity.Player");
 
-  List<CodeAnnotation> annotations();
+  TestTypes SIMPLE_COMMAND_EXCEPTION_TYPE = create("com.mojang.brigadier.exceptions.SimpleCommandExceptionType");
+  TestTypes LITERAL_MESSAGE = create("com.mojang.brigadier.LiteralMessage");
+  TestTypes COMMAND = create("com.mojang.brigadier.Command");
 
-  default List<CodeAnnotation> annotationsType(ConvertToClassType type) {
-    return annotations().stream()
-      .filter(annotation -> annotation.type().equals(type.toClassType()))
-      .toList();
-  }
+  // Custom
+  TestTypes LIST_HOLDER = create("com.ListHolder");
+  TestTypes CUSTOM_TYPE = create("com.CustomType");
+  TestTypes MY_CLASS = create("com.MyClass");
 
-  default CodeAnnotation firstAnnotationType(ConvertToClassType type) {
-    return annotations().stream()
-      .filter(annotations -> annotations.type().equals(type.toClassType()))
-      .findFirst().orElseThrow();
-  }
-
-  default boolean hasAnnotations() {
-    return !annotations().isEmpty();
-  }
-
-  default boolean hasAnnotationsType(ConvertToClassType type) {
-    return annotations().stream()
-      .anyMatch(annotation -> annotation.type().equals(type.toClassType()));
+  static TestTypes create(String fqn) {
+    return () -> CodeTypes.ofClass(fqn);
   }
 }

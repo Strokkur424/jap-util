@@ -23,6 +23,12 @@
  */
 package net.strokkur.jap.code.expression.source;
 
+import net.strokkur.jap.code.convert.ConvertToMethodReferenceSource;
+
 /// Marker interface for something you can get methods out of.
-public interface MethodReferenceSource extends FieldMethodSource {
+public interface MethodReferenceSource extends FieldMethodSource, ConvertToMethodReferenceSource {
+  @Override
+  default MethodReferenceSource toMethodReferenceSource() {
+    return this;
+  }
 }

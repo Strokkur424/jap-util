@@ -47,8 +47,8 @@ public final class ConstructorInvocationBuilder implements ConvertToConstructorI
     this.type = type;
   }
 
-  public ConstructorInvocationBuilder setSource(@Nullable ConvertToFieldMethodSource source) {
-    this.source = source == null ? null : source.toFieldMethodSource();
+  public ConstructorInvocationBuilder setSource(ConvertToFieldMethodSource source) {
+    this.source = source.toFieldMethodSource();
     return this;
   }
 

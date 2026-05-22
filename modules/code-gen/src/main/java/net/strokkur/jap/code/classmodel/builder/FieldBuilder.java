@@ -25,6 +25,7 @@ package net.strokkur.jap.code.classmodel.builder;
 
 import net.strokkur.jap.code.annotations.CodeAnnotation;
 import net.strokkur.jap.code.classmodel.CodeField;
+import net.strokkur.jap.code.convert.ConvertToClassType;
 import net.strokkur.jap.code.convert.ConvertToExpression;
 import net.strokkur.jap.code.convert.ConvertToField;
 import net.strokkur.jap.code.expression.CodeExpression;
@@ -33,6 +34,7 @@ import net.strokkur.jap.code.util.Modifiers;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -58,6 +60,13 @@ public class FieldBuilder implements ConvertToField {
   public FieldBuilder addModifiers(Modifiers... modifiers) {
     this.modifiers.addAll(List.of(modifiers));
     return this;
+  }
+
+  public FieldBuilder addAnnotations(ConvertToClassType... annotations) {
+    return addAnnotations(Arrays.stream(annotations)
+      .map(CodeAnnotation::of)
+      .toArray(CodeAnnotation[]::new)
+    );
   }
 
   public FieldBuilder addAnnotations(CodeAnnotation... annotations) {

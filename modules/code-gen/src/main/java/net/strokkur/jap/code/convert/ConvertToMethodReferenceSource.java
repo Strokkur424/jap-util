@@ -23,8 +23,14 @@
  */
 package net.strokkur.jap.code.convert;
 
+import net.strokkur.jap.code.expression.Expressions;
+import net.strokkur.jap.code.expression.MethodReference;
 import net.strokkur.jap.code.expression.source.MethodReferenceSource;
 
 public interface ConvertToMethodReferenceSource {
   MethodReferenceSource toMethodReferenceSource();
+
+  default MethodReference methodReference(String methodName) {
+    return Expressions.methodReference(this, methodName);
+  }
 }

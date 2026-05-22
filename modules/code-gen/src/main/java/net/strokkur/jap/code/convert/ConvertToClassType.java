@@ -26,13 +26,19 @@ package net.strokkur.jap.code.convert;
 import net.strokkur.jap.code.expression.Expressions;
 import net.strokkur.jap.code.expression.builder.ConstructorInvocationBuilder;
 import net.strokkur.jap.code.expression.source.FieldMethodSource;
+import net.strokkur.jap.code.expression.source.MethodReferenceSource;
 import net.strokkur.jap.code.type.CodeClassType;
 import net.strokkur.jap.code.type.CodeType;
 import net.strokkur.jap.code.type.generic.CodeGenericType;
 import net.strokkur.jap.code.type.generic.GenericEnclosure;
 
-public interface ConvertToClassType extends ConvertToType, ConvertToGenericType, ConvertToFieldMethodSource {
+public interface ConvertToClassType extends ConvertToType, ConvertToGenericType, ConvertToFieldMethodSource, ConvertToMethodReferenceSource {
   CodeClassType toClassType();
+
+  @Override
+  default MethodReferenceSource toMethodReferenceSource() {
+    return toClassType();
+  }
 
   @Override
   default CodeType toType() {

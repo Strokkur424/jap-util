@@ -69,6 +69,11 @@ public record CodeClassType(
   }
 
   @Override
+  public MethodReferenceSource toMethodReferenceSource() {
+    return this;
+  }
+
+  @Override
   public FieldMethodSource toFieldMethodSource() {
     return this;
   }

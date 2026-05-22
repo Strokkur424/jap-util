@@ -30,8 +30,13 @@ import net.strokkur.jap.code.statement.CodeStatement;
 import net.strokkur.jap.code.statement.Statements;
 import org.jspecify.annotations.Nullable;
 
-public interface ConvertToExpression {
+public interface ConvertToExpression extends ConvertToStatement {
   CodeExpression toExpression();
+
+  @Override
+  default CodeStatement toStatement() {
+    return Statements.expressionStatement(this);
+  }
 
   default InstanceOfExpr instanceOf(ConvertToClassType type) {
     return Expressions.instanceOf(this, type);
@@ -43,5 +48,9 @@ public interface ConvertToExpression {
 
   default CodeStatement throwStmt() {
     return Statements.throwStatement(this);
+  }
+
+  default CodeExpression assign(ConvertToExpression right) {
+    return Expressions.assign(this, right);
   }
 }

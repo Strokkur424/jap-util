@@ -40,8 +40,4 @@ public record FieldAccess(
   public FieldMethodSource toFieldMethodSource() {
     return this;
   }
-
-  public FieldAccess withSource(FieldMethodSource source) {
-    return new FieldAccess(source, fieldName());
-  }
 }

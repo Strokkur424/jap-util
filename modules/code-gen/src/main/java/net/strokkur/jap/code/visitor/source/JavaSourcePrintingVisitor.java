@@ -33,6 +33,7 @@ import net.strokkur.jap.code.classmodel.CodeMethod;
 import net.strokkur.jap.code.classmodel.CodeParameterDefinition;
 import net.strokkur.jap.code.classmodel.MethodLike;
 import net.strokkur.jap.code.documentation.AbstractDocumentationRenderer;
+import net.strokkur.jap.code.expression.AssignExpression;
 import net.strokkur.jap.code.expression.BooleanExpression;
 import net.strokkur.jap.code.expression.CodeExpression;
 import net.strokkur.jap.code.expression.ConstructorInvocation;
@@ -131,7 +132,7 @@ public class JavaSourcePrintingVisitor extends AbstractSourcePrintingVisitor {
 
   @Override
   public StringBuilder visitAnnotationParameter(CodeAnnotationParameter param) {
-    return append(builder -> builder.append(param.name()).append(" ").append(param.value().accept(this)));
+    return append(builder -> builder.append(param.name()).append(" = ").append(param.value().accept(this)));
   }
 
   @Override
@@ -262,6 +263,11 @@ public class JavaSourcePrintingVisitor extends AbstractSourcePrintingVisitor {
         case CodeStringExpression(String value) -> builder.append('"').append(value).append('"');
 
         case CodeVariableExpression(String name) -> builder.append(name);
+
+        case AssignExpression(CodeExpression leftSide, CodeExpression rightSide) -> builder
+          .append(leftSide.accept(this))
+          .append(" = ")
+          .append(rightSide.accept(this));
 
         case ConstructorInvocation(
           CodeClassType type, List<CodeExpression> parameters, @Nullable FieldMethodSource source, StyleConfig style
