@@ -38,7 +38,7 @@ public record CodeClassType(
   CodePackage codePackage,
   String simpleName,
   @Nullable List<CodeGenericType> genericTypes
-) implements CodeType, ConvertToClassType, MethodReferenceSource {
+) implements CodeType, ConvertToClassType, MethodReferenceSource, Comparable<CodeClassType> {
 
   /// The value returned from [#name()] may differ from one returned from [#simpleName()]
   /// in that [#name()] only returns the canonical name of the class itself (`TestClass`),
@@ -81,6 +81,11 @@ public record CodeClassType(
   @Override
   public CodeType toType() {
     return this;
+  }
+
+  @Override
+  public int compareTo(CodeClassType other) {
+    return fullyQualifiedName().compareTo(other.fullyQualifiedName());
   }
 
   @Override

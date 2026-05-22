@@ -4,6 +4,7 @@ import org.jspecify.annotations.NullMarked;
 module net.strokkur.jap.code {
   requires static org.jetbrains.annotations;
   requires static org.jspecify;
+  requires java.compiler;
 
   exports net.strokkur.jap.code.annotations;
   exports net.strokkur.jap.code.classmodel;

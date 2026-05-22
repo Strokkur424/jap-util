@@ -50,7 +50,7 @@ public abstract class AbstractDocumentationRenderer implements DocumentationVisi
 
   public static Context createContext(
     @Nullable CodePackage currentPath,
-    @Nullable Set<ConvertToClassType> existingImports
+    @Nullable Set<? extends ConvertToClassType> existingImports
   ) {
     return new Context(currentPath, existingImports == null ? null : existingImports.stream()
       .map(ConvertToClassType::toClassType)

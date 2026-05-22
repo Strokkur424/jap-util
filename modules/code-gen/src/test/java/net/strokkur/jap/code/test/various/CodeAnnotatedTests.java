@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.strokkur.jap.code.test;
+package net.strokkur.jap.code.test.various;
 
 import net.strokkur.jap.code.annotations.CodeAnnotated;
 import net.strokkur.jap.code.annotations.CodeAnnotation;
