@@ -25,6 +25,7 @@ package net.strokkur.jap.code.type;
 
 import net.strokkur.jap.code.convert.ConvertToClassType;
 import net.strokkur.jap.code.convert.ConvertToGenericType;
+import net.strokkur.jap.code.expression.source.FieldMethodSource;
 import net.strokkur.jap.code.expression.source.MethodReferenceSource;
 import net.strokkur.jap.code.type.generic.CodeGenericType;
 import org.jspecify.annotations.Nullable;
@@ -65,6 +66,11 @@ public record CodeClassType(
         .map(ConvertToGenericType::toGenericType)
         .toList()
     );
+  }
+
+  @Override
+  public FieldMethodSource toFieldMethodSource() {
+    return this;
   }
 
   @Override

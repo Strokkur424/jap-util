@@ -109,12 +109,20 @@ public final class Expressions {
     return lambdaInline(List.of(), lambdaExpression);
   }
 
+  public static SingleLineLambda lambdaInline(String lambdaParameter, ConvertToExpression lambdaExpression) {
+    return lambdaInline(List.of(lambdaParameter), lambdaExpression);
+  }
+
   public static SingleLineLambda lambdaInline(List<String> lambdaParameters, ConvertToExpression lambdaExpression) {
     return new SingleLineLambda(lambdaParameters, lambdaExpression.toExpression());
   }
 
   public static MultilineLambda lambda(ConvertToStatement... lambdaStatements) {
     return lambda(List.of(), lambdaStatements);
+  }
+
+  public static MultilineLambda lambda(String lambdaParameter, ConvertToStatement... lambdaStatements) {
+    return lambda(List.of(lambdaParameter), lambdaStatements);
   }
 
   public static MultilineLambda lambda(List<String> lambdaParameters, ConvertToStatement... lambdaStatements) {

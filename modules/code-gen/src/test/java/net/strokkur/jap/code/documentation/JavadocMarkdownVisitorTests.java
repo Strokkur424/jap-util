@@ -26,8 +26,11 @@ package net.strokkur.jap.code.documentation;
 import net.strokkur.jap.code.classmodel.CodeMethod;
 import net.strokkur.jap.code.classmodel.CodeParameterDefinition;
 import net.strokkur.jap.code.type.CodeTypes;
-import net.strokkur.jap.code.type.JavaTypes;
+import net.strokkur.jap.code.type.preset.JavaTypes;
+import net.strokkur.jap.code.util.TestTypes;
 import org.junit.jupiter.api.Test;
+
+import java.util.Set;
 
 import static net.strokkur.jap.code.documentation.CodeDocumentation.blank;
 import static net.strokkur.jap.code.documentation.CodeDocumentation.classReference;
@@ -74,8 +77,8 @@ class JavadocMarkdownVisitorTests extends CommonDocumentationRendererTests {
       /// ### Registering the command
       ///
       /// This method can safely be called either in your plugin bootstrapper's
-      /// [io.papermc.paper.plugin.bootstrap.PluginBootstrap#bootstrap(io.papermc.paper.plugin.bootstrap.BootstrapContext)] or your main
-      /// class' [org.bukkit.plugin.java.JavaPlugin#onLoad()] or [org.bukkit.plugin.java.JavaPlugin#onEnable()]
+      /// [PluginBootstrap#bootstrap(BootstrapContext)] or your main
+      /// class' [JavaPlugin#onLoad()] or [JavaPlugin#onEnable()]
       /// methods.
       ///
       /// You need to call it inside of a lifecycle event. General information can be found on the
@@ -88,7 +91,13 @@ class JavadocMarkdownVisitorTests extends CommonDocumentationRendererTests {
       ///     EntitiesCommandBrigadier.register(commands);
       /// }
       /// ```""";
-    checkOutput(expected, registerJavadoc(), MarkdownJavadocRenderer::new);
+    checkOutput(expected, registerJavadoc(), () -> new MarkdownJavadocRenderer(AbstractDocumentationRenderer.createContext(null,
+      Set.of(
+        TestTypes.PLUGIN_BOOTSTRAP,
+        TestTypes.BOOTSTRAP_CONTEXT,
+        TestTypes.JAVA_PLUGIN
+      )
+    )));
   }
 
   @Test

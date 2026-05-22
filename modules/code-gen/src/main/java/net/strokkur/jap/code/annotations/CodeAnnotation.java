@@ -23,6 +23,7 @@
  */
 package net.strokkur.jap.code.annotations;
 
+import net.strokkur.jap.code.convert.ConvertToClassType;
 import net.strokkur.jap.code.convert.ConvertToExpression;
 import net.strokkur.jap.code.type.CodeClassType;
 import net.strokkur.jap.code.visitor.CodeVisitable;
@@ -35,12 +36,12 @@ public record CodeAnnotation(
   List<CodeAnnotationParameter> parameters
 ) implements CodeVisitable {
 
-  public static CodeAnnotation of(CodeClassType type, ConvertToExpression valueExpression) {
-    return new CodeAnnotation(type, List.of(CodeAnnotationParameter.of("value", valueExpression)));
+  public static CodeAnnotation of(ConvertToClassType type, ConvertToExpression valueExpression) {
+    return new CodeAnnotation(type.toClassType(), List.of(CodeAnnotationParameter.of("value", valueExpression)));
   }
 
-  public static CodeAnnotation of(CodeClassType type, CodeAnnotationParameter... parameters) {
-    return new CodeAnnotation(type, List.of(parameters));
+  public static CodeAnnotation of(ConvertToClassType type, CodeAnnotationParameter... parameters) {
+    return new CodeAnnotation(type.toClassType(), List.of(parameters));
   }
 
   @Override

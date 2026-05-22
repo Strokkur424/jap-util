@@ -25,7 +25,10 @@ package net.strokkur.jap.code.documentation;
 
 import net.strokkur.jap.code.classmodel.CodeMethod;
 import net.strokkur.jap.code.type.CodeTypes;
+import net.strokkur.jap.code.util.TestTypes;
 import org.junit.jupiter.api.Test;
+
+import java.util.Set;
 
 import static net.strokkur.jap.code.documentation.CodeDocumentation.classReference;
 import static net.strokkur.jap.code.documentation.CodeDocumentation.combine;
@@ -90,6 +93,42 @@ class JavadocStarVisitorTests extends CommonDocumentationRendererTests {
        * }</pre>
        */""";
     checkOutput(expected, registerJavadoc(), StarJavadocRenderer::new);
+  }
+
+  @Test
+  void testJavaStarJavadocsRegisterWithContext() {
+    // language=java
+    final String expected = """
+      /**
+       * Shortcut for registering the command node returned from
+       * {@link #create()}. This method uses the provided aliases
+       * and description from the original source file.
+       *
+       * <h3>Registering the command</h3>
+       *
+       * This method can safely be called either in your plugin bootstrapper's
+       * {@link PluginBootstrap#bootstrap(BootstrapContext)} or your main
+       * class' {@link JavaPlugin#onLoad()} or {@link JavaPlugin#onEnable()}
+       * methods.
+       * <p>
+       * You need to call it inside of a lifecycle event. General information can be found on the
+       * <a href="https://docs.papermc.io/paper/dev/lifecycle/">PaperMC Lifecycle API docs page</a>.
+       * <p>
+       * The general use case might look like this (example given inside the {@code onEnable} method):
+       * <pre>{@code
+       * this.getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS.newHandler(event -> {
+       *     final Commands commands = event.registrar();
+       *     EntitiesCommandBrigadier.register(commands);
+       * }
+       * }</pre>
+       */""";
+    checkOutput(expected, registerJavadoc(), () -> new StarJavadocRenderer(AbstractDocumentationRenderer.createContext(null,
+      Set.of(
+        TestTypes.PLUGIN_BOOTSTRAP,
+        TestTypes.BOOTSTRAP_CONTEXT,
+        TestTypes.JAVA_PLUGIN
+      )
+    )));
   }
 
   @Test

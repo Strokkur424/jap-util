@@ -23,6 +23,7 @@
  */
 package net.strokkur.jap.code.documentation;
 
+import net.strokkur.jap.code.convert.ConvertToClassType;
 import net.strokkur.jap.code.type.CodeClassType;
 import net.strokkur.jap.code.type.CodePackage;
 import org.jetbrains.annotations.Unmodifiable;
@@ -30,6 +31,7 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.SequencedCollection;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /// @apiNote instances of this class cannot be reused
 public abstract class AbstractDocumentationRenderer implements DocumentationVisitor {
@@ -48,9 +50,11 @@ public abstract class AbstractDocumentationRenderer implements DocumentationVisi
 
   public static Context createContext(
     @Nullable CodePackage currentPath,
-    @Nullable Set<CodeClassType> existingImports
+    @Nullable Set<ConvertToClassType> existingImports
   ) {
-    return new Context(currentPath, existingImports);
+    return new Context(currentPath, existingImports == null ? null : existingImports.stream()
+      .map(ConvertToClassType::toClassType)
+      .collect(Collectors.toSet()));
   }
 
   public static Context emptyContext() {

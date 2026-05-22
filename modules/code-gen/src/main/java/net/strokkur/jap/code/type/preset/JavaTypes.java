@@ -21,19 +21,25 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.strokkur.jap.code.type;
+package net.strokkur.jap.code.type.preset;
 
 import net.strokkur.jap.code.convert.ConvertToClassType;
+import net.strokkur.jap.code.type.CodeTypes;
 
 public interface JavaTypes extends ConvertToClassType {
 
   JavaTypes OBJECT = create("java.lang.Object");
   JavaTypes STRING = create("java.lang.String");
+  JavaTypes DOUBLE = create("java.lang.Double");
+  JavaTypes INTEGER = create("java.lang.Integer");
+  JavaTypes NUMBER = create("java.lang.Number");
+  JavaTypes FLOAT = create("java.lang.Float");
 
   JavaTypes LIST = create("java.util.List");
 
   JavaTypes NULL_POINTER_EXCEPTION = create("java.lang.NullPointerException");
   JavaTypes ILLEGAL_STATE_EXCEPTION = create("java.lang.IllegalStateException");
+  JavaTypes RUNTIME_EXCEPTION = create("java.lang.RuntimeException");
 
   static JavaTypes create(String fqn) {
     return () -> CodeTypes.ofClass(fqn);

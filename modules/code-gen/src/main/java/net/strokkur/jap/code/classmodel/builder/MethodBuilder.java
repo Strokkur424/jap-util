@@ -30,6 +30,7 @@ import net.strokkur.jap.code.classmodel.CodeParameterDefinition;
 import net.strokkur.jap.code.convert.ConvertToClassType;
 import net.strokkur.jap.code.convert.ConvertToMethod;
 import net.strokkur.jap.code.convert.ConvertToStatement;
+import net.strokkur.jap.code.convert.ConvertToType;
 import net.strokkur.jap.code.documentation.CodeDocumentation;
 import net.strokkur.jap.code.type.CodeClassType;
 import net.strokkur.jap.code.type.CodePrimitiveType;
@@ -62,8 +63,8 @@ public class MethodBuilder implements ConvertToMethod {
     this.name = name;
   }
 
-  public MethodBuilder setReturnType(CodeType returnType) {
-    this.returnType = returnType;
+  public MethodBuilder setReturnType(ConvertToType returnType) {
+    this.returnType = returnType.toType();
     return this;
   }
 
@@ -75,6 +76,13 @@ public class MethodBuilder implements ConvertToMethod {
   public MethodBuilder setCodeBlock(ConvertToStatement... statements) {
     this.codeBlock = CodeBlock.of(statements);
     return this;
+  }
+
+  public MethodBuilder addAnnotations(ConvertToClassType... annotations) {
+    return addAnnotations(Arrays.stream(annotations)
+      .map(CodeAnnotation::of)
+      .toArray(CodeAnnotation[]::new)
+    );
   }
 
   public MethodBuilder addAnnotations(CodeAnnotation... annotations) {
@@ -98,6 +106,10 @@ public class MethodBuilder implements ConvertToMethod {
       .toList()
     );
     return this;
+  }
+
+  public MethodBuilder addParameter(ConvertToType type, String name, CodeAnnotation... annotations) {
+    return addParameters(CodeParameterDefinition.of(type, name, annotations));
   }
 
   public MethodBuilder addParameters(CodeParameterDefinition... parameters) {

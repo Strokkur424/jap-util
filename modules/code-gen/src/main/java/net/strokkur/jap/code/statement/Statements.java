@@ -26,6 +26,7 @@ package net.strokkur.jap.code.statement;
 import net.strokkur.jap.code.classmodel.CodeBlock;
 import net.strokkur.jap.code.convert.ConvertToBooleanExpression;
 import net.strokkur.jap.code.convert.ConvertToExpression;
+import net.strokkur.jap.code.convert.ConvertToStatement;
 import net.strokkur.jap.code.convert.ConvertToType;
 import org.jspecify.annotations.Nullable;
 
@@ -43,7 +44,11 @@ public final class Statements {
     return new VariableDeclarationStatement(type.toType(), name, assignment == null ? null : assignment.toExpression(), true);
   }
 
-  public static CodeStatement returnStatement(@Nullable ConvertToExpression returnExpression) {
+  public static CodeStatement returnStmt() {
+    return returnStmt(null);
+  }
+
+  public static CodeStatement returnStmt(@Nullable ConvertToExpression returnExpression) {
     return new ReturnStatement(returnExpression == null ? null : returnExpression.toExpression());
   }
 
@@ -55,7 +60,7 @@ public final class Statements {
     return BlankStatement.INSTANCE;
   }
 
-  public static IfStatement ifStmt(ConvertToBooleanExpression booleanExpr, CodeStatement... ifTrue) {
+  public static IfStatement ifStmt(ConvertToBooleanExpression booleanExpr, ConvertToStatement... ifTrue) {
     return ifStmt(booleanExpr, CodeBlock.of(ifTrue), null);
   }
 

@@ -30,6 +30,7 @@ import net.strokkur.jap.code.classmodel.CodeParameterDefinition;
 import net.strokkur.jap.code.convert.ConvertToClassType;
 import net.strokkur.jap.code.convert.ConvertToConstructor;
 import net.strokkur.jap.code.convert.ConvertToStatement;
+import net.strokkur.jap.code.convert.ConvertToType;
 import net.strokkur.jap.code.documentation.CodeDocumentation;
 import net.strokkur.jap.code.type.CodeClassType;
 import net.strokkur.jap.code.type.generic.CodeGenericTypeDefinition;
@@ -46,7 +47,7 @@ import java.util.Set;
 public class ConstructorBuilder implements ConvertToConstructor {
   private final CodeClassType type;
   private @Nullable CodeDocumentation documentation = null;
-  private @Nullable CodeBlock codeBlock = null;
+  private CodeBlock codeBlock = CodeBlock.of();
 
   private final List<CodeGenericTypeDefinition> generics = new ArrayList<>();
   private final List<CodeAnnotation> annotations = new ArrayList<>();
@@ -94,6 +95,14 @@ public class ConstructorBuilder implements ConvertToConstructor {
   public ConstructorBuilder addParameters(CodeParameterDefinition... parameters) {
     this.parameters.addAll(List.of(parameters));
     return this;
+  }
+
+  public ConstructorBuilder addParameter(ConvertToType type, String name, CodeAnnotation... annotations) {
+    return addParameters(CodeParameterDefinition.of(type, name, annotations));
+  }
+
+  public ConstructorBuilder addParameter(ConvertToType type, String name) {
+    return addParameters(CodeParameterDefinition.of(type, name));
   }
 
   @Override

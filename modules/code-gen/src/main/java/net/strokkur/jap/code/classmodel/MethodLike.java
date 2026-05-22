@@ -23,46 +23,30 @@
  */
 package net.strokkur.jap.code.classmodel;
 
+import net.strokkur.jap.code.annotations.CodeAnnotated;
 import net.strokkur.jap.code.annotations.CodeAnnotation;
-import net.strokkur.jap.code.classmodel.builder.MethodBuilder;
-import net.strokkur.jap.code.convert.ConvertToMethod;
 import net.strokkur.jap.code.documentation.CodeDocumentation;
 import net.strokkur.jap.code.type.CodeClassType;
-import net.strokkur.jap.code.type.CodeType;
 import net.strokkur.jap.code.type.generic.CodeGenericTypeDefinition;
 import net.strokkur.jap.code.util.Modifiers;
-import net.strokkur.jap.code.visitor.CodeVisitor;
+import net.strokkur.jap.code.visitor.CodeVisitable;
 import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 import java.util.Set;
 
-public record CodeMethod(
-  CodeType returnType,
-  String name,
-  List<CodeGenericTypeDefinition> generics,
+public interface MethodLike extends CodeVisitable, CodeAnnotated {
+  List<CodeGenericTypeDefinition> generics();
 
-  List<CodeAnnotation> annotations,
-  Set<Modifiers> modifiers,
-  List<CodeClassType> throwsExceptions,
+  List<CodeAnnotation> annotations();
 
-  @Nullable CodeDocumentation documentation,
+  Set<Modifiers> modifiers();
 
-  List<CodeParameterDefinition> parameters,
-  CodeBlock codeBlock
-) implements ConvertToMethod, MethodLike {
+  List<CodeClassType> throwsExceptions();
 
-  public static MethodBuilder builder(String name) {
-    return new MethodBuilder(name);
-  }
+  @Nullable CodeDocumentation documentation();
 
-  @Override
-  public CodeMethod toMethod() {
-    return this;
-  }
+  List<CodeParameterDefinition> parameters();
 
-  @Override
-  public <R> R accept(CodeVisitor<R> visitor) {
-    return visitor.visitMethod(this);
-  }
+  CodeBlock codeBlock();
 }

@@ -34,7 +34,7 @@ import net.strokkur.jap.code.type.CodeClassType;
 import net.strokkur.jap.code.type.CodePrimitiveType;
 import net.strokkur.jap.code.type.CodeType;
 import net.strokkur.jap.code.type.CodeTypes;
-import net.strokkur.jap.code.type.JavaTypes;
+import net.strokkur.jap.code.type.preset.JavaTypes;
 import net.strokkur.jap.code.type.generic.CodeGenericTypeDefinition;
 import net.strokkur.jap.code.type.generic.GenericEnclosure;
 import net.strokkur.jap.code.util.Modifiers;
@@ -142,9 +142,9 @@ class ImportGatherTests {
     );
 
     // Return statement (no value)
-    check("", Statements.returnStatement(null));
+    check("", Statements.returnStmt(null));
     // Return statement (with value)
-    check("", Statements.returnStatement(Expressions.nullExpr()));
+    check("", Statements.returnStmt(Expressions.nullExpr()));
 
     // Throw statement
     check("java.lang.NullPointerException",

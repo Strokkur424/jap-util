@@ -21,23 +21,19 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.strokkur.jap.code.util;
+package net.strokkur.jap.code.type.preset;
 
 import net.strokkur.jap.code.convert.ConvertToClassType;
 import net.strokkur.jap.code.type.CodeTypes;
 
-public interface TestTypes extends ConvertToClassType {
-  TestTypes JAVA_PLUGIN = create("org.bukkit.plugin.java.JavaPlugin");
-  TestTypes PLUGIN_BOOTSTRAP = create("io.papermc.paper.plugin.bootstrap.PluginBootstrap");
-  TestTypes BOOTSTRAP_CONTEXT = create("io.papermc.paper.plugin.bootstrap.BootstrapContext");
+public interface JSpecifyTypes extends ConvertToClassType {
 
-  TestTypes PLAYER = create("org.bukkit.entity.Player");
+  JSpecifyTypes NULL_MARKED = create("NullMarked");
+  JSpecifyTypes NULL_UNMARKED = create("NullUnmarked");
+  JSpecifyTypes NULLABLE = create("Nullable");
+  JSpecifyTypes NON_NULL = create("NonNull");
 
-  TestTypes SIMPLE_COMMAND_EXCEPTION_TYPE = create("com.mojang.brigadier.exceptions.SimpleCommandExceptionType");
-  TestTypes LITERAL_MESSAGE = create("com.mojang.brigadier.LiteralMessage");
-  TestTypes COMMAND = create("com.mojang.brigadier.Command");
-
-  static TestTypes create(String fqn) {
-    return () -> CodeTypes.ofClass(fqn);
+  static JSpecifyTypes create(String name) {
+    return () -> CodeTypes.ofClass("org.jspecify.annotations." + name);
   }
 }

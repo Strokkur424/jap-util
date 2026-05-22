@@ -56,8 +56,8 @@ public record CodeClass(
     return builder(CodeTypes.ofClass(fqn));
   }
 
-  public static ClassBuilder builder(CodeClassType type) {
-    return new ClassBuilder(type);
+  public static ClassBuilder builder(ConvertToClassType type) {
+    return new ClassBuilder(type.toClassType());
   }
 
   @Override

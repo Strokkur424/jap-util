@@ -30,9 +30,10 @@ import net.strokkur.jap.code.expression.source.FieldMethodSource;
 public interface ConvertToFieldMethodSource {
   FieldMethodSource toFieldMethodSource();
 
-  default MethodInvocationBuilder chainMethod(String methodName) {
+  default MethodInvocationBuilder chainMethod(String methodName, ConvertToExpression... parameters) {
     return new MethodInvocationBuilder()
       .setName(methodName)
+      .addParameters(parameters)
       .setSource(this);
   }
 
