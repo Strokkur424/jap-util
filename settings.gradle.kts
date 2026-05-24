@@ -15,3 +15,8 @@ File(rootDir, "modules").listFiles().forEach {
   include(it.name)
   project(":${it.name}").projectDir = it
 }
+File(rootDir, "test-ap").listFiles().forEach {
+  val name = "test-ap-" + it.name
+  include(name)
+  project(":$name").projectDir = it
+}

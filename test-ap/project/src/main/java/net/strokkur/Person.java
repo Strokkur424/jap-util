@@ -1,5 +1,5 @@
 /*
- * This file is part of source-map, licensed under the MIT License.
+ * This file is part of test-ap-project, licensed under the MIT License.
  *
  * Copyright (c) 2026 Strokkur24
  *
@@ -21,22 +21,20 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.strokkur.jap.source.annotation;
+package net.strokkur;
 
-import net.strokkur.jap.code.convert.ConvertToExpression;
+import net.strokkur.processor.annotations.BuilderDefault.CanBeNull;
+import net.strokkur.processor.annotations.BuilderDefault.ForInt;
+import net.strokkur.processor.annotations.BuilderDefault.ForString;
+import net.strokkur.processor.annotations.CreateBuilder;
 import org.jspecify.annotations.Nullable;
 
-import java.util.Objects;
-
-public record SourceAnnotationParameter(
-  String name,
-  @Nullable ConvertToExpression value
+@CreateBuilder
+public record Person(
+  String firstName,
+  String lastName,
+  @CanBeNull @Nullable String address,
+  @ForString("Pizza") String favoriteFood,
+  @ForInt(2) int age
 ) {
-  public boolean isSet() {
-    return value != null;
-  }
-
-  public ConvertToExpression valueOrThrow() {
-    return Objects.requireNonNull(value);
-  }
 }

@@ -26,6 +26,7 @@ package net.strokkur.jap.source.implementation.javax;
 import com.sun.source.tree.ExpressionTree;
 import net.strokkur.jap.code.convert.ConvertToGenericType;
 import net.strokkur.jap.code.type.CodeClassType;
+import net.strokkur.jap.code.type.CodePackage;
 import net.strokkur.jap.code.type.CodeTypes;
 import net.strokkur.jap.code.type.generic.CodeGenericTypeDefinition;
 import net.strokkur.jap.code.type.generic.GenericEnclosure;
@@ -47,12 +48,14 @@ import org.jspecify.annotations.Nullable;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.Modifier;
+import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.TypeParameterElement;
 import javax.lang.model.type.ArrayType;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -82,8 +85,26 @@ public final class ElementUtil {
     }
   }
 
+  public static CodeClassType mapTypeToClassType(TypeElement element) {
+    final List<String> nameComponents = new ArrayList<>();
+    Element current = element;
+    do {
+      nameComponents.add(current.getSimpleName().toString());
+      current = current.getEnclosingElement();
+    } while (current instanceof TypeElement);
+
+    final PackageElement pkg = (PackageElement) current;
+
+    return new CodeClassType(
+      CodePackage.of(pkg.getQualifiedName().toString()),
+      String.join(".", nameComponents.reversed()),
+      null
+    );
+  }
+
   public static CodeClassType mapDeclared(DeclaredType declared) {
-    final String fqn = declared.toString();
+    final String fqn = declared.toString()
+      .replaceAll("@[a-zA-Z0-9_.]+(\\([^)]*\\))?\\s*", "");
 
     if (fqn.contains("<")) {
       final String[] split = fqn.split("<");

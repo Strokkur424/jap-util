@@ -37,6 +37,7 @@ public interface JavaTypes extends ConvertToClassType {
 
   JavaTypes LIST = create("java.util.List");
   JavaTypes RANDOM = create("java.util.Random");
+  JavaTypes OBJECTS = create("java.util.Objects");
 
   JavaTypes SYSTEM = create("java.lang.System");
 

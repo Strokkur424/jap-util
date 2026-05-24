@@ -35,4 +35,10 @@ public record SourceAnnotation(
   public CodeClassType type() {
     return source().toClassType();
   }
+
+  public SourceAnnotationParameter parameter(String named) {
+    return parameters.stream()
+      .filter(param -> param.name().equals(named))
+      .findFirst().orElseThrow();
+  }
 }

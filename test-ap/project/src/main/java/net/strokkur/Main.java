@@ -1,5 +1,5 @@
 /*
- * This file is part of source-map, licensed under the MIT License.
+ * This file is part of test-ap-project, licensed under the MIT License.
  *
  * Copyright (c) 2026 Strokkur24
  *
@@ -21,22 +21,25 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.strokkur.jap.source.annotation;
+package net.strokkur;
 
-import net.strokkur.jap.code.convert.ConvertToExpression;
-import org.jspecify.annotations.Nullable;
+public class Main {
+  public static void main(String[] args) {
+    PersonBuilder builder = PersonBuilder.create()
+      .setFirstName("Andrew")
+      .setLastName("Holland");
 
-import java.util.Objects;
+    System.out.println();
+    System.out.println("The default age is: " + builder.getAge() + ". That doesn't seem right...\n");
+    builder.setAge(24);
 
-public record SourceAnnotationParameter(
-  String name,
-  @Nullable ConvertToExpression value
-) {
-  public boolean isSet() {
-    return value != null;
-  }
-
-  public ConvertToExpression valueOrThrow() {
-    return Objects.requireNonNull(value);
+    Person andrew = builder.build();
+    System.out.printf(
+      "Allow me to welcome %s %s. %s, but his favorite food is: %s. He is %d years old!%n", andrew.firstName(),
+      andrew.lastName(),
+      andrew.address() == null ? "I won't say his address" : "He lives at " + andrew.address(),
+      andrew.favoriteFood(),
+      andrew.age()
+    );
   }
 }

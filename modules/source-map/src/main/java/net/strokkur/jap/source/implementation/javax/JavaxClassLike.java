@@ -25,7 +25,6 @@ package net.strokkur.jap.source.implementation.javax;
 
 import net.strokkur.jap.code.type.CodeClassType;
 import net.strokkur.jap.code.type.CodePackage;
-import net.strokkur.jap.code.type.CodeTypes;
 import net.strokkur.jap.code.type.generic.CodeGenericTypeDefinition;
 import net.strokkur.jap.code.util.Modifiers;
 import net.strokkur.jap.source.SourceMapProcessor;
@@ -63,8 +62,7 @@ abstract class JavaxClassLike implements SourceClassLike {
 
   @Override
   public CodeClassType classType() {
-    final String fqn = type.toString().split("<")[0];
-    return CodeTypes.ofClass(fqn);
+    return ElementUtil.mapTypeToClassType(element.get());
   }
 
   @Override

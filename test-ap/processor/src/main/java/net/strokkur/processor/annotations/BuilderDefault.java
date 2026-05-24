@@ -1,5 +1,5 @@
 /*
- * This file is part of source-map, licensed under the MIT License.
+ * This file is part of test-ap-processor, licensed under the MIT License.
  *
  * Copyright (c) 2026 Strokkur24
  *
@@ -21,22 +21,28 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.strokkur.jap.source.annotation;
+package net.strokkur.processor.annotations;
 
-import net.strokkur.jap.code.convert.ConvertToExpression;
-import org.jspecify.annotations.Nullable;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import java.util.Objects;
+public interface BuilderDefault {
 
-public record SourceAnnotationParameter(
-  String name,
-  @Nullable ConvertToExpression value
-) {
-  public boolean isSet() {
-    return value != null;
+  @Retention(RetentionPolicy.SOURCE)
+  @Target(ElementType.RECORD_COMPONENT)
+  @interface ForString {
+    String value();
   }
 
-  public ConvertToExpression valueOrThrow() {
-    return Objects.requireNonNull(value);
+  @Retention(RetentionPolicy.SOURCE)
+  @Target(ElementType.RECORD_COMPONENT)
+  @interface ForInt {
+    int value();
   }
+
+  @Retention(RetentionPolicy.SOURCE)
+  @Target(ElementType.RECORD_COMPONENT)
+  @interface CanBeNull {}
 }
