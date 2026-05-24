@@ -24,25 +24,22 @@
 package net.strokkur.jap.source.implementation.javax.visitor;
 
 import net.strokkur.jap.code.expression.CodeExpression;
+import net.strokkur.jap.code.expression.Expressions;
+import net.strokkur.jap.code.type.CodeTypes;
 
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.AnnotationValue;
-import javax.lang.model.element.AnnotationValueVisitor;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.TypeMirror;
+import javax.lang.model.util.AbstractAnnotationValueVisitor14;
 import java.util.List;
 
-public class JavaxAnnotationValueToExpression implements AnnotationValueVisitor<CodeExpression, Void> {
+public class JavaxAnnotationValueToExpression extends AbstractAnnotationValueVisitor14<CodeExpression, Void> {
   public static JavaxAnnotationValueToExpression VISITOR = new JavaxAnnotationValueToExpression();
 
   @Override
-  public CodeExpression visit(AnnotationValue av, Void unused) {
-    throw new IllegalStateException("Not implemented");
-  }
-
-  @Override
   public CodeExpression visitBoolean(boolean b, Void unused) {
-    throw new IllegalStateException("Not implemented");
+    return Expressions.bool(b);
   }
 
   @Override
@@ -57,22 +54,22 @@ public class JavaxAnnotationValueToExpression implements AnnotationValueVisitor<
 
   @Override
   public CodeExpression visitDouble(double d, Void unused) {
-    throw new IllegalStateException("Not implemented");
+    return Expressions.doubleExpr(d);
   }
 
   @Override
   public CodeExpression visitFloat(float f, Void unused) {
-    throw new IllegalStateException("Not implemented");
+    return Expressions.floatExpr(f);
   }
 
   @Override
   public CodeExpression visitInt(int i, Void unused) {
-    throw new IllegalStateException("Not implemented");
+    return Expressions.intExpr(i);
   }
 
   @Override
   public CodeExpression visitLong(long i, Void unused) {
-    throw new IllegalStateException("Not implemented");
+    return Expressions.longExpr(i);
   }
 
   @Override
@@ -82,17 +79,17 @@ public class JavaxAnnotationValueToExpression implements AnnotationValueVisitor<
 
   @Override
   public CodeExpression visitString(String s, Void unused) {
-    throw new IllegalStateException("Not implemented");
+    return Expressions.string(s);
   }
 
   @Override
   public CodeExpression visitType(TypeMirror t, Void unused) {
-    throw new IllegalStateException("Not implemented");
+    return CodeTypes.ofClass(t.toString()).chainField("class");
   }
 
   @Override
   public CodeExpression visitEnumConstant(VariableElement c, Void unused) {
-    throw new IllegalStateException("Not implemented");
+    return CodeTypes.ofClass(c.asType().toString()).chainField(c.getSimpleName().toString());
   }
 
   @Override

@@ -101,7 +101,7 @@ final class ElementUtil {
       return null;
     }
     //noinspection DataFlowIssue
-    return LazyExpression.ofExpression(() -> tree.accept(JavaxTreeToExpression.VISITOR, null));
+    return LazyExpression.ofExpression(() -> Objects.requireNonNull(tree.accept(new JavaxTreeToExpression(), null)));
   }
 
   public static SourceType mapType(SourceMapProcessor processor, TypeMirror mirror) {

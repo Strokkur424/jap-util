@@ -23,6 +23,7 @@
  */
 package net.strokkur.jap.code.expression;
 
+import net.strokkur.jap.code.expression.builder.MethodInvocationBuilder;
 import net.strokkur.jap.code.expression.source.FieldMethodSource;
 import net.strokkur.jap.code.util.StyleConfig;
 import org.jspecify.annotations.Nullable;
@@ -35,4 +36,12 @@ public record MethodInvocation(
   List<CodeExpression> parameters,
   StyleConfig style
 ) implements CodeExpression, FieldMethodSource {
+
+  public MethodInvocationBuilder builder() {
+    return new MethodInvocationBuilder()
+      .setName(methodName)
+      .setSource(source)
+      .addParameters(parameters.toArray(CodeExpression[]::new))
+      .setStyle(style);
+  }
 }

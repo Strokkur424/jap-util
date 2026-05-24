@@ -60,7 +60,7 @@ public final class Expressions {
     return new CodeIntExpression(value);
   }
 
-  public static CodeLongExpression longExpr(int value) {
+  public static CodeLongExpression longExpr(long value) {
     return new CodeLongExpression(value);
   }
 
