@@ -26,11 +26,12 @@ package net.strokkur.jap.source.classmodel;
 import net.strokkur.jap.code.util.Modifiers;
 import net.strokkur.jap.source.annotation.AnnotationsHolder;
 import net.strokkur.jap.source.type.SourceType;
+import net.strokkur.jap.source.visitor.SourceVisitable;
 
 import java.util.List;
 import java.util.Set;
 
-public interface SourceMethodLike extends AnnotationsHolder {
+public interface SourceMethodLike extends AnnotationsHolder, SourceVisitable {
   Set<Modifiers> modifiers();
 
   List<SourceType> thrown();

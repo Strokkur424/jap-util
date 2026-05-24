@@ -24,6 +24,7 @@
 package net.strokkur.jap.source.implementation.javax;
 
 import net.strokkur.jap.code.type.CodeClassType;
+import net.strokkur.jap.code.type.CodePackage;
 import net.strokkur.jap.code.type.CodeTypes;
 import net.strokkur.jap.code.type.generic.CodeGenericTypeDefinition;
 import net.strokkur.jap.code.util.Modifiers;
@@ -33,10 +34,16 @@ import net.strokkur.jap.source.classmodel.SourceClassLike;
 import net.strokkur.jap.source.classmodel.SourceField;
 import net.strokkur.jap.source.classmodel.SourceInterface;
 import net.strokkur.jap.source.classmodel.SourceMethod;
+import net.strokkur.jap.source.classmodel.SourceModule;
+import net.strokkur.jap.source.classmodel.SourcePackage;
 import net.strokkur.jap.source.util.Lazy;
+import org.jspecify.annotations.Nullable;
 
+import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
+import javax.lang.model.element.ModuleElement;
+import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.DeclaredType;
@@ -63,6 +70,64 @@ abstract class JavaxClassLike implements SourceClassLike {
   @Override
   public List<CodeGenericTypeDefinition> genericTypes() {
     return element.map(e -> ElementUtil.mapGenerics(processor, e.getTypeParameters()));
+  }
+
+  @Override
+  public List<SourceClassLike> nestedClasses() {
+    return element.map(e ->
+      e.getEnclosedElements().stream()
+        .filter(ele -> ele.getKind() == ElementKind.CLASS
+          || ele.getKind() == ElementKind.RECORD
+          || ele.getKind() == ElementKind.INTERFACE
+          || ele.getKind() == ElementKind.ANNOTATION_TYPE
+        )
+        .map(ele -> ElementUtil.getClassLikeFor(processor, (TypeElement) ele))
+        .toList()
+    );
+  }
+
+  @Override
+  public @Nullable SourceClassLike enclosingClass() {
+    //noinspection DataFlowIssue
+    return element.map(e ->
+      e.getEnclosingElement() instanceof TypeElement t
+        ? ElementUtil.getClassLikeFor(processor, t)
+        : null
+    );
+  }
+
+  @Override
+  public @Nullable SourcePackage sourcePackage() {
+    Element maybePackage = element.get();
+    do {
+      maybePackage = maybePackage.getEnclosingElement();
+    } while (maybePackage != null && maybePackage.getKind() != ElementKind.PACKAGE);
+
+    if (maybePackage instanceof PackageElement pkg) {
+      return new SourcePackage(
+        CodePackage.of(pkg.getQualifiedName().toString()),
+        ElementUtil.mirrorsToAnnotations(processor, pkg.getAnnotationMirrors())
+      );
+    }
+
+    return null;
+  }
+
+  @Override
+  public @Nullable SourceModule sourceModule() {
+    Element maybeModule = element.get();
+    do {
+      maybeModule = maybeModule.getEnclosingElement();
+    } while (maybeModule != null && maybeModule.getKind() != ElementKind.MODULE);
+
+    if (maybeModule instanceof ModuleElement pkg) {
+      return new SourceModule(
+        pkg.getQualifiedName().toString(),
+        ElementUtil.mirrorsToAnnotations(processor, pkg.getAnnotationMirrors())
+      );
+    }
+
+    return null;
   }
 
   @Override

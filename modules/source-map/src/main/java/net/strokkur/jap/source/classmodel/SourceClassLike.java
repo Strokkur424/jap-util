@@ -29,11 +29,13 @@ import net.strokkur.jap.code.type.generic.CodeGenericTypeDefinition;
 import net.strokkur.jap.code.util.Modifiers;
 import net.strokkur.jap.source.annotation.AnnotationsHolder;
 import net.strokkur.jap.source.type.SourceType;
+import net.strokkur.jap.source.visitor.SourceVisitable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 import java.util.Set;
 
-public interface SourceClassLike extends AnnotationsHolder, ConvertToClassType, SourceType {
+public interface SourceClassLike extends AnnotationsHolder, ConvertToClassType, SourceType, SourceVisitable {
 
   //
   // Head
@@ -48,6 +50,14 @@ public interface SourceClassLike extends AnnotationsHolder, ConvertToClassType, 
   // Body
   //
   List<SourceMethod> methods();
+
+  List<SourceClassLike> nestedClasses();
+
+  @Nullable SourceClassLike enclosingClass();
+
+  @Nullable SourcePackage sourcePackage();
+
+  @Nullable SourceModule sourceModule();
 
   //
   // Other

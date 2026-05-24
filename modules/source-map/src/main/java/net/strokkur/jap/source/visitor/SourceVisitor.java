@@ -21,28 +21,28 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.strokkur.jap.source.classmodel;
+package net.strokkur.jap.source.visitor;
 
-import net.strokkur.jap.code.classmodel.CodeClass;
-import net.strokkur.jap.code.util.Modifiers;
-import net.strokkur.jap.source.annotation.SourceAnnotation;
-import net.strokkur.jap.source.type.SourceType;
-import net.strokkur.jap.source.visitor.SourceVisitor;
+import net.strokkur.jap.source.classmodel.SourceAnnotationInterface;
+import net.strokkur.jap.source.classmodel.SourceClass;
+import net.strokkur.jap.source.classmodel.SourceConstructor;
+import net.strokkur.jap.source.classmodel.SourceField;
+import net.strokkur.jap.source.classmodel.SourceInterface;
+import net.strokkur.jap.source.classmodel.SourceMethod;
+import net.strokkur.jap.source.classmodel.SourceRecord;
 
-import java.util.List;
-import java.util.Set;
+public interface SourceVisitor<R, D> {
+  R visitClass(SourceClass sourceClass, D data);
 
-public record SourceConstructor(
-  List<SourceAnnotation> annotations,
-  Set<Modifiers> modifiers,
-  List<SourceMethodParameter> parameters,
-  List<SourceType> thrown,
-  CodeClass constructing,
-  String name
-) implements SourceMethodLike {
+  R visitInterface(SourceInterface sourceInterface, D data);
 
-  @Override
-  public <R, D> R accept(SourceVisitor<R, D> visitor, D data) {
-    return visitor.visitConstructor(this, data);
-  }
+  R visitAnnotationInterface(SourceAnnotationInterface annotationInterface, D data);
+
+  R visitRecord(SourceRecord record, D data);
+
+  R visitMethod(SourceMethod method, D data);
+
+  R visitConstructor(SourceConstructor constructor, D data);
+
+  R visitField(SourceField field, D data);
 }

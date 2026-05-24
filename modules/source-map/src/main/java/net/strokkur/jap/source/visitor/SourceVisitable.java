@@ -21,28 +21,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.strokkur.jap.source.classmodel;
+package net.strokkur.jap.source.visitor;
 
-import net.strokkur.jap.code.classmodel.CodeClass;
-import net.strokkur.jap.code.util.Modifiers;
-import net.strokkur.jap.source.annotation.SourceAnnotation;
-import net.strokkur.jap.source.type.SourceType;
-import net.strokkur.jap.source.visitor.SourceVisitor;
-
-import java.util.List;
-import java.util.Set;
-
-public record SourceConstructor(
-  List<SourceAnnotation> annotations,
-  Set<Modifiers> modifiers,
-  List<SourceMethodParameter> parameters,
-  List<SourceType> thrown,
-  CodeClass constructing,
-  String name
-) implements SourceMethodLike {
-
-  @Override
-  public <R, D> R accept(SourceVisitor<R, D> visitor, D data) {
-    return visitor.visitConstructor(this, data);
-  }
+public interface SourceVisitable {
+  <R, D> R accept(SourceVisitor<R, D> visitor, D data);
 }

@@ -23,6 +23,8 @@
  */
 package net.strokkur.jap.source.classmodel;
 
+import net.strokkur.jap.source.visitor.SourceVisitor;
+
 public interface SourceAnnotationInterface extends SourceClassLike {
   //
   // Other
@@ -30,5 +32,10 @@ public interface SourceAnnotationInterface extends SourceClassLike {
   @Override
   default boolean isStatic() {
     return true;
+  }
+
+  @Override
+  default <R, D> R accept(SourceVisitor<R, D> visitor, D data) {
+    return visitor.visitAnnotationInterface(this, data);
   }
 }

@@ -28,6 +28,8 @@ import net.strokkur.jap.code.util.Modifiers;
 import net.strokkur.jap.source.annotation.AnnotationsHolder;
 import net.strokkur.jap.source.annotation.SourceAnnotation;
 import net.strokkur.jap.source.type.SourceType;
+import net.strokkur.jap.source.visitor.SourceVisitable;
+import net.strokkur.jap.source.visitor.SourceVisitor;
 import org.jspecify.annotations.Nullable;
 
 import java.util.List;
@@ -39,5 +41,10 @@ public record SourceField(
   SourceType type,
   String name,
   @Nullable ConvertToExpression initializer
-) implements AnnotationsHolder {
+) implements AnnotationsHolder, SourceVisitable {
+
+  @Override
+  public <R, D> R accept(SourceVisitor<R, D> visitor, D data) {
+    return visitor.visitField(this, data);
+  }
 }

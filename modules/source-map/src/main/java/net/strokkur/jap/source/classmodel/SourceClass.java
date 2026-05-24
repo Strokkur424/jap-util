@@ -23,6 +23,8 @@
  */
 package net.strokkur.jap.source.classmodel;
 
+import net.strokkur.jap.source.visitor.SourceVisitor;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -41,4 +43,12 @@ public interface SourceClass extends SourceClassLike {
   List<SourceField> fields();
 
   List<SourceConstructor> constructors();
+
+  //
+  // Other
+  //
+  @Override
+  default <R, D> R accept(SourceVisitor<R, D> visitor, D data) {
+    return visitor.visitClass(this, data);
+  }
 }

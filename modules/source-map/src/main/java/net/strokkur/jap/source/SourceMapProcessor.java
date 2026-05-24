@@ -24,13 +24,12 @@
 package net.strokkur.jap.source;
 
 import com.sun.source.util.Trees;
+import net.strokkur.jap.code.CodeGenProcessor;
 
-import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 
-public interface SourceMapProcessor {
-  ProcessingEnvironment processingEnv();
+public interface SourceMapProcessor extends CodeGenProcessor {
 
   default Elements elements() {
     return processingEnv().getElementUtils();

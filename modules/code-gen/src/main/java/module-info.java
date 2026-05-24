@@ -6,6 +6,7 @@ module net.strokkur.jap.code {
   requires static org.jspecify;
   requires java.compiler;
 
+  exports net.strokkur.jap.code;
   exports net.strokkur.jap.code.annotations;
   exports net.strokkur.jap.code.classmodel;
   exports net.strokkur.jap.code.classmodel.builder;

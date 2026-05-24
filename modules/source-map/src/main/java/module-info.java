@@ -10,4 +10,11 @@ module net.strokkur.jap.source {
   requires java.compiler;
   requires jdk.compiler;
   requires java.xml;
+
+  exports net.strokkur.jap.source;
+  exports net.strokkur.jap.source.annotation;
+  exports net.strokkur.jap.source.classmodel;
+  exports net.strokkur.jap.source.type;
+  exports net.strokkur.jap.source.util;
+  exports net.strokkur.jap.source.visitor;
 }

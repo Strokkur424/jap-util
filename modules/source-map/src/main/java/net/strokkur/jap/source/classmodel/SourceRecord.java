@@ -23,6 +23,8 @@
  */
 package net.strokkur.jap.source.classmodel;
 
+import net.strokkur.jap.source.visitor.SourceVisitor;
+
 import java.util.List;
 
 public interface SourceRecord extends SourceClassLike {
@@ -44,5 +46,10 @@ public interface SourceRecord extends SourceClassLike {
   @Override
   default boolean isStatic() {
     return true;
+  }
+
+  @Override
+  default <R, D> R accept(SourceVisitor<R, D> visitor, D data) {
+    return visitor.visitRecord(this, data);
   }
 }

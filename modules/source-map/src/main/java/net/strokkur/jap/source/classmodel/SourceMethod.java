@@ -26,6 +26,7 @@ package net.strokkur.jap.source.classmodel;
 import net.strokkur.jap.code.util.Modifiers;
 import net.strokkur.jap.source.annotation.SourceAnnotation;
 import net.strokkur.jap.source.type.SourceType;
+import net.strokkur.jap.source.visitor.SourceVisitor;
 
 import java.util.List;
 import java.util.Set;
@@ -38,4 +39,9 @@ public record SourceMethod(
   SourceType returnType,
   String name
 ) implements SourceMethodLike {
+
+  @Override
+  public <R, D> R accept(SourceVisitor<R, D> visitor, D data) {
+    return visitor.visitMethod(this, data);
+  }
 }

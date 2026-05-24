@@ -33,6 +33,7 @@ import net.strokkur.jap.code.util.Modifiers;
 import net.strokkur.jap.source.SourceMapProcessor;
 import net.strokkur.jap.source.annotation.SourceAnnotation;
 import net.strokkur.jap.source.annotation.SourceAnnotationParameter;
+import net.strokkur.jap.source.classmodel.SourceClassLike;
 import net.strokkur.jap.source.implementation.javax.visitor.JavaxAnnotationValueToExpression;
 import net.strokkur.jap.source.implementation.javax.visitor.JavaxTreeToExpression;
 import net.strokkur.jap.source.type.LazySourceClassLikeType;
@@ -46,6 +47,7 @@ import org.jspecify.annotations.Nullable;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.Modifier;
+import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.TypeParameterElement;
 import javax.lang.model.type.ArrayType;
 import javax.lang.model.type.DeclaredType;
@@ -126,16 +128,22 @@ final class ElementUtil {
         mapDeclared(declared),
         Lazy.of(() -> {
           final Element element = declared.asElement();
-          return switch (element.getKind()) {
-            case CLASS -> new JavaxClass(processor, declared);
-            case INTERFACE -> new JavaxInterface(processor, declared);
-            default -> throw new IllegalArgumentException("Unknown element kind: " + element.getKind());
-          };
+          return getClassLikeFor(processor, (TypeElement) element);
         })
       );
     }
 
     throw new IllegalArgumentException("Unknown type kind: " + mirror.getKind());
+  }
+
+  public static SourceClassLike getClassLikeFor(SourceMapProcessor processor, TypeElement element) {
+    return switch (element.getKind()) {
+      case CLASS -> new JavaxClass(processor, (DeclaredType) element.asType());
+      case RECORD -> new JavaxRecord(processor, (DeclaredType) element.asType());
+      case INTERFACE -> new JavaxInterface(processor, (DeclaredType) element.asType());
+      case ANNOTATION_TYPE -> new JavaxAnnotationInterface(processor, (DeclaredType) element.asType());
+      default -> throw new IllegalArgumentException("This should not happen.");
+    };
   }
 
   public static List<CodeGenericTypeDefinition> mapGenerics(SourceMapProcessor processor, List<? extends TypeParameterElement> parameters) {
