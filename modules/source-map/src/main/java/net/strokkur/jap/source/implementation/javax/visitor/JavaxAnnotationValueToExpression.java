@@ -35,7 +35,7 @@ import javax.lang.model.util.AbstractAnnotationValueVisitor14;
 import java.util.List;
 
 public class JavaxAnnotationValueToExpression extends AbstractAnnotationValueVisitor14<CodeExpression, Void> {
-  public static JavaxAnnotationValueToExpression VISITOR = new JavaxAnnotationValueToExpression();
+  public static final JavaxAnnotationValueToExpression VISITOR = new JavaxAnnotationValueToExpression();
 
   @Override
   public CodeExpression visitBoolean(boolean b, Void unused) {

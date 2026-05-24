@@ -59,7 +59,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-final class ElementUtil {
+public final class ElementUtil {
 
   public static SourceAnnotation mirrorToAnnotation(SourceMapProcessor processor, AnnotationMirror element) {
     //noinspection DataFlowIssue

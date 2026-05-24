@@ -21,18 +21,34 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.strokkur.jap.source.type;
+package net.strokkur.jap.source;
 
-import net.strokkur.jap.code.type.CodeType;
+import net.strokkur.jap.source.classmodel.SourceClassLike;
+import net.strokkur.jap.source.classmodel.SourceField;
+import net.strokkur.jap.source.classmodel.SourceMethod;
+import net.strokkur.jap.source.implementation.javax.ElementUtil;
+import net.strokkur.jap.source.implementation.javax.JavaxUtil;
 
-public final class UnknownType implements SourceType {
-  static final UnknownType UNKNOWN = new UnknownType();
+import javax.lang.model.element.ExecutableElement;
+import javax.lang.model.element.TypeElement;
+import javax.lang.model.element.VariableElement;
 
-  @Override
-  public CodeType toType() {
-    throw new IllegalArgumentException("Unknown type.");
+public class SourceMapUtil {
+  private final SourceMapProcessor processor;
+
+  public SourceMapUtil(SourceMapProcessor processor) {
+    this.processor = processor;
   }
 
-  private UnknownType() {
+  public SourceClassLike parseClassElement(TypeElement element) {
+    return ElementUtil.getClassLikeFor(processor, element);
+  }
+
+  public SourceMethod parseMethodElement(ExecutableElement element) {
+    return JavaxUtil.convertMethod(processor, element);
+  }
+
+  public SourceField parseFieldElement(VariableElement element) {
+    return JavaxUtil.convertField(processor, element);
   }
 }

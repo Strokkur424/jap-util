@@ -325,7 +325,6 @@ public class JavaSourcePrintingVisitor extends AbstractSourcePrintingVisitor {
             builder.append(methodName);
             appendMethodCallParams(builder, parameters, style);
           }
-          ;
         }
 
         case MethodReference(MethodReferenceSource source, String methodName) -> {

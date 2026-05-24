@@ -32,7 +32,7 @@ import net.strokkur.jap.source.classmodel.SourceMethodParameter;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.VariableElement;
 
-final class JavaxUtil {
+public final class JavaxUtil {
 
   public static SourceMethodParameter convertParameter(SourceMapProcessor processor, VariableElement element) {
     return new SourceMethodParameter(

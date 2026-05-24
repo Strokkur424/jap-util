@@ -1,7 +1,7 @@
 jap-util
 ========
 
-Common utilities for Java annotation processors, with focus on (cross JVM language) code generation and intelligent
+Common utilities for Java annotation processors, with a focus on (cross JVM language) code generation and intelligent
 parsing.
 
 # Modules
@@ -164,7 +164,7 @@ For constructors, you can use the `.addConstructor` method. This class has two o
 `CodeConstructor` objects, whilst the other provides a `Consumer<ConstructorBuilder>`. This utility overload is added
 because the `CodeConstructor` requires information about the type of the class it is a constructor for, which would be
 pretty repetitive to provide, since you'd need to pass in the same type as you have for the class builder. Instead, you
-can just get a constructor builder for the current class and extend that. Much more convenient!
+can get a constructor builder for the current class and extend that. Much more convenient!
 
 To represent the following constructor...
 
@@ -281,9 +281,9 @@ imports.removeIf(type -> CodePackage.isRedundantImport(codeClass.classType().cod
 <!-- @formatter:on -->
 
 The class itself is rendered using the `JavaSourcePrintingVisitor`. This class takes in a
-`Supplier<AbstractDocumentationRenderer>`. The reason being that the documentation visitor does not return a value,
+`Supplier<AbstractDocumentationRenderer>`. The reason being that the documentation visitor does not return a value;
 instead it just adds the rendered parts into a field of type `StringBuilder`. A special method on the
-`AbstractDocumentationRender` then takes the value of that field, and adds extra stuff, such as the actual documentation
+`AbstractDocumentationRender` then takes the value of that field and adds extra stuff, such as the actual documentation
 comment syntax `/** ... */` or `///`.
 
 `CodeGenUtil` automatically picks the most fitting documentation renderer based on the current language version the
