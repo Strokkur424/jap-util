@@ -35,7 +35,7 @@ import org.jspecify.annotations.Nullable;
 import java.util.List;
 import java.util.Set;
 
-public interface SourceClassLike extends AnnotationsHolder, ConvertToClassType, SourceType, SourceVisitable {
+public interface SourceClassLike extends AnnotationsHolder, ConvertToClassType, SourceType, SourceVisitable, SourceElement {
 
   //
   // Head

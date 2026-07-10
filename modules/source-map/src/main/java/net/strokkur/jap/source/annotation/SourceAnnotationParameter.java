@@ -24,19 +24,9 @@
 package net.strokkur.jap.source.annotation;
 
 import net.strokkur.jap.code.convert.ConvertToExpression;
-import org.jspecify.annotations.Nullable;
-
-import java.util.Objects;
 
 public record SourceAnnotationParameter(
   String name,
-  @Nullable ConvertToExpression value
+  ConvertToExpression value
 ) {
-  public boolean isSet() {
-    return value != null;
-  }
-
-  public ConvertToExpression valueOrThrow() {
-    return Objects.requireNonNull(value);
-  }
 }

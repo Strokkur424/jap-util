@@ -29,9 +29,11 @@ import net.strokkur.jap.source.type.SourceType;
 
 import java.util.List;
 
-public record SourceRecordComponent(
-  List<SourceAnnotation> annotations,
-  SourceType type,
-  String name
-) implements AnnotationsHolder {
+public interface SourceRecordComponent extends AnnotationsHolder, SourceElement {
+
+  List<SourceAnnotation> annotations();
+
+  SourceType type();
+
+  String name();
 }

@@ -29,8 +29,9 @@ import net.strokkur.jap.source.annotation.SourceAnnotation;
 
 import java.util.List;
 
-public record SourcePackage(
-  CodePackage codePackage,
-  List<SourceAnnotation> annotations
-) implements AnnotationsHolder {
+public interface SourcePackage extends AnnotationsHolder, SourceElement {
+
+  CodePackage codePackage();
+
+  List<SourceAnnotation> annotations();
 }

@@ -43,6 +43,7 @@ import net.strokkur.jap.code.expression.MethodInvocation;
 import net.strokkur.jap.code.expression.MethodReference;
 import net.strokkur.jap.code.expression.MultilineLambda;
 import net.strokkur.jap.code.expression.SingleLineLambda;
+import net.strokkur.jap.code.expression.UnaryMinusExpression;
 import net.strokkur.jap.code.expression.simple.CodeBooleanExpression;
 import net.strokkur.jap.code.expression.simple.CodeDoubleExpression;
 import net.strokkur.jap.code.expression.simple.CodeFloatExpression;
@@ -346,6 +347,8 @@ public class JavaSourcePrintingVisitor extends AbstractSourcePrintingVisitor {
           builder.append(codeExpression.accept(this));
         }
 
+        case UnaryMinusExpression(CodeExpression expr) -> builder.append("-").append(expr.accept(this));
+
         default -> throw new IllegalArgumentException("Unrecognized expression type: " + expression.getClass());
       }
     });
@@ -436,7 +439,7 @@ public class JavaSourcePrintingVisitor extends AbstractSourcePrintingVisitor {
           }
         }
 
-        case CodePrimitiveType(String name) -> builder.append(name);
+        case CodePrimitiveType(String name, String boxed) -> builder.append(name);
 
         default -> throw new IllegalArgumentException("Unrecognized type: " + type.getClass());
       }

@@ -25,6 +25,7 @@ package net.strokkur.jap.source;
 
 import com.sun.source.util.Trees;
 import net.strokkur.jap.code.CodeGenProcessor;
+import net.strokkur.jap.source.util.MessagerWrapper;
 
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
@@ -41,5 +42,9 @@ public interface SourceMapProcessor extends CodeGenProcessor {
 
   default Trees trees() {
     return Trees.instance(processingEnv());
+  }
+
+  default MessagerWrapper messager() {
+    return MessagerWrapper.wrap(processingEnv().getMessager());
   }
 }

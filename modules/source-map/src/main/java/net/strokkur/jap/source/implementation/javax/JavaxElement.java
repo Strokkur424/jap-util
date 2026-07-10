@@ -23,41 +23,8 @@
  */
 package net.strokkur.jap.source.implementation.javax;
 
-import net.strokkur.jap.source.SourceMapProcessor;
-import net.strokkur.jap.source.classmodel.SourceField;
-import net.strokkur.jap.source.classmodel.SourceInterface;
-import net.strokkur.jap.source.classmodel.SourceRecord;
-import net.strokkur.jap.source.classmodel.SourceRecordComponent;
+import javax.lang.model.element.Element;
 
-import javax.lang.model.type.DeclaredType;
-import java.util.List;
-
-public class JavaxRecord extends JavaxClassLike implements SourceRecord {
-  public JavaxRecord(SourceMapProcessor processor, DeclaredType type) {
-    super(processor, type);
-  }
-
-  @Override
-  public List<SourceRecordComponent> components() {
-    return element.map(e ->
-      e.getRecordComponents().stream()
-        .map(comp -> (SourceRecordComponent) new JavaxRecordComponent(
-          comp,
-          ElementUtil.mapAnnotations(processor, comp),
-          ElementUtil.mapType(processor, comp.asType()),
-          comp.getSimpleName().toString()
-        ))
-        .toList()
-    );
-  }
-
-  @Override
-  public List<SourceInterface> implementsClasses() {
-    return interfaces();
-  }
-
-  @Override
-  public List<SourceField> staticFields() {
-    return allFields();
-  }
+public interface JavaxElement {
+  Element javaxElement();
 }

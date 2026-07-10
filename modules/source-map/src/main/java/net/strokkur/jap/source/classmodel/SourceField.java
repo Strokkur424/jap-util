@@ -35,16 +35,20 @@ import org.jspecify.annotations.Nullable;
 import java.util.List;
 import java.util.Set;
 
-public record SourceField(
-  List<SourceAnnotation> annotations,
-  Set<Modifiers> modifiers,
-  SourceType type,
-  String name,
-  @Nullable ConvertToExpression initializer
-) implements AnnotationsHolder, SourceVisitable {
+public interface SourceField extends AnnotationsHolder, SourceVisitable, SourceElement {
+
+  List<SourceAnnotation> annotations();
+
+  Set<Modifiers> modifiers();
+
+  SourceType type();
+
+  String name();
+
+  @Nullable ConvertToExpression initializer();
 
   @Override
-  public <R, D> R accept(SourceVisitor<R, D> visitor, D data) {
+  default <R, D> R accept(SourceVisitor<R, D> visitor, D data) {
     return visitor.visitField(this, data);
   }
 }

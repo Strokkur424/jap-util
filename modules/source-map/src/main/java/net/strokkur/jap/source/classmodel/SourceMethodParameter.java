@@ -29,9 +29,11 @@ import net.strokkur.jap.source.type.SourceType;
 
 import java.util.List;
 
-public record SourceMethodParameter(
-  List<SourceAnnotation> annotations,
-  SourceType type,
-  String name
-) implements AnnotationsHolder {
+public interface SourceMethodParameter extends AnnotationsHolder {
+
+  List<SourceAnnotation> annotations();
+
+  SourceType type();
+
+  String name();
 }

@@ -26,6 +26,7 @@ package net.strokkur.jap.code.convert;
 import net.strokkur.jap.code.expression.CodeExpression;
 import net.strokkur.jap.code.expression.Expressions;
 import net.strokkur.jap.code.expression.InstanceOfExpr;
+import net.strokkur.jap.code.expression.UnaryMinusExpression;
 import net.strokkur.jap.code.statement.CodeStatement;
 import net.strokkur.jap.code.statement.Statements;
 import org.jspecify.annotations.Nullable;
@@ -52,5 +53,9 @@ public interface ConvertToExpression extends ConvertToStatement {
 
   default CodeExpression assign(ConvertToExpression right) {
     return Expressions.assign(this, right);
+  }
+
+  default UnaryMinusExpression unaryMinus() {
+    return Expressions.unaryMinus(this);
   }
 }

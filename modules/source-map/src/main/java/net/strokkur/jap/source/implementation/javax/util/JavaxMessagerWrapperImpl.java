@@ -1,7 +1,7 @@
 /*
  * This file is part of source-map, licensed under the MIT License.
  *
- * Copyright (c) 2026 Strokkur24
+ * Copyright (c) 2025 Strokkur24
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,43 +21,28 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.strokkur.jap.source.implementation.javax;
+package net.strokkur.jap.source.implementation.javax.util;
 
-import net.strokkur.jap.source.SourceMapProcessor;
-import net.strokkur.jap.source.classmodel.SourceField;
-import net.strokkur.jap.source.classmodel.SourceInterface;
-import net.strokkur.jap.source.classmodel.SourceRecord;
-import net.strokkur.jap.source.classmodel.SourceRecordComponent;
+import net.strokkur.jap.source.classmodel.SourceElement;
+import net.strokkur.jap.source.implementation.javax.JavaxElement;
+import net.strokkur.jap.source.util.MessagerWrapper;
 
-import javax.lang.model.type.DeclaredType;
-import java.util.List;
+import javax.annotation.processing.Messager;
+import javax.tools.Diagnostic;
 
-public class JavaxRecord extends JavaxClassLike implements SourceRecord {
-  public JavaxRecord(SourceMapProcessor processor, DeclaredType type) {
-    super(processor, type);
+public record JavaxMessagerWrapperImpl(Messager messager) implements MessagerWrapper {
+
+  @Override
+  public void print(Diagnostic.Kind kind, String format, Object... arguments) {
+    messager.printMessage(kind, format.formatted(arguments));
   }
 
   @Override
-  public List<SourceRecordComponent> components() {
-    return element.map(e ->
-      e.getRecordComponents().stream()
-        .map(comp -> (SourceRecordComponent) new JavaxRecordComponent(
-          comp,
-          ElementUtil.mapAnnotations(processor, comp),
-          ElementUtil.mapType(processor, comp.asType()),
-          comp.getSimpleName().toString()
-        ))
-        .toList()
-    );
-  }
-
-  @Override
-  public List<SourceInterface> implementsClasses() {
-    return interfaces();
-  }
-
-  @Override
-  public List<SourceField> staticFields() {
-    return allFields();
+  public void printSource(Diagnostic.Kind kind, String format, SourceElement element, Object... arguments) {
+    if (element instanceof JavaxElement javax) {
+      messager.printMessage(kind, format.formatted(arguments), javax.javaxElement());
+    } else {
+      print(kind, format, arguments);
+    }
   }
 }

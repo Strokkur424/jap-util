@@ -45,6 +45,7 @@ import net.strokkur.jap.source.util.LazyExpression;
 import org.jetbrains.annotations.Unmodifiable;
 import org.jspecify.annotations.Nullable;
 
+import javax.lang.model.AnnotatedConstruct;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.Modifier;
@@ -55,6 +56,7 @@ import javax.lang.model.type.ArrayType;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
+import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -64,9 +66,19 @@ import java.util.stream.Collectors;
 
 public final class ElementUtil {
 
-  public static SourceAnnotation mirrorToAnnotation(SourceMapProcessor processor, AnnotationMirror element) {
-    //noinspection DataFlowIssue
+  @SuppressWarnings({"unchecked", "DataFlowIssue"})
+  public static SourceAnnotation mirrorToAnnotation(SourceMapProcessor processor, AnnotatedConstruct annotated, AnnotationMirror element) {
     return new SourceAnnotation(
+      Lazy.of(() -> {
+        final String fqn = element.getAnnotationType().toString();
+        final Class<? extends Annotation> annotationClass;
+        try {
+          annotationClass = (Class<? extends Annotation>) Class.forName(fqn);
+        } catch (ClassNotFoundException e) {
+          throw new RuntimeException(e);
+        }
+        return Objects.requireNonNull(annotated.getAnnotation(annotationClass));
+      }),
       new JavaxAnnotationInterface(processor, element.getAnnotationType()),
       element.getElementValues().entrySet().stream()
         .map(e -> new SourceAnnotationParameter(
@@ -189,9 +201,9 @@ public final class ElementUtil {
       .toList();
   }
 
-  public static @Unmodifiable List<SourceAnnotation> mirrorsToAnnotations(SourceMapProcessor processor, List<? extends AnnotationMirror> elements) {
-    return elements.stream()
-      .map(mirror -> mirrorToAnnotation(processor, mirror))
+  public static @Unmodifiable List<SourceAnnotation> mapAnnotations(SourceMapProcessor processor, AnnotatedConstruct source) {
+    return source.getAnnotationMirrors().stream()
+      .map(mirror -> mirrorToAnnotation(processor, source, mirror))
       .toList();
   }
 

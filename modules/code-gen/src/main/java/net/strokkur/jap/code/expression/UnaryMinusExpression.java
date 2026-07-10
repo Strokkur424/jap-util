@@ -1,5 +1,5 @@
 /*
- * This file is part of source-map, licensed under the MIT License.
+ * This file is part of code-gen, licensed under the MIT License.
  *
  * Copyright (c) 2026 Strokkur24
  *
@@ -21,20 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.strokkur.jap.source.classmodel;
+package net.strokkur.jap.code.expression;
 
-import net.strokkur.jap.code.util.Modifiers;
-import net.strokkur.jap.source.annotation.AnnotationsHolder;
-import net.strokkur.jap.source.type.SourceType;
-import net.strokkur.jap.source.visitor.SourceVisitable;
-
-import java.util.List;
-import java.util.Set;
-
-public interface SourceMethodLike extends AnnotationsHolder, SourceVisitable, SourceElement {
-  Set<Modifiers> modifiers();
-
-  List<SourceType> thrown();
-
-  List<SourceMethodParameter> parameters();
+public record UnaryMinusExpression(CodeExpression expr) implements CodeExpression {
 }

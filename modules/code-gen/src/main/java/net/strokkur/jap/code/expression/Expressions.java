@@ -85,6 +85,10 @@ public final class Expressions {
       .setName(methodName);
   }
 
+  public static UnaryMinusExpression unaryMinus(ConvertToExpression expr) {
+    return new UnaryMinusExpression(expr.toExpression());
+  }
+
   public static ConstructorInvocationBuilder ctorInvocation(ConvertToClassType classType) {
     return new ConstructorInvocationBuilder(classType.toClassType());
   }

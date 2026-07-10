@@ -49,7 +49,7 @@ import javax.lang.model.type.DeclaredType;
 import java.util.List;
 import java.util.Set;
 
-abstract class JavaxClassLike implements SourceClassLike {
+abstract class JavaxClassLike implements SourceClassLike, JavaxElement {
   protected final SourceMapProcessor processor;
   protected final DeclaredType type;
   protected final Lazy<TypeElement> element;
@@ -58,6 +58,11 @@ abstract class JavaxClassLike implements SourceClassLike {
     this.processor = processor;
     this.type = type;
     this.element = Lazy.of(() -> (TypeElement) type.asElement());
+  }
+
+  @Override
+  public Element javaxElement() {
+    return element.get();
   }
 
   @Override
@@ -72,15 +77,14 @@ abstract class JavaxClassLike implements SourceClassLike {
 
   @Override
   public List<SourceClassLike> nestedClasses() {
-    return element.map(e ->
-      e.getEnclosedElements().stream()
-        .filter(ele -> ele.getKind() == ElementKind.CLASS
-          || ele.getKind() == ElementKind.RECORD
-          || ele.getKind() == ElementKind.INTERFACE
-          || ele.getKind() == ElementKind.ANNOTATION_TYPE
-        )
-        .map(ele -> ElementUtil.getClassLikeFor(processor, (TypeElement) ele))
-        .toList()
+    return element.map(e -> e.getEnclosedElements().stream()
+      .filter(ele -> ele.getKind() == ElementKind.CLASS
+        || ele.getKind() == ElementKind.RECORD
+        || ele.getKind() == ElementKind.INTERFACE
+        || ele.getKind() == ElementKind.ANNOTATION_TYPE
+      )
+      .map(ele -> ElementUtil.getClassLikeFor(processor, (TypeElement) ele))
+      .toList()
     );
   }
 
@@ -102,9 +106,10 @@ abstract class JavaxClassLike implements SourceClassLike {
     } while (maybePackage != null && maybePackage.getKind() != ElementKind.PACKAGE);
 
     if (maybePackage instanceof PackageElement pkg) {
-      return new SourcePackage(
+      return new JavaxPackage(
+        pkg,
         CodePackage.of(pkg.getQualifiedName().toString()),
-        ElementUtil.mirrorsToAnnotations(processor, pkg.getAnnotationMirrors())
+        ElementUtil.mapAnnotations(processor, pkg)
       );
     }
 
@@ -118,10 +123,11 @@ abstract class JavaxClassLike implements SourceClassLike {
       maybeModule = maybeModule.getEnclosingElement();
     } while (maybeModule != null && maybeModule.getKind() != ElementKind.MODULE);
 
-    if (maybeModule instanceof ModuleElement pkg) {
-      return new SourceModule(
-        pkg.getQualifiedName().toString(),
-        ElementUtil.mirrorsToAnnotations(processor, pkg.getAnnotationMirrors())
+    if (maybeModule instanceof ModuleElement module) {
+      return new JavaxModule(
+        module,
+        module.getQualifiedName().toString(),
+        ElementUtil.mapAnnotations(processor, module)
       );
     }
 
@@ -146,7 +152,7 @@ abstract class JavaxClassLike implements SourceClassLike {
 
   @Override
   public List<SourceAnnotation> annotations() {
-    return element.map(e -> ElementUtil.mirrorsToAnnotations(processor, e.getAnnotationMirrors()));
+    return element.map(e -> ElementUtil.mapAnnotations(processor, e));
   }
 
   //

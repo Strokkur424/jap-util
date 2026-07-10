@@ -31,17 +31,22 @@ import net.strokkur.jap.source.visitor.SourceVisitor;
 import java.util.List;
 import java.util.Set;
 
-public record SourceMethod(
-  List<SourceAnnotation> annotations,
-  Set<Modifiers> modifiers,
-  List<SourceMethodParameter> parameters,
-  List<SourceType> thrown,
-  SourceType returnType,
-  String name
-) implements SourceMethodLike {
+public interface SourceMethod extends SourceMethodLike {
+
+  List<SourceAnnotation> annotations();
+
+  Set<Modifiers> modifiers();
+
+  List<SourceMethodParameter> parameters();
+
+  List<SourceType> thrown();
+
+  SourceType returnType();
+
+  String name();
 
   @Override
-  public <R, D> R accept(SourceVisitor<R, D> visitor, D data) {
+  default <R, D> R accept(SourceVisitor<R, D> visitor, D data) {
     return visitor.visitMethod(this, data);
   }
 }

@@ -40,6 +40,7 @@ import net.strokkur.jap.code.expression.MethodInvocation;
 import net.strokkur.jap.code.expression.MethodReference;
 import net.strokkur.jap.code.expression.MultilineLambda;
 import net.strokkur.jap.code.expression.SingleLineLambda;
+import net.strokkur.jap.code.expression.UnaryMinusExpression;
 import net.strokkur.jap.code.expression.simple.SimpleExpression;
 import net.strokkur.jap.code.statement.BlankStatement;
 import net.strokkur.jap.code.statement.CodeStatement;
@@ -184,6 +185,8 @@ public class ImportGatheringVisitor implements CodeVisitor<Set<CodeClassType>> {
         leftSide.accept(this),
         rightSide.accept(this)
       );
+
+      case UnaryMinusExpression(CodeExpression expr) -> expr.accept(this);
 
       default ->
         throw new IllegalArgumentException("Expression of type " + expression.getClass() + " was not handled.");

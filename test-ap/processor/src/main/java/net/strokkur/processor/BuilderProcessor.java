@@ -78,7 +78,7 @@ public class BuilderProcessor extends AbstractProcessor implements SourceMapProc
     for (Element element : annotatedElements) {
       final SourceClassLike classLike = mapUtil.parseClassElement((TypeElement) element);
       if (!(classLike instanceof SourceRecord record)) {
-        processingEnv.getMessager().printError("Not a record", element);
+        messager().errorSource("Not a record", classLike);
         continue;
       }
 
@@ -106,13 +106,13 @@ public class BuilderProcessor extends AbstractProcessor implements SourceMapProc
           fieldBuilder.setInitializer(
             component.firstAnnotationByType(DefaultsAnnotations.FOR_STRING)
               .parameter("value")
-              .valueOrThrow()
+              .value()
           );
         } else if (component.hasAnnotation(DefaultsAnnotations.FOR_INT)) {
           fieldBuilder.setInitializer(
             component.firstAnnotationByType(DefaultsAnnotations.FOR_INT)
               .parameter("value")
-              .valueOrThrow()
+              .value()
           );
         } else if (!(component.type() instanceof SourcePrimitiveType)) {
           fieldBuilder.addAnnotations(JSpecifyTypes.NULLABLE);

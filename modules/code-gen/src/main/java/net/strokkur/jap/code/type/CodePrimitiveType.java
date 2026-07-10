@@ -24,19 +24,21 @@
 package net.strokkur.jap.code.type;
 
 public record CodePrimitiveType(
-  String name
+  String name,
+  String boxedName
 ) implements CodeType {
   /// This cannot be used anywhere else except the return value of a method. Nothing
   /// has to specifically enforce this, but the JVM does not allow otherwise.
-  public static final CodePrimitiveType VOID = new CodePrimitiveType("void");
+  public static final CodePrimitiveType VOID = new CodePrimitiveType("void", "Void");
 
-  public static final CodePrimitiveType BYTE = new CodePrimitiveType("byte");
-  public static final CodePrimitiveType CHAR = new CodePrimitiveType("char");
-  public static final CodePrimitiveType SHORT = new CodePrimitiveType("short");
-  public static final CodePrimitiveType INT = new CodePrimitiveType("int");
-  public static final CodePrimitiveType LONG = new CodePrimitiveType("long");
-  public static final CodePrimitiveType FLOAT = new CodePrimitiveType("float");
-  public static final CodePrimitiveType DOUBLE = new CodePrimitiveType("double");
+  public static final CodePrimitiveType BYTE = new CodePrimitiveType("byte", "Byte");
+  public static final CodePrimitiveType CHAR = new CodePrimitiveType("char", "Character");
+  public static final CodePrimitiveType SHORT = new CodePrimitiveType("short", "Short");
+  public static final CodePrimitiveType INT = new CodePrimitiveType("int", "Integer");
+  public static final CodePrimitiveType LONG = new CodePrimitiveType("long", "Long");
+  public static final CodePrimitiveType FLOAT = new CodePrimitiveType("float", "Float");
+  public static final CodePrimitiveType DOUBLE = new CodePrimitiveType("double", "Double");
+  public static final CodePrimitiveType BOOL = new CodePrimitiveType("boolean", "Boolean");
 
   @Override
   public String simpleName() {
@@ -46,5 +48,9 @@ public record CodePrimitiveType(
   @Override
   public String fullyQualifiedName() {
     return name;
+  }
+
+  public CodeClassType boxed() {
+    return CodeTypes.ofClass("java.lang." + boxedName);
   }
 }

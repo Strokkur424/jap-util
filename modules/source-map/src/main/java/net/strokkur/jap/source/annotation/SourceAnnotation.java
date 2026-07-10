@@ -25,15 +25,27 @@ package net.strokkur.jap.source.annotation;
 
 import net.strokkur.jap.code.type.CodeClassType;
 import net.strokkur.jap.source.classmodel.SourceAnnotationInterface;
+import net.strokkur.jap.source.util.Lazy;
 
+import java.lang.annotation.Annotation;
 import java.util.List;
 
 public record SourceAnnotation(
+  Lazy<? extends Annotation> valueGeneric,
   SourceAnnotationInterface source,
   List<SourceAnnotationParameter> parameters
 ) {
+  public <T extends Annotation> T value(Class<T> type) {
+    return type.cast(valueGeneric.get());
+  }
+
   public CodeClassType type() {
     return source().toClassType();
+  }
+
+  public boolean isSet(String named) {
+    return parameters.stream()
+      .anyMatch(param -> param.name().equals(named));
   }
 
   public SourceAnnotationParameter parameter(String named) {

@@ -35,16 +35,18 @@ import javax.lang.model.element.VariableElement;
 public final class JavaxUtil {
 
   public static SourceMethodParameter convertParameter(SourceMapProcessor processor, VariableElement element) {
-    return new SourceMethodParameter(
-      ElementUtil.mirrorsToAnnotations(processor, element.getAnnotationMirrors()),
+    return new JavaxMethodParameter(
+      element,
+      ElementUtil.mapAnnotations(processor, element),
       ElementUtil.mapType(processor, element.asType()),
       element.getSimpleName().toString()
     );
   }
 
   public static SourceMethod convertMethod(SourceMapProcessor processor, ExecutableElement element) {
-    return new SourceMethod(
-      ElementUtil.mirrorsToAnnotations(processor, element.getAnnotationMirrors()),
+    return new JavaxMethod(
+      element,
+      ElementUtil.mapAnnotations(processor, element),
       ElementUtil.mapModifiers(element.getModifiers()),
       element.getParameters().stream().map(e -> convertParameter(processor, e)).toList(),
       element.getThrownTypes().stream().map(type -> ElementUtil.mapType(processor, type)).toList(),
@@ -54,8 +56,9 @@ public final class JavaxUtil {
   }
 
   public static SourceField convertField(SourceMapProcessor processor, VariableElement element) {
-    return new SourceField(
-      ElementUtil.mirrorsToAnnotations(processor, element.getAnnotationMirrors()),
+    return new JavaxField(
+      element,
+      ElementUtil.mapAnnotations(processor, element),
       ElementUtil.mapModifiers(element.getModifiers()),
       ElementUtil.mapType(processor, element.asType()),
       element.getSimpleName().toString(),

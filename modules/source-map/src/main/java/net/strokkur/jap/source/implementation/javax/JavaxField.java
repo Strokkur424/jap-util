@@ -23,41 +23,24 @@
  */
 package net.strokkur.jap.source.implementation.javax;
 
-import net.strokkur.jap.source.SourceMapProcessor;
+import net.strokkur.jap.code.convert.ConvertToExpression;
+import net.strokkur.jap.code.util.Modifiers;
+import net.strokkur.jap.source.annotation.SourceAnnotation;
 import net.strokkur.jap.source.classmodel.SourceField;
-import net.strokkur.jap.source.classmodel.SourceInterface;
-import net.strokkur.jap.source.classmodel.SourceRecord;
-import net.strokkur.jap.source.classmodel.SourceRecordComponent;
+import net.strokkur.jap.source.type.SourceType;
+import org.jspecify.annotations.Nullable;
 
-import javax.lang.model.type.DeclaredType;
+import javax.lang.model.element.Element;
 import java.util.List;
+import java.util.Set;
 
-public class JavaxRecord extends JavaxClassLike implements SourceRecord {
-  public JavaxRecord(SourceMapProcessor processor, DeclaredType type) {
-    super(processor, type);
-  }
+public record JavaxField(
+  Element javaxElement,
 
-  @Override
-  public List<SourceRecordComponent> components() {
-    return element.map(e ->
-      e.getRecordComponents().stream()
-        .map(comp -> (SourceRecordComponent) new JavaxRecordComponent(
-          comp,
-          ElementUtil.mapAnnotations(processor, comp),
-          ElementUtil.mapType(processor, comp.asType()),
-          comp.getSimpleName().toString()
-        ))
-        .toList()
-    );
-  }
-
-  @Override
-  public List<SourceInterface> implementsClasses() {
-    return interfaces();
-  }
-
-  @Override
-  public List<SourceField> staticFields() {
-    return allFields();
-  }
+  List<SourceAnnotation> annotations,
+  Set<Modifiers> modifiers,
+  SourceType type,
+  String name,
+  @Nullable ConvertToExpression initializer
+) implements SourceField {
 }

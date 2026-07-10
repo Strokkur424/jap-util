@@ -28,8 +28,9 @@ import net.strokkur.jap.source.annotation.SourceAnnotation;
 
 import java.util.List;
 
-public record SourceModule(
-  String moduleName,
-  List<SourceAnnotation> annotations
-) implements AnnotationsHolder {
+public interface SourceModule extends AnnotationsHolder, SourceElement {
+
+  String moduleName();
+
+  List<SourceAnnotation> annotations();
 }

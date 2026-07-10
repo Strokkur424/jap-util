@@ -30,10 +30,12 @@ public interface JavaTypes extends ConvertToClassType {
 
   JavaTypes OBJECT = create("java.lang.Object");
   JavaTypes STRING = create("java.lang.String");
-  JavaTypes DOUBLE = create("java.lang.Double");
-  JavaTypes INTEGER = create("java.lang.Integer");
   JavaTypes NUMBER = create("java.lang.Number");
+
+  JavaTypes INTEGER = create("java.lang.Integer");
+  JavaTypes LONG = create("java.lang.Long");
   JavaTypes FLOAT = create("java.lang.Float");
+  JavaTypes DOUBLE = create("java.lang.Double");
 
   JavaTypes LIST = create("java.util.List");
   JavaTypes RANDOM = create("java.util.Random");
