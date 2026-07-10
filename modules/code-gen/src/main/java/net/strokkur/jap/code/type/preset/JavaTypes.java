@@ -26,28 +26,37 @@ package net.strokkur.jap.code.type.preset;
 import net.strokkur.jap.code.convert.ConvertToClassType;
 import net.strokkur.jap.code.type.CodeTypes;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.Random;
+
 public interface JavaTypes extends ConvertToClassType {
 
-  JavaTypes OBJECT = create("java.lang.Object");
-  JavaTypes STRING = create("java.lang.String");
-  JavaTypes NUMBER = create("java.lang.Number");
+  JavaTypes OBJECT = create(Object.class);
+  JavaTypes STRING = create(String.class);
+  JavaTypes NUMBER = create(Number.class);
 
-  JavaTypes INTEGER = create("java.lang.Integer");
-  JavaTypes LONG = create("java.lang.Long");
-  JavaTypes FLOAT = create("java.lang.Float");
-  JavaTypes DOUBLE = create("java.lang.Double");
+  JavaTypes INTEGER = create(Integer.class);
+  JavaTypes LONG = create(Long.class);
+  JavaTypes FLOAT = create(Float.class);
+  JavaTypes DOUBLE = create(Double.class);
 
-  JavaTypes LIST = create("java.util.List");
-  JavaTypes RANDOM = create("java.util.Random");
-  JavaTypes OBJECTS = create("java.util.Objects");
+  JavaTypes LIST = create(List.class);
+  JavaTypes RANDOM = create(Random.class);
 
-  JavaTypes SYSTEM = create("java.lang.System");
+  JavaTypes OBJECTS = create(Objects.class);
+  JavaTypes COLLECTIONS = create(Collections.class);
+  JavaTypes ARRAYS = create(Arrays.class);
 
-  JavaTypes NULL_POINTER_EXCEPTION = create("java.lang.NullPointerException");
-  JavaTypes ILLEGAL_STATE_EXCEPTION = create("java.lang.IllegalStateException");
-  JavaTypes RUNTIME_EXCEPTION = create("java.lang.RuntimeException");
+  JavaTypes SYSTEM = create(System.class);
 
-  static JavaTypes create(String fqn) {
-    return () -> CodeTypes.ofClass(fqn);
+  JavaTypes NULL_POINTER_EXCEPTION = create(NullPointerException.class);
+  JavaTypes ILLEGAL_STATE_EXCEPTION = create(IllegalStateException.class);
+  JavaTypes RUNTIME_EXCEPTION = create(RuntimeException.class);
+
+  static JavaTypes create(Class<?> type) {
+    return () -> CodeTypes.ofClass(type.getName());
   }
 }
