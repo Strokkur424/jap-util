@@ -23,18 +23,11 @@
  */
 package net.strokkur.jap.code.expression.simple;
 
-import net.strokkur.jap.code.expression.BooleanExpression;
+import net.strokkur.jap.code.expression.CodeExpression;
 
-public record CodeBooleanExpression(boolean value) implements BooleanExpression, SimpleExpression {
+public record CodeBooleanExpression(boolean value) implements CodeExpression, SimpleExpression {
   @Override
-  public boolean isInverted() {
-    // A boolean constant is never inverted by putting a ! in front of it, you just switch out
-    // a `true` with a `false`, hence #invert() just replaces the boolean value outright.
-    return false;
-  }
-
-  @Override
-  public BooleanExpression invert() {
-    return new CodeBooleanExpression(!value());
+  public CodeExpression not() {
+    return new CodeBooleanExpression(!value);
   }
 }

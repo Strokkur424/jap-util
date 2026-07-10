@@ -92,6 +92,16 @@ public abstract class AbstractSourcePrintingVisitor implements CodeVisitor<Strin
     builder.append(visitable.accept(this));
   }
 
+  protected void appendParenthesesMaybe(StringBuilder builder, CodeVisitable visitable, boolean condition) {
+    if (condition) {
+      builder.append('(');
+      builder.append(visitable.accept(this));
+      builder.append(')');
+    } else {
+      builder.append(visitable.accept(this));
+    }
+  }
+
   protected <S extends CodeVisitable> String joining(Collection<S> nested) {
     return nested.stream()
       .map(visitable -> visitable.accept(this))

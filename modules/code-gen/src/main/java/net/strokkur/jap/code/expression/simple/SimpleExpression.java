@@ -23,6 +23,8 @@
  */
 package net.strokkur.jap.code.expression.simple;
 
+import net.strokkur.jap.code.expression.CodeExpression;
+
 /// Marker interface for simple/primitive expressions.
-public interface SimpleExpression {
+public interface SimpleExpression extends CodeExpression {
 }

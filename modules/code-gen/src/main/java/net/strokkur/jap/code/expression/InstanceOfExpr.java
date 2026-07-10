@@ -23,6 +23,7 @@
  */
 package net.strokkur.jap.code.expression;
 
+import net.strokkur.jap.code.expression.bool.ScopedNot;
 import net.strokkur.jap.code.type.CodeClassType;
 import org.jspecify.annotations.Nullable;
 
@@ -31,9 +32,5 @@ public record InstanceOfExpr(
   CodeClassType classType,
   @Nullable String targetVariable,
   boolean isInverted
-) implements BooleanExpression {
-  @Override
-  public BooleanExpression invert() {
-    return new InstanceOfExpr(source, classType, targetVariable, !isInverted);
-  }
+) implements CodeExpression, ScopedNot {
 }

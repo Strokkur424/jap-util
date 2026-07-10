@@ -93,7 +93,7 @@ class StatementGenTests extends AbstractGenTest {
       JavaTypes.ILLEGAL_STATE_EXCEPTION
     );
     check(expectedInvertedImports, expectedInvertedCode, Statements.ifStmt(
-      variable("ctx").chainMethod("getSource").instanceOf(TestTypes.PLAYER).invert(),
+      variable("ctx").chainMethod("getSource").instanceOf(TestTypes.PLAYER).not(),
       JavaTypes.ILLEGAL_STATE_EXCEPTION.ctor(string("Don't do that.")).throwStmt()
     ));
   }

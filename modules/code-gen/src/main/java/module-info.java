@@ -13,6 +13,7 @@ module net.strokkur.jap.code {
   exports net.strokkur.jap.code.convert;
   exports net.strokkur.jap.code.documentation;
   exports net.strokkur.jap.code.expression;
+  exports net.strokkur.jap.code.expression.bool;
   exports net.strokkur.jap.code.expression.builder;
   exports net.strokkur.jap.code.expression.simple;
   exports net.strokkur.jap.code.expression.source;

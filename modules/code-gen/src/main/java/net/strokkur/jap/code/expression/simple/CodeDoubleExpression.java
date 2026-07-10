@@ -23,6 +23,4 @@
  */
 package net.strokkur.jap.code.expression.simple;
 
-import net.strokkur.jap.code.expression.CodeExpression;
-
-public record CodeDoubleExpression(double value) implements CodeExpression, SimpleExpression {}
+public record CodeDoubleExpression(double value) implements SimpleExpression {}

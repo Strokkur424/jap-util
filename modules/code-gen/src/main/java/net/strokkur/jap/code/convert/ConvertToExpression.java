@@ -27,6 +27,9 @@ import net.strokkur.jap.code.expression.CodeExpression;
 import net.strokkur.jap.code.expression.Expressions;
 import net.strokkur.jap.code.expression.InstanceOfExpr;
 import net.strokkur.jap.code.expression.UnaryMinusExpression;
+import net.strokkur.jap.code.expression.bool.AndExpression;
+import net.strokkur.jap.code.expression.bool.BooleanExpressions;
+import net.strokkur.jap.code.expression.bool.OrExpression;
 import net.strokkur.jap.code.statement.CodeStatement;
 import net.strokkur.jap.code.statement.Statements;
 import org.jspecify.annotations.Nullable;
@@ -55,7 +58,19 @@ public interface ConvertToExpression extends ConvertToStatement {
     return Expressions.assign(this, right);
   }
 
-  default UnaryMinusExpression unaryMinus() {
+  default UnaryMinusExpression negate() {
     return Expressions.unaryMinus(this);
+  }
+
+  default CodeExpression not() {
+    return BooleanExpressions.not(this);
+  }
+
+  default AndExpression and(ConvertToExpression right) {
+    return BooleanExpressions.and(this.toExpression(), right.toExpression());
+  }
+
+  default OrExpression or(ConvertToExpression right) {
+    return BooleanExpressions.or(this.toExpression(), right.toExpression());
   }
 }

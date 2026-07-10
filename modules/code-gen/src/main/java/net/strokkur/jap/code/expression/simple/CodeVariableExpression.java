@@ -23,8 +23,7 @@
  */
 package net.strokkur.jap.code.expression.simple;
 
-import net.strokkur.jap.code.expression.CodeExpression;
 import net.strokkur.jap.code.expression.source.MethodReferenceSource;
 
-public record CodeVariableExpression(String name) implements CodeExpression, MethodReferenceSource, SimpleExpression {
+public record CodeVariableExpression(String name) implements MethodReferenceSource, SimpleExpression {
 }

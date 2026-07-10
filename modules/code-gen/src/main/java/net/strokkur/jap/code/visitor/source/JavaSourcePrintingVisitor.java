@@ -34,7 +34,6 @@ import net.strokkur.jap.code.classmodel.CodeParameterDefinition;
 import net.strokkur.jap.code.classmodel.MethodLike;
 import net.strokkur.jap.code.documentation.AbstractDocumentationRenderer;
 import net.strokkur.jap.code.expression.AssignExpression;
-import net.strokkur.jap.code.expression.BooleanExpression;
 import net.strokkur.jap.code.expression.CodeExpression;
 import net.strokkur.jap.code.expression.ConstructorInvocation;
 import net.strokkur.jap.code.expression.FieldAccess;
@@ -44,6 +43,10 @@ import net.strokkur.jap.code.expression.MethodReference;
 import net.strokkur.jap.code.expression.MultilineLambda;
 import net.strokkur.jap.code.expression.SingleLineLambda;
 import net.strokkur.jap.code.expression.UnaryMinusExpression;
+import net.strokkur.jap.code.expression.bool.AndExpression;
+import net.strokkur.jap.code.expression.bool.NotExpression;
+import net.strokkur.jap.code.expression.bool.OrExpression;
+import net.strokkur.jap.code.expression.bool.ScopedNot;
 import net.strokkur.jap.code.expression.simple.CodeBooleanExpression;
 import net.strokkur.jap.code.expression.simple.CodeDoubleExpression;
 import net.strokkur.jap.code.expression.simple.CodeFloatExpression;
@@ -265,6 +268,25 @@ public class JavaSourcePrintingVisitor extends AbstractSourcePrintingVisitor {
 
         case CodeVariableExpression(String name) -> builder.append(name);
 
+        // Boolean expressions
+        case NotExpression(CodeExpression contained) -> {
+          builder.append('!');
+          appendParenthesesMaybe(builder, contained, contained instanceof ScopedNot);
+        }
+
+        case AndExpression(CodeExpression left, CodeExpression right) -> {
+          appendParenthesesMaybe(builder, left, left instanceof OrExpression);
+          builder.append(" && ");
+          appendParenthesesMaybe(builder, right, right instanceof OrExpression);
+        }
+
+        case OrExpression(CodeExpression left, CodeExpression right) -> {
+          builder.append(left.accept(this));
+          builder.append(" || ");
+          builder.append(right.accept(this));
+        }
+
+        // Other
         case AssignExpression(CodeExpression leftSide, CodeExpression rightSide) -> builder
           .append(leftSide.accept(this))
           .append(" = ")
@@ -363,7 +385,7 @@ public class JavaSourcePrintingVisitor extends AbstractSourcePrintingVisitor {
       }
       appendIndent(builder);
 
-      if (statement instanceof IfStatement(BooleanExpression expr, CodeBlock ifTrue, @Nullable CodeBlock ifFalse)) {
+      if (statement instanceof IfStatement(CodeExpression expr, CodeBlock ifTrue, @Nullable CodeBlock ifFalse)) {
         builder.append("if (").append(expr.accept(this)).append(") {\n");
         builder.append(ifTrue.accept(this));
         appendIndent(builder);

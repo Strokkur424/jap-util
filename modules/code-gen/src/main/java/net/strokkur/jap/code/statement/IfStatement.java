@@ -24,11 +24,11 @@
 package net.strokkur.jap.code.statement;
 
 import net.strokkur.jap.code.classmodel.CodeBlock;
-import net.strokkur.jap.code.expression.BooleanExpression;
+import net.strokkur.jap.code.expression.CodeExpression;
 import org.jspecify.annotations.Nullable;
 
 public record IfStatement(
-  BooleanExpression expression,
+  CodeExpression expression,
   CodeBlock ifTrue,
   @Nullable CodeBlock ifFalse
 ) implements CodeStatement {

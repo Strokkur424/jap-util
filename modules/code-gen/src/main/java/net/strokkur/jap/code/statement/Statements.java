@@ -24,7 +24,6 @@
 package net.strokkur.jap.code.statement;
 
 import net.strokkur.jap.code.classmodel.CodeBlock;
-import net.strokkur.jap.code.convert.ConvertToBooleanExpression;
 import net.strokkur.jap.code.convert.ConvertToExpression;
 import net.strokkur.jap.code.convert.ConvertToStatement;
 import net.strokkur.jap.code.convert.ConvertToType;
@@ -60,13 +59,13 @@ public final class Statements {
     return BlankStatement.INSTANCE;
   }
 
-  public static IfStatement ifStmt(ConvertToBooleanExpression booleanExpr, ConvertToStatement... ifTrue) {
+  public static IfStatement ifStmt(ConvertToExpression booleanExpr, ConvertToStatement... ifTrue) {
     return ifStmt(booleanExpr, CodeBlock.of(ifTrue), null);
   }
 
-  public static IfStatement ifStmt(ConvertToBooleanExpression booleanExpr, CodeBlock ifTrue, @Nullable CodeBlock ifFalse) {
+  public static IfStatement ifStmt(ConvertToExpression booleanExpr, CodeBlock ifTrue, @Nullable CodeBlock ifFalse) {
     return new IfStatement(
-      booleanExpr.toBooleanExpression(),
+      booleanExpr.toExpression(),
       ifTrue,
       ifFalse
     );

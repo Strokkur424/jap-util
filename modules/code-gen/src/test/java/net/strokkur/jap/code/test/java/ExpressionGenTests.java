@@ -23,9 +23,10 @@
  */
 package net.strokkur.jap.code.test.java;
 
-import net.strokkur.jap.code.expression.BooleanExpression;
 import net.strokkur.jap.code.expression.Expressions;
 import net.strokkur.jap.code.expression.FieldAccess;
+import net.strokkur.jap.code.expression.bool.BooleanExpressions;
+import net.strokkur.jap.code.expression.simple.CodeBooleanExpression;
 import net.strokkur.jap.code.statement.Statements;
 import net.strokkur.jap.code.test.util.TestTypes;
 import net.strokkur.jap.code.type.preset.JavaTypes;
@@ -38,6 +39,7 @@ import java.util.Set;
 import static net.strokkur.jap.code.expression.Expressions.string;
 import static net.strokkur.jap.code.expression.Expressions.variable;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -163,9 +165,9 @@ class ExpressionGenTests extends AbstractGenTest {
   @Test
   void testInstanceOf() {
     check(Set.of(TestTypes.PLAYER), "ctx instanceof Player", variable("ctx").instanceOf(TestTypes.PLAYER));
-    check(Set.of(TestTypes.PLAYER), "!(ctx instanceof Player)", variable("ctx").instanceOf(TestTypes.PLAYER).invert());
+    check(Set.of(TestTypes.PLAYER), "!(ctx instanceof Player)", variable("ctx").instanceOf(TestTypes.PLAYER).not());
     check(Set.of(TestTypes.PLAYER), "ctx instanceof Player src", variable("ctx").instanceOf(TestTypes.PLAYER, "src"));
-    check(Set.of(TestTypes.PLAYER), "!(ctx instanceof Player src)", variable("ctx").instanceOf(TestTypes.PLAYER, "src").invert());
+    check(Set.of(TestTypes.PLAYER), "!(ctx instanceof Player src)", variable("ctx").instanceOf(TestTypes.PLAYER, "src").not());
   }
 
   @Test
@@ -187,13 +189,11 @@ class ExpressionGenTests extends AbstractGenTest {
 
     check(Set.of(), "true", Expressions.bool(true));
     check(Set.of(), "false", Expressions.bool(false));
-    check(Set.of(), "true", Expressions.bool(false).invert());
-    check(Set.of(), "false", Expressions.bool(true).invert());
+    check(Set.of(), "true", Expressions.bool(false).not());
+    check(Set.of(), "false", Expressions.bool(true).not());
 
-    assertFalse(Expressions.bool(true).isInverted());
-    assertFalse(Expressions.bool(true).invert().isInverted());
-    assertFalse(Expressions.bool(false).isInverted());
-    assertFalse(Expressions.bool(false).invert().isInverted());
+    assertInstanceOf(CodeBooleanExpression.class, Expressions.bool(true).not());
+    assertInstanceOf(CodeBooleanExpression.class, Expressions.bool(false).not());
   }
 
   @Test
@@ -201,8 +201,7 @@ class ExpressionGenTests extends AbstractGenTest {
     final FieldAccess access = JavaTypes.STRING.chainField("hey");
     assertSame(access, access.toFieldAccess());
 
-    final BooleanExpression booleanExpr = Expressions.bool(true);
-    assertSame(booleanExpr, booleanExpr.toBooleanExpression());
+    final CodeBooleanExpression booleanExpr = Expressions.bool(true);
     assertSame(booleanExpr, booleanExpr.toExpression());
   }
 
