@@ -24,13 +24,16 @@
 package net.strokkur.jap.source.annotation;
 
 import net.strokkur.jap.code.convert.ConvertToClassType;
+import net.strokkur.jap.code.type.CodeTypes;
+import net.strokkur.jap.source.classmodel.SourceElement;
 import org.jetbrains.annotations.ApiStatus;
 
+import java.lang.annotation.Annotation;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-public interface AnnotationsHolder {
+public interface AnnotationsHolder extends SourceElement {
 
   List<SourceAnnotation> annotations();
 
@@ -44,10 +47,18 @@ public interface AnnotationsHolder {
       .anyMatch(predicateAnnotationWithType(type));
   }
 
+  default boolean hasAnnotation(Class<? extends Annotation> annotationClass) {
+    return hasAnnotation(CodeTypes.ofJavaClass(annotationClass));
+  }
+
   default List<SourceAnnotation> annotationsByType(ConvertToClassType type) {
     return annotations().stream()
       .filter(predicateAnnotationWithType(type))
       .toList();
+  }
+
+  default List<SourceAnnotation> annotationsByType(Class<? extends Annotation> annotationClass) {
+    return annotationsByType(CodeTypes.ofJavaClass(annotationClass));
   }
 
   default SourceAnnotation firstAnnotationByType(ConvertToClassType type) {
@@ -56,12 +67,20 @@ public interface AnnotationsHolder {
       .findFirst().orElseThrow();
   }
 
+  default SourceAnnotation firstAnnotationByType(Class<? extends Annotation> annotationClass) {
+    return firstAnnotationByType(CodeTypes.ofJavaClass(annotationClass));
+  }
+
   default boolean hasAnnotationInherited(ConvertToClassType type) {
     if (hasAnnotation(type)) {
       return true;
     }
 
     return annotations().stream().anyMatch(anno -> anno.source().hasAnnotationInherited(type));
+  }
+
+  default boolean hasAnnotationInherited(Class<? extends Annotation> annotationClass) {
+    return hasAnnotationInherited(CodeTypes.ofJavaClass(annotationClass));
   }
 
   default SourceAnnotation firstAnnotationInherited(ConvertToClassType type) {
@@ -75,11 +94,19 @@ public interface AnnotationsHolder {
       .findFirst().orElseThrow();
   }
 
+  default SourceAnnotation firstAnnotationInherited(Class<? extends Annotation> annotationClass) {
+    return firstAnnotationInherited(CodeTypes.ofJavaClass(annotationClass));
+  }
+
   default List<SourceAnnotation> annotationsInherited(ConvertToClassType type) {
     return annotations().stream()
       .flatMap(annotation -> annotation.type().equals(type.toClassType())
         ? Stream.of(annotation)
         : annotation.source().annotationsInherited(type).stream())
       .toList();
+  }
+
+  default List<SourceAnnotation> annotationsInherited(Class<? extends Annotation> annotationClass) {
+    return annotationsInherited(CodeTypes.ofJavaClass(annotationClass));
   }
 }

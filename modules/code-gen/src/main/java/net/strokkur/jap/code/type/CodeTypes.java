@@ -67,6 +67,10 @@ public final class CodeTypes {
       .toList());
   }
 
+  public static CodeClassType ofJavaClass(Class<?> clazz) {
+    return ofClass(clazz.getName());
+  }
+
   private static CodeClassType ofClass(String fullyQualifiedName, @Nullable List<CodeGenericType> types) {
     final List<String> splitInner = List.of(fullyQualifiedName.split("\\$"));
     final List<String> splitPackage = List.of(splitInner.getFirst().split("\\."));
