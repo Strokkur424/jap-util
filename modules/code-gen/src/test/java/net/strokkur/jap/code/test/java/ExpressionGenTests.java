@@ -25,7 +25,6 @@ package net.strokkur.jap.code.test.java;
 
 import net.strokkur.jap.code.expression.Expressions;
 import net.strokkur.jap.code.expression.FieldAccess;
-import net.strokkur.jap.code.expression.bool.BooleanExpressions;
 import net.strokkur.jap.code.expression.simple.CodeBooleanExpression;
 import net.strokkur.jap.code.statement.Statements;
 import net.strokkur.jap.code.test.util.TestTypes;
@@ -38,7 +37,6 @@ import java.util.Set;
 
 import static net.strokkur.jap.code.expression.Expressions.string;
 import static net.strokkur.jap.code.expression.Expressions.variable;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;

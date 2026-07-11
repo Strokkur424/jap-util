@@ -32,6 +32,9 @@ import java.util.List;
 import java.util.Set;
 
 public interface SourceMethodLike extends AnnotationsHolder, SourceVisitable, SourceElement {
+
+  SourceClassLike enclosed();
+
   Set<Modifiers> modifiers();
 
   List<SourceType> thrown();

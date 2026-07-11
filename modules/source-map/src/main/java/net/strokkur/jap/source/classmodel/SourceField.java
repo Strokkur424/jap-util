@@ -37,6 +37,8 @@ import java.util.Set;
 
 public interface SourceField extends AnnotationsHolder, SourceVisitable, SourceElement {
 
+  SourceClassLike enclosed();
+
   List<SourceAnnotation> annotations();
 
   Set<Modifiers> modifiers();

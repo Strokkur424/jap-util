@@ -25,6 +25,7 @@ package net.strokkur.jap.source.implementation.javax;
 
 import net.strokkur.jap.code.util.Modifiers;
 import net.strokkur.jap.source.annotation.SourceAnnotation;
+import net.strokkur.jap.source.classmodel.SourceClassLike;
 import net.strokkur.jap.source.classmodel.SourceMethod;
 import net.strokkur.jap.source.classmodel.SourceMethodParameter;
 import net.strokkur.jap.source.type.SourceType;
@@ -36,6 +37,7 @@ import java.util.Set;
 public record JavaxMethod(
   Element javaxElement,
 
+  SourceClassLike enclosed,
   List<SourceAnnotation> annotations,
   Set<Modifiers> modifiers,
   List<SourceMethodParameter> parameters,

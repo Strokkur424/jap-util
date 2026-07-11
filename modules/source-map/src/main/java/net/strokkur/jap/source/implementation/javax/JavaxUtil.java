@@ -30,6 +30,7 @@ import net.strokkur.jap.source.classmodel.SourceMethod;
 import net.strokkur.jap.source.classmodel.SourceMethodParameter;
 
 import javax.lang.model.element.ExecutableElement;
+import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
 
 public final class JavaxUtil {
@@ -46,6 +47,7 @@ public final class JavaxUtil {
   public static SourceMethod convertMethod(SourceMapProcessor processor, ExecutableElement element) {
     return new JavaxMethod(
       element,
+      ElementUtil.getClassLikeFor(processor, (TypeElement) element.getEnclosingElement()),
       ElementUtil.mapAnnotations(processor, element),
       ElementUtil.mapModifiers(element.getModifiers()),
       element.getParameters().stream().map(e -> convertParameter(processor, e)).toList(),
@@ -58,6 +60,7 @@ public final class JavaxUtil {
   public static SourceField convertField(SourceMapProcessor processor, VariableElement element) {
     return new JavaxField(
       element,
+      ElementUtil.getClassLikeFor(processor, (TypeElement) element.getEnclosingElement()),
       ElementUtil.mapAnnotations(processor, element),
       ElementUtil.mapModifiers(element.getModifiers()),
       ElementUtil.mapType(processor, element.asType()),

@@ -26,6 +26,7 @@ package net.strokkur.jap.source.implementation.javax;
 import net.strokkur.jap.code.convert.ConvertToExpression;
 import net.strokkur.jap.code.util.Modifiers;
 import net.strokkur.jap.source.annotation.SourceAnnotation;
+import net.strokkur.jap.source.classmodel.SourceClassLike;
 import net.strokkur.jap.source.classmodel.SourceField;
 import net.strokkur.jap.source.type.SourceType;
 import org.jspecify.annotations.Nullable;
@@ -37,6 +38,7 @@ import java.util.Set;
 public record JavaxField(
   Element javaxElement,
 
+  SourceClassLike enclosed,
   List<SourceAnnotation> annotations,
   Set<Modifiers> modifiers,
   SourceType type,
