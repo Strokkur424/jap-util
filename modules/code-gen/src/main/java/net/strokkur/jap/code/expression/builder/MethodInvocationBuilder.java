@@ -40,7 +40,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public final class MethodInvocationBuilder implements ConvertToMethodInvocation, ConvertToStatement {
+public final class MethodInvocationBuilder implements MethodLikeInvocationBuilder<MethodInvocationBuilder>, ConvertToMethodInvocation, ConvertToStatement {
   private @Nullable String name;
   private @Nullable FieldMethodSource source;
   private final List<CodeExpression> parameters = new ArrayList<>();

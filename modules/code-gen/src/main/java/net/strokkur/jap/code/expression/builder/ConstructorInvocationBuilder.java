@@ -37,7 +37,7 @@ import org.jspecify.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class ConstructorInvocationBuilder implements ConvertToConstructorInvocation {
+public final class ConstructorInvocationBuilder implements MethodLikeInvocationBuilder<ConstructorInvocationBuilder>, ConvertToConstructorInvocation {
   private final CodeClassType type;
   private @Nullable FieldMethodSource source;
   private final List<CodeExpression> parameters = new ArrayList<>();
@@ -47,16 +47,19 @@ public final class ConstructorInvocationBuilder implements ConvertToConstructorI
     this.type = type;
   }
 
+  @Override
   public ConstructorInvocationBuilder setSource(ConvertToFieldMethodSource source) {
     this.source = source.toFieldMethodSource();
     return this;
   }
 
+  @Override
   public ConstructorInvocationBuilder setStyle(StyleConfig style) {
     this.style = style;
     return this;
   }
 
+  @Override
   public ConstructorInvocationBuilder addParameters(ConvertToExpression... parameters) {
     for (ConvertToExpression parameter : parameters) {
       this.parameters.add(parameter.toExpression());
