@@ -23,7 +23,6 @@
  */
 package net.strokkur.jap.source.implementation.javax;
 
-import net.strokkur.jap.code.classmodel.CodeClass;
 import net.strokkur.jap.code.util.Modifiers;
 import net.strokkur.jap.source.annotation.SourceAnnotation;
 import net.strokkur.jap.source.classmodel.SourceClassLike;
@@ -42,8 +41,6 @@ public record JavaxConstructor(
   List<SourceAnnotation> annotations,
   Set<Modifiers> modifiers,
   List<SourceMethodParameter> parameters,
-  List<SourceType> thrown,
-  CodeClass constructing,
-  String name
+  List<SourceType> thrown
 ) implements SourceConstructor {
 }

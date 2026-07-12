@@ -23,7 +23,6 @@
  */
 package net.strokkur.jap.source.classmodel;
 
-import net.strokkur.jap.code.classmodel.CodeClass;
 import net.strokkur.jap.code.util.Modifiers;
 import net.strokkur.jap.source.annotation.SourceAnnotation;
 import net.strokkur.jap.source.type.SourceType;
@@ -41,10 +40,6 @@ public interface SourceConstructor extends SourceMethodLike {
   List<SourceMethodParameter> parameters();
 
   List<SourceType> thrown();
-
-  CodeClass constructing();
-
-  String name();
 
   @Override
   default <R, D> R accept(SourceVisitor<R, D> visitor, D data) {

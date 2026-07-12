@@ -30,6 +30,7 @@ import net.strokkur.jap.source.classmodel.SourceField;
 import net.strokkur.jap.source.classmodel.SourceInterface;
 
 import javax.lang.model.element.ElementKind;
+import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.type.DeclaredType;
 import java.util.List;
@@ -61,7 +62,13 @@ public class JavaxClass extends JavaxClassLike implements SourceClass {
 
   @Override
   public List<SourceConstructor> constructors() {
-    return List.of();
+    return element.map(e ->
+      e.getEnclosedElements().stream()
+        .filter(ele -> ele.getKind() == ElementKind.CONSTRUCTOR)
+        .map(ExecutableElement.class::cast)
+        .map(method -> JavaxUtil.convertConstructor(processor, method))
+        .toList()
+    );
   }
 
   @Override

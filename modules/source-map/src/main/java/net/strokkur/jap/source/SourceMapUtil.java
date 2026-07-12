@@ -24,11 +24,16 @@
 package net.strokkur.jap.source;
 
 import net.strokkur.jap.source.classmodel.SourceClassLike;
+import net.strokkur.jap.source.classmodel.SourceConstructor;
+import net.strokkur.jap.source.classmodel.SourceElement;
 import net.strokkur.jap.source.classmodel.SourceField;
 import net.strokkur.jap.source.classmodel.SourceMethod;
 import net.strokkur.jap.source.implementation.javax.ElementUtil;
+import net.strokkur.jap.source.implementation.javax.JavaxConstructor;
 import net.strokkur.jap.source.implementation.javax.JavaxUtil;
 
+import javax.lang.model.element.Element;
+import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
@@ -40,6 +45,26 @@ public class SourceMapUtil {
     this.processor = processor;
   }
 
+  public SourceElement parseElement(Element element) {
+    return switch (element) {
+      case TypeElement typeElement -> parseClassElement(typeElement);
+      case ExecutableElement executableElement -> {
+        if (executableElement.getKind() == ElementKind.CONSTRUCTOR) {
+          yield parseConstructorElement(executableElement);
+        } else {
+          yield parseMethodElement(executableElement);
+        }
+      }
+      case VariableElement variableElement -> {
+        if (element.getKind() == ElementKind.FIELD) {
+          yield parseFieldElement(variableElement);
+        }
+        throw new IllegalArgumentException("Cannot convert element of type: " + element.getKind());
+      }
+      default -> throw new IllegalArgumentException("Cannot convert element of type: " + element.getKind());
+    };
+  }
+
   public SourceClassLike parseClassElement(TypeElement element) {
     return ElementUtil.getClassLikeFor(processor, element);
   }
@@ -48,7 +73,12 @@ public class SourceMapUtil {
     return JavaxUtil.convertMethod(processor, element);
   }
 
+  public SourceConstructor parseConstructorElement(ExecutableElement element) {
+    return JavaxUtil.convertConstructor(processor, element);
+  }
+
   public SourceField parseFieldElement(VariableElement element) {
     return JavaxUtil.convertField(processor, element);
   }
+
 }

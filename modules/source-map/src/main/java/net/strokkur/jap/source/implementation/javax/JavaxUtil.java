@@ -25,6 +25,7 @@ package net.strokkur.jap.source.implementation.javax;
 
 import com.sun.source.tree.VariableTree;
 import net.strokkur.jap.source.SourceMapProcessor;
+import net.strokkur.jap.source.classmodel.SourceConstructor;
 import net.strokkur.jap.source.classmodel.SourceField;
 import net.strokkur.jap.source.classmodel.SourceMethod;
 import net.strokkur.jap.source.classmodel.SourceMethodParameter;
@@ -54,6 +55,17 @@ public final class JavaxUtil {
       element.getThrownTypes().stream().map(type -> ElementUtil.mapType(processor, type)).toList(),
       ElementUtil.mapType(processor, element.getReturnType()),
       element.getSimpleName().toString()
+    );
+  }
+
+  public static SourceConstructor convertConstructor(SourceMapProcessor processor, ExecutableElement element) {
+    return new JavaxConstructor(
+      element,
+      ElementUtil.getClassLikeFor(processor, (TypeElement) element.getEnclosingElement()),
+      ElementUtil.mapAnnotations(processor, element),
+      ElementUtil.mapModifiers(element.getModifiers()),
+      element.getParameters().stream().map(e -> convertParameter(processor, e)).toList(),
+      element.getThrownTypes().stream().map(type -> ElementUtil.mapType(processor, type)).toList()
     );
   }
 
