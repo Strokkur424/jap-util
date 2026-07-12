@@ -105,14 +105,14 @@ public class BuilderProcessor extends AbstractProcessor implements SourceMapProc
         if (component.hasAnnotation(DefaultsAnnotations.FOR_STRING)) {
           fieldBuilder.setInitializer(
             component.firstAnnotationByType(DefaultsAnnotations.FOR_STRING)
-              .parameter("value")
-              .value()
+              .parameter("expression")
+              .expression()
           );
         } else if (component.hasAnnotation(DefaultsAnnotations.FOR_INT)) {
           fieldBuilder.setInitializer(
             component.firstAnnotationByType(DefaultsAnnotations.FOR_INT)
-              .parameter("value")
-              .value()
+              .parameter("expression")
+              .expression()
           );
         } else if (!(component.type() instanceof SourcePrimitiveType)) {
           fieldBuilder.addAnnotations(JSpecifyTypes.NULLABLE);

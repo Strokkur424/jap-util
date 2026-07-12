@@ -139,7 +139,7 @@ builder.addFields(
   CodeField.builder(JavaTypes.RANDOM, "random")
     // We add the `private final` modifiers
     .addModifiers(Modifiers.PRIVATE, Modifiers.FINAL)
-    // We add an initializer. This is the part that sets the value. In this case,
+    // We add an initializer. This is the part that sets the expression. In this case,
     // we take the Random built-in type again, and create a constructor call out of it
     // with .ctor(). This is a short-cut to calling the much longer
     // `Expressions.ctorInvocation(JavaTypes.RANDOM)`.
@@ -187,7 +187,7 @@ builder.addConstructor(ctor -> ctor
   // consists of multiple statements.
   .setCodeBlock(
     // A statement can also just be an expression. In this case, we are declaring an "assign" expression,
-    // with `this.welcomeMessages` as the target and the variable `welcomeMessages` as the value source.
+    // with `this.welcomeMessages` as the target and the variable `welcomeMessages` as the expression source.
     Expressions.thisExpr().chainField("welcomeMessages").assign(Expressions.variable("welcomeMessages"))
   )
 )
@@ -220,7 +220,7 @@ builder.addMethods(CodeMethod.builder("greet")
   .setDocumentation(CodeDocumentation.text("Greet the console!"))
   .setCodeBlock(
     // The variable declaration (final) statement declares a new variable with a specific type and name
-    // and then, optionally, assigns a value to it.
+    // and then, optionally, assigns a expression to it.
     Statements.variableDeclarationFinal(
       JavaTypes.STRING, // the type of the variable
       "message", // the name of the variable
@@ -228,7 +228,7 @@ builder.addMethods(CodeMethod.builder("greet")
       // expression as a base to call another method.
       Expressions.fieldAccess("welcomeMessages").chainMethod("get")
         // This .addParameters call references the latest .chainMethod, adding a parameter
-        // expression to the get(...) method for evaluation. The value of this parameter
+        // expression to the get(...) method for evaluation. The expression of this parameter
         // is once again a method call: `random.nextInt`.
         .addParameters(Expressions.fieldAccess("random").chainMethod("nextInt")
           // this `random.nextInt` call itself also has a parameter: `welcomeMessages.size()`
@@ -271,10 +271,10 @@ final CodeClass codeClass = ...;
 final ImportGatheringVisitor importVisitor = new ImportGatheringVisitor();
 
 // The `.accept` method takes in a Visitor and gives back the result. A visitor basically
-// goes through your entire class tree recursively and computes some value. In this case,
+// goes through your entire class tree recursively and computes some expression. In this case,
 // it just retrieves all classes you have referenced.
 final Set<CodeClassType> imports = codeClass.accept(importVisitor);
-// You need to clean the return value before, since it will also include references to the current class
+// You need to clean the return expression before, since it will also include references to the current class
 // or `java.lang` types, which do not need to be imported.
 imports.removeIf(type -> CodePackage.isRedundantImport(codeClass.classType().codePackage(), type.codePackage()));
 ```

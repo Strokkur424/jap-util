@@ -24,9 +24,18 @@
 package net.strokkur.jap.source.annotation;
 
 import net.strokkur.jap.code.convert.ConvertToExpression;
+import net.strokkur.jap.code.type.CodeClassType;
+import net.strokkur.jap.code.type.CodeTypes;
 
 public record SourceAnnotationParameter(
   String name,
-  ConvertToExpression value
+  Object value,
+  ConvertToExpression expression
 ) {
+  public CodeClassType classValue() {
+    if (value instanceof Class<?> clazz) {
+      return CodeTypes.ofJavaClass(clazz);
+    }
+    throw new IllegalArgumentException("Expected Class, found " + value.getClass());
+  }
 }

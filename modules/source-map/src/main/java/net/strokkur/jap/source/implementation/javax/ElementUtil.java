@@ -83,6 +83,7 @@ public final class ElementUtil {
       element.getElementValues().entrySet().stream()
         .map(e -> new SourceAnnotationParameter(
           e.getKey().getSimpleName().toString(),
+          e.getValue().getValue(),
           LazyExpression.ofExpression(() -> e.getValue().accept(JavaxAnnotationValueToExpression.VISITOR, null))
         ))
         .toList()
