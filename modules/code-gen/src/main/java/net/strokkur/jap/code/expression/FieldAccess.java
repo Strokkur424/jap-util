@@ -30,7 +30,7 @@ import org.jspecify.annotations.Nullable;
 public record FieldAccess(
   @Nullable FieldMethodSource source,
   String fieldName
-) implements CodeExpression, ConvertToFieldAccess, FieldMethodSource {
+) implements CodeExpression, ConvertToFieldAccess, Invocation {
   @Override
   public FieldAccess toFieldAccess() {
     return this;

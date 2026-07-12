@@ -35,7 +35,7 @@ public record MethodInvocation(
   @Nullable FieldMethodSource source,
   List<CodeExpression> parameters,
   StyleConfig style
-) implements CodeExpression, FieldMethodSource {
+) implements CodeExpression, Invocation {
 
   public MethodInvocationBuilder builder() {
     return new MethodInvocationBuilder()
