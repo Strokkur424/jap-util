@@ -26,11 +26,14 @@ package net.strokkur.jap.code.type.preset;
 import net.strokkur.jap.code.convert.ConvertToClassType;
 import net.strokkur.jap.code.type.CodeTypes;
 
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
+import java.util.concurrent.CompletableFuture;
+import java.util.function.Predicate;
 
 public interface JavaTypes extends ConvertToClassType {
 
@@ -43,8 +46,11 @@ public interface JavaTypes extends ConvertToClassType {
   JavaTypes FLOAT = create(Float.class);
   JavaTypes DOUBLE = create(Double.class);
 
+  // java.util types
   JavaTypes LIST = create(List.class);
   JavaTypes RANDOM = create(Random.class);
+  JavaTypes PREDICATE = create(Predicate.class);
+  JavaTypes COMPLETABLE_FUTURE = create(CompletableFuture.class);
 
   JavaTypes OBJECTS = create(Objects.class);
   JavaTypes COLLECTIONS = create(Collections.class);
@@ -55,6 +61,9 @@ public interface JavaTypes extends ConvertToClassType {
   JavaTypes NULL_POINTER_EXCEPTION = create(NullPointerException.class);
   JavaTypes ILLEGAL_STATE_EXCEPTION = create(IllegalStateException.class);
   JavaTypes RUNTIME_EXCEPTION = create(RuntimeException.class);
+
+  // Reflection types
+  JavaTypes METHOD = create(Method.class);
 
   static JavaTypes create(Class<?> type) {
     return () -> CodeTypes.ofClass(type.getName());

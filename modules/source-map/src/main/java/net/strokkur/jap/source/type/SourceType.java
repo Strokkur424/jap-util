@@ -30,6 +30,10 @@ public interface SourceType extends ConvertToType {
   SourceType VOID = primitive(CodePrimitiveType.VOID);
   SourceType UNKNOWN = UnknownType.UNKNOWN;
 
+  SourceType BYTE = primitive(CodePrimitiveType.BYTE);
+  SourceType BOOL = primitive(CodePrimitiveType.BOOL);
+  SourceType SHORT = primitive(CodePrimitiveType.SHORT);
+  SourceType CHAR = primitive(CodePrimitiveType.CHAR);
   SourceType INT = primitive(CodePrimitiveType.INT);
   SourceType LONG = primitive(CodePrimitiveType.LONG);
   SourceType FLOAT = primitive(CodePrimitiveType.FLOAT);
