@@ -37,6 +37,8 @@ public interface TestTypes extends ConvertToClassType {
   TestTypes LITERAL_MESSAGE = create("com.mojang.brigadier.LiteralMessage");
   TestTypes COMMAND = create("com.mojang.brigadier.Command");
 
+  TestTypes COMMANDS = create("com.test.Commands");
+
   // Custom
   TestTypes LIST_HOLDER = create("com.ListHolder");
   TestTypes CUSTOM_TYPE = create("com.CustomType");

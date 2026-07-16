@@ -28,18 +28,59 @@ public record StyleConfig(
   boolean multilineParameters,
   boolean newlineClosingBrace
 ) {
+  /// Does not do any special formatting; method/field call
+  /// is done right after the source expression.
+  ///
+  /// ```
+  /// TheSource.theMethod()
+  /// ```
   public static final StyleConfig DEFAULT = new StyleConfig(
     false, false, false
   );
+
+  /// Puts the continuation (dot) on a new line, while appending
+  /// one continuation indent relative to the previous level.
+  ///
+  /// ```
+  /// TheSource
+  ///   .theMethod()
+  /// ```
   public static final StyleConfig NEWLINE = new StyleConfig(
     true, false, false
   );
+
+  /// Makes method call parameters appear on separate lines.
+  ///
+  /// ```
+  /// TheSource.theMethod(
+  ///   "arg1",
+  ///   "arg2"
+  /// )
+  /// ```
   public static final StyleConfig MULTILINE = new StyleConfig(
     false, true, false
   );
+
+  /// Makes the method call and its parameters appear on separate lines.
+  ///
+  /// ```
+  /// TheSource
+  ///   .theMethod(
+  ///     "arg1",
+  ///     "arg2"
+  ///   )
+  /// ```
   public static final StyleConfig NEWLINE_MULTILINE = new StyleConfig(
     true, true, false
   );
+
+  /// Makes the method call and the closing bracket appear on a new line.
+  ///
+  /// ```
+  /// TheSource
+  ///   .theMethod(arg1
+  ///   )
+  /// ```
   public static final StyleConfig NEWLINE_BOTH = new StyleConfig(
     true, false, true
   );

@@ -57,6 +57,27 @@ class ExpressionGenTests extends AbstractGenTest {
         .chainMethod("toLol")
         .chainMethod("toList").setStyle(StyleConfig.NEWLINE)
     );
+
+    final String nestedInvocationCode = """
+      Commands.literal("hey")
+         .then(Commands.literal("you")
+            .then(Commands.literal("there!")
+               .thisWorks()
+            )
+         )
+         .build()""";
+    check(Set.of(TestTypes.COMMANDS), nestedInvocationCode,
+      TestTypes.COMMANDS
+        .chainMethod("literal", Expressions.string("hey"))
+        .chainMethod("then", StyleConfig.NEWLINE_BOTH,
+          TestTypes.COMMANDS.chainMethod("literal", Expressions.string("you"))
+            .chainMethod("then", StyleConfig.NEWLINE_BOTH,
+              TestTypes.COMMANDS.chainMethod("literal", Expressions.string("there!"))
+                .chainMethod("thisWorks", StyleConfig.NEWLINE)
+            )
+        )
+        .chainMethod("build", StyleConfig.NEWLINE)
+    );
   }
 
   @Test

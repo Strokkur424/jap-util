@@ -27,12 +27,18 @@ import net.strokkur.jap.code.expression.FieldAccess;
 import net.strokkur.jap.code.expression.builder.InvocationChainBuilder;
 import net.strokkur.jap.code.expression.builder.MethodInvocationBuilder;
 import net.strokkur.jap.code.expression.source.FieldMethodSource;
+import net.strokkur.jap.code.util.StyleConfig;
 
 public interface ConvertToFieldMethodSource {
   FieldMethodSource toFieldMethodSource();
 
   default InvocationChainBuilder chainBuilder() {
     return new InvocationChainBuilder(toFieldMethodSource());
+  }
+
+  default MethodInvocationBuilder chainMethod(String methodName, StyleConfig style, ConvertToExpression... parameters) {
+    return chainMethod(methodName, parameters)
+      .setStyle(style);
   }
 
   default MethodInvocationBuilder chainMethod(String methodName, ConvertToExpression... parameters) {
