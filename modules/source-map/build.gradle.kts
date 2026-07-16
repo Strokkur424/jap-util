@@ -16,3 +16,8 @@ dependencies {
   compileOnly(libs.bundles.annotations)
   api(project(":code-gen"))
 }
+
+java {
+  withSourcesJar()
+  withJavadocJar()
+}

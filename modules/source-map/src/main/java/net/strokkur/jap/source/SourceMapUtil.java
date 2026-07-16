@@ -28,6 +28,7 @@ import net.strokkur.jap.source.classmodel.SourceConstructor;
 import net.strokkur.jap.source.classmodel.SourceElement;
 import net.strokkur.jap.source.classmodel.SourceField;
 import net.strokkur.jap.source.classmodel.SourceMethod;
+import net.strokkur.jap.source.classmodel.SourceMethodParameter;
 import net.strokkur.jap.source.implementation.javax.ElementUtil;
 import net.strokkur.jap.source.implementation.javax.JavaxConstructor;
 import net.strokkur.jap.source.implementation.javax.JavaxUtil;
@@ -59,6 +60,9 @@ public class SourceMapUtil {
         if (element.getKind() == ElementKind.FIELD) {
           yield parseFieldElement(variableElement);
         }
+        if (element.getKind() == ElementKind.PARAMETER) {
+          yield parseParameterElement(variableElement);
+        }
         throw new IllegalArgumentException("Cannot convert element of type: " + element.getKind());
       }
       default -> throw new IllegalArgumentException("Cannot convert element of type: " + element.getKind());
@@ -81,4 +85,7 @@ public class SourceMapUtil {
     return JavaxUtil.convertField(processor, element);
   }
 
+  public SourceMethodParameter parseParameterElement(VariableElement element) {
+    return JavaxUtil.convertParameter(processor, element);
+  }
 }

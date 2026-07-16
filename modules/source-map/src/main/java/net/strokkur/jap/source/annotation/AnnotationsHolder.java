@@ -25,11 +25,13 @@ package net.strokkur.jap.source.annotation;
 
 import net.strokkur.jap.code.convert.ConvertToClassType;
 import net.strokkur.jap.code.type.CodeTypes;
+import net.strokkur.jap.source.classmodel.SourceAnnotationInterface;
 import net.strokkur.jap.source.classmodel.SourceElement;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.lang.annotation.Annotation;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
@@ -62,13 +64,21 @@ public interface AnnotationsHolder extends SourceElement {
   }
 
   default SourceAnnotation firstAnnotationByType(ConvertToClassType type) {
-    return annotations().stream()
-      .filter(predicateAnnotationWithType(type))
-      .findFirst().orElseThrow();
+    return firstAnnotationByTypeOptional(type).orElseThrow();
   }
 
   default SourceAnnotation firstAnnotationByType(Class<? extends Annotation> annotationClass) {
     return firstAnnotationByType(CodeTypes.ofJavaClass(annotationClass));
+  }
+
+  default Optional<SourceAnnotation> firstAnnotationByTypeOptional(ConvertToClassType type) {
+    return annotations().stream()
+      .filter(predicateAnnotationWithType(type))
+      .findFirst();
+  }
+
+  default Optional<SourceAnnotation> firstAnnotationByTypeOptional(Class<? extends Annotation> annotationClass) {
+    return firstAnnotationByTypeOptional(CodeTypes.ofJavaClass(annotationClass));
   }
 
   default boolean hasAnnotationInherited(ConvertToClassType type) {
@@ -76,7 +86,26 @@ public interface AnnotationsHolder extends SourceElement {
       return true;
     }
 
-    return annotations().stream().anyMatch(anno -> anno.source().hasAnnotationInherited(type));
+    class Internal {
+      static final int MAX_DEPTH = 3;
+
+      boolean recurseSearching(SourceAnnotationInterface annotation, int depth) {
+        if (annotation.hasAnnotation(type)) {
+          return true;
+        }
+
+        if (depth > MAX_DEPTH) {
+          return false;
+        }
+
+        return annotation.annotations().stream()
+          .anyMatch(anno -> recurseSearching(anno.source(), depth + 1));
+      }
+    }
+
+    final Internal internal = new Internal();
+    return annotations().stream()
+      .anyMatch(anno -> internal.recurseSearching(anno.source(), 1));
   }
 
   default boolean hasAnnotationInherited(Class<? extends Annotation> annotationClass) {
@@ -84,25 +113,50 @@ public interface AnnotationsHolder extends SourceElement {
   }
 
   default SourceAnnotation firstAnnotationInherited(ConvertToClassType type) {
+    return firstAnnotationInheritedOptional(type).orElseThrow();
+  }
+
+  default Optional<SourceAnnotation> firstAnnotationInheritedOptional(ConvertToClassType type) {
     if (hasAnnotation(type)) {
-      return firstAnnotationByType(type);
+      return firstAnnotationByTypeOptional(type);
     }
 
     return annotations().stream()
       .filter(anno -> anno.source().hasAnnotationInherited(type))
       .map(anno -> anno.source().firstAnnotationInherited(type))
-      .findFirst().orElseThrow();
+      .findFirst();
   }
 
   default SourceAnnotation firstAnnotationInherited(Class<? extends Annotation> annotationClass) {
     return firstAnnotationInherited(CodeTypes.ofJavaClass(annotationClass));
   }
 
+  default Optional<SourceAnnotation> firstAnnotationInheritedOptional(Class<? extends Annotation> annotationClass) {
+    return firstAnnotationInheritedOptional(CodeTypes.ofJavaClass(annotationClass));
+  }
+
   default List<SourceAnnotation> annotationsInherited(ConvertToClassType type) {
+    class Internal {
+      static final int MAX_DEPTH = 3;
+
+      Stream<SourceAnnotation> annotationsInherited(SourceAnnotationInterface anno, int depth) {
+        if (depth >= MAX_DEPTH) {
+          return Stream.empty();
+        }
+
+        return anno.annotations().stream()
+          .flatMap(annotation -> annotation.type().equals(type.toClassType())
+            ? Stream.of(annotation)
+            : annotationsInherited(annotation.source(), depth + 1)
+          );
+      }
+    }
+
+    final Internal internal = new Internal();
     return annotations().stream()
       .flatMap(annotation -> annotation.type().equals(type.toClassType())
         ? Stream.of(annotation)
-        : annotation.source().annotationsInherited(type).stream())
+        : internal.annotationsInherited(annotation.source(), 1))
       .toList();
   }
 

@@ -58,8 +58,10 @@ public interface JavaTypes extends ConvertToClassType {
 
   JavaTypes SYSTEM = create(System.class);
 
+  // Exceptions
   JavaTypes NULL_POINTER_EXCEPTION = create(NullPointerException.class);
   JavaTypes ILLEGAL_STATE_EXCEPTION = create(IllegalStateException.class);
+  JavaTypes ILLEGAL_ACCESS_EXCEPTION = create(IllegalAccessException.class);
   JavaTypes RUNTIME_EXCEPTION = create(RuntimeException.class);
 
   // Reflection types

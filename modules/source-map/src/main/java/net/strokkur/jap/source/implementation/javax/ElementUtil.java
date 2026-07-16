@@ -144,10 +144,16 @@ public final class ElementUtil {
     if (mirror.getKind() == TypeKind.ARRAY && mirror instanceof ArrayType array) {
       return new SourceArrayType(mapType(processor, array.getComponentType()));
     }
+    if (mirror.getKind() == TypeKind.VOID) {
+      return SourceType.VOID;
+    }
+
     if (mirror.getKind().isPrimitive()) {
       return switch (mirror.getKind()) {
-        case VOID -> SourceType.VOID;
-
+        case BYTE -> SourceType.BYTE;
+        case BOOLEAN -> SourceType.BOOL;
+        case SHORT -> SourceType.SHORT;
+        case CHAR -> SourceType.CHAR;
         case INT -> SourceType.INT;
         case LONG -> SourceType.LONG;
         case FLOAT -> SourceType.FLOAT;
