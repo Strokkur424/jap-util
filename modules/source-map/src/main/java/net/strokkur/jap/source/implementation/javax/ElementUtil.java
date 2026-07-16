@@ -24,6 +24,7 @@
 package net.strokkur.jap.source.implementation.javax;
 
 import com.sun.source.tree.ExpressionTree;
+import net.strokkur.jap.code.classmodel.CodeClass;
 import net.strokkur.jap.code.convert.ConvertToGenericType;
 import net.strokkur.jap.code.type.CodeClassType;
 import net.strokkur.jap.code.type.CodePackage;
@@ -83,11 +84,18 @@ public final class ElementUtil {
       element.getElementValues().entrySet().stream()
         .map(e -> new SourceAnnotationParameter(
           e.getKey().getSimpleName().toString(),
-          e.getValue().getValue(),
+          parseAnnotationValue(e.getValue().getValue()),
           LazyExpression.ofExpression(() -> e.getValue().accept(JavaxAnnotationValueToExpression.VISITOR, null))
         ))
         .toList()
     );
+  }
+
+  private static Object parseAnnotationValue(Object obj) {
+    if (obj instanceof DeclaredType dec) {
+      return CodeTypes.ofClass(dec.toString());
+    }
+    return obj;
   }
 
   public static @Nullable Modifiers mapModifier(Modifier elementModifier) {

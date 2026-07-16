@@ -33,8 +33,8 @@ public record SourceAnnotationParameter(
   ConvertToExpression expression
 ) {
   public CodeClassType classValue() {
-    if (value instanceof Class<?> clazz) {
-      return CodeTypes.ofJavaClass(clazz);
+    if (value instanceof CodeClassType type) {
+      return type;
     }
     throw new IllegalArgumentException("Expected Class, found " + value.getClass());
   }
