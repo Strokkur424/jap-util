@@ -138,19 +138,16 @@ public abstract class AbstractSourcePrintingVisitor implements CodeVisitor<Strin
   }
 
   protected void appendMethodParametersMultiline(StringBuilder builder, List<CodeExpression> parameters) {
-    appendIndentedContinuation(() -> {
-      builder.append("\n");
-      for (int i = 0, parametersSize = parameters.size(); i < parametersSize; i++) {
-        final CodeExpression parameter = parameters.get(i);
-        appendIndent(builder);
-        appendNested(builder, parameter);
-        if (i + 1 < parametersSize) {
-          builder.append(",");
-        }
-        builder.append("\n");
+    builder.append("\n");
+    for (int i = 0, parametersSize = parameters.size(); i < parametersSize; i++) {
+      final CodeExpression parameter = parameters.get(i);
+      appendIndent(builder);
+      appendNested(builder, parameter);
+      if (i + 1 < parametersSize) {
+        builder.append(",");
       }
-    });
-    appendIndent(builder);
+      builder.append("\n");
+    }
   }
 
   protected void appendMethodCallParams(StringBuilder builder, List<CodeExpression> parameters, StyleConfig style) {
@@ -161,12 +158,19 @@ public abstract class AbstractSourcePrintingVisitor implements CodeVisitor<Strin
       } else {
         builder.append(joining(parameters));
       }
+    });
 
-      if (style.newlineClosingBrace()) {
+    if (style.multilineParameters()) {
+      appendIndent(builder);
+    }
+
+    if (style.newlineClosingBrace()) {
+      appendIndentedContinuation(() -> {
         builder.append("\n");
         appendIndent(builder);
-      }
-    });
+      });
+    }
+
     builder.append(")");
   }
 }

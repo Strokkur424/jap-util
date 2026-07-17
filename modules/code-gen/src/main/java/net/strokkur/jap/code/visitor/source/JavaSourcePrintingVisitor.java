@@ -294,19 +294,19 @@ public class JavaSourcePrintingVisitor extends AbstractSourcePrintingVisitor {
 
         case ConstructorInvocation(
           CodeClassType type, List<CodeExpression> parameters, @Nullable FieldMethodSource source, StyleConfig style
-        ) -> appendIndentedContinuationConditional(source != null && style.newline(), () -> {
+        ) -> {
           if (source != null) {
             builder.append(source.accept(this));
             if (style.newline()) {
               builder.append("\n");
-              appendIndent(builder);
+              appendIndentedContinuation(() -> appendIndent(builder));
             }
             builder.append(".");
           }
           builder.append("new ");
           builder.append(type.accept(this));
           appendMethodCallParams(builder, parameters, style);
-        });
+        }
 
         case FieldAccess(@Nullable FieldMethodSource source, String fieldName) -> {
           if (source == null) {
