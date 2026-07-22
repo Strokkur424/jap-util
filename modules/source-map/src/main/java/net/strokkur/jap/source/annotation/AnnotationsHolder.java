@@ -59,12 +59,22 @@ public interface AnnotationsHolder extends SourceElement {
       .toList();
   }
 
+  default <T extends Annotation> List<T> annotationsValuesByType(Class<T> annotationClass) {
+    return annotationsByType(annotationClass).stream()
+      .map(a -> a.value(annotationClass))
+      .toList();
+  }
+
   default List<SourceAnnotation> annotationsByType(Class<? extends Annotation> annotationClass) {
     return annotationsByType(CodeTypes.ofJavaClass(annotationClass));
   }
 
   default SourceAnnotation firstAnnotationByType(ConvertToClassType type) {
     return firstAnnotationByTypeOptional(type).orElseThrow();
+  }
+
+  default <T extends Annotation> T firstAnnotationValueByType(Class<T> annotationClass) {
+    return firstAnnotationByType(annotationClass).value(annotationClass);
   }
 
   default SourceAnnotation firstAnnotationByType(Class<? extends Annotation> annotationClass) {
@@ -75,6 +85,11 @@ public interface AnnotationsHolder extends SourceElement {
     return annotations().stream()
       .filter(predicateAnnotationWithType(type))
       .findFirst();
+  }
+
+  default <T extends Annotation> Optional<T> firstAnnotationValueByTypeOptional(Class<T> annotationClass) {
+    return firstAnnotationByTypeOptional(annotationClass)
+      .map(a -> a.value(annotationClass));
   }
 
   default Optional<SourceAnnotation> firstAnnotationByTypeOptional(Class<? extends Annotation> annotationClass) {
@@ -135,6 +150,15 @@ public interface AnnotationsHolder extends SourceElement {
     return firstAnnotationInheritedOptional(CodeTypes.ofJavaClass(annotationClass));
   }
 
+  default <T extends Annotation> T firstAnnotationValueInherited(Class<T> annotationClass) {
+    return firstAnnotationInherited(CodeTypes.ofJavaClass(annotationClass)).value(annotationClass);
+  }
+
+  default <T extends Annotation> Optional<T> firstAnnotationValueInheritedOptional(Class<T> annotationClass) {
+    return firstAnnotationInheritedOptional(CodeTypes.ofJavaClass(annotationClass))
+      .map(a -> a.value(annotationClass));
+  }
+
   default List<SourceAnnotation> annotationsInherited(ConvertToClassType type) {
     class Internal {
       static final int MAX_DEPTH = 3;
@@ -157,6 +181,12 @@ public interface AnnotationsHolder extends SourceElement {
       .flatMap(annotation -> annotation.type().equals(type.toClassType())
         ? Stream.of(annotation)
         : internal.annotationsInherited(annotation.source(), 1))
+      .toList();
+  }
+
+  default <T extends Annotation> List<T> annotationsValuesInherited(Class<T> annotationClass) {
+    return annotationsInherited(annotationClass).stream()
+      .map(a -> a.value(annotationClass))
       .toList();
   }
 
