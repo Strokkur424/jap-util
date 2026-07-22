@@ -137,6 +137,18 @@ public final class Expressions {
     return new MultilineLambda(lambdaParameters, CodeBlock.of(lambdaStatements));
   }
 
+  public static MultilineLambda lambda(CodeBlock lambdaBlock) {
+    return lambda(List.of(), lambdaBlock);
+  }
+
+  public static MultilineLambda lambda(String lambdaParameter, CodeBlock lambdaBlock) {
+    return lambda(List.of(lambdaParameter), lambdaBlock);
+  }
+
+  public static MultilineLambda lambda(List<String> lambdaParameters, CodeBlock lambdaBlock) {
+    return new MultilineLambda(lambdaParameters, lambdaBlock);
+  }
+
   private Expressions() throws IllegalAccessError {
     throw new IllegalAccessError("You cannot instantiate this class.");
   }

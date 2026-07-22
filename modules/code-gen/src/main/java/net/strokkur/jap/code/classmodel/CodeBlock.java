@@ -39,6 +39,13 @@ public record CodeBlock(List<CodeStatement> statements) implements CodeVisitable
     );
   }
 
+  public static CodeBlock of(List<ConvertToStatement> statements) {
+    return new CodeBlock(statements.stream()
+      .map(ConvertToStatement::toStatement)
+      .toList()
+    );
+  }
+
   @Override
   public <R> R accept(CodeVisitor<R> visitor) {
     return visitor.visitCodeBlock(this);
