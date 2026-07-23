@@ -53,6 +53,8 @@ public class ClassBuilder {
   private final List<CodeField> fields = new ArrayList<>();
   private final List<CodeMethod> methods = new ArrayList<>();
   private final List<CodeConstructor> constructors = new ArrayList<>();
+  private @Nullable CodeClassType extendsClass = null;
+  private final List<CodeClassType> implementsInterfaces = new ArrayList<>();
 
   private @Nullable CodeDocumentation documentation;
 
@@ -117,12 +119,26 @@ public class ClassBuilder {
     return this;
   }
 
+  public ClassBuilder extendsClass(@Nullable ConvertToClassType extendsClass) {
+    this.extendsClass = extendsClass != null ? extendsClass.toClassType() : null;
+    return this;
+  }
+
+  public ClassBuilder implementsInterfaces(ConvertToClassType... implementsInterfaces) {
+    this.implementsInterfaces.addAll(Arrays.stream(implementsInterfaces)
+      .map(ConvertToClassType::toClassType)
+      .toList());
+    return this;
+  }
+
   public CodeClass build() {
     return new CodeClass(
       type,
       List.copyOf(genericTypes),
       Set.copyOf(modifiers),
       List.copyOf(annotations),
+      extendsClass,
+      List.copyOf(implementsInterfaces),
       List.copyOf(fields),
       List.copyOf(methods),
       List.copyOf(constructors),

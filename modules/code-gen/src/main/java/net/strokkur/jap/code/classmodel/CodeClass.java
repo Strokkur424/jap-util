@@ -44,6 +44,8 @@ public record CodeClass(
   List<CodeGenericTypeDefinition> genericTypes,
   Set<Modifiers> modifiers,
   List<CodeAnnotation> annotations,
+  @Nullable CodeClassType extendsType,
+  List<CodeClassType> implementsTypes,
 
   List<CodeField> fields,
   List<CodeMethod> methods,

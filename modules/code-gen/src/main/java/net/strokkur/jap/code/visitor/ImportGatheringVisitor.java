@@ -94,6 +94,8 @@ public class ImportGatheringVisitor implements CodeVisitor<Set<CodeClassType>> {
       Set.of(codeClass.classType()),
       collect(codeClass.methods()),
       collect(codeClass.constructors()),
+      maybeAccept(codeClass.extendsType()),
+      collect(codeClass.implementsTypes()),
       collect(codeClass.fields()),
       collect(codeClass.annotations()),
       collect(codeClass.genericTypes())

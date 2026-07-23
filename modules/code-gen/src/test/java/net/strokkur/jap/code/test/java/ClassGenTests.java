@@ -33,6 +33,7 @@ import net.strokkur.jap.code.statement.Statements;
 import net.strokkur.jap.code.test.util.TestTypes;
 import net.strokkur.jap.code.type.CodeClassType;
 import net.strokkur.jap.code.type.CodePrimitiveType;
+import net.strokkur.jap.code.type.CodeType;
 import net.strokkur.jap.code.type.CodeTypes;
 import net.strokkur.jap.code.type.generic.CodeGenericTypeDefinition;
 import net.strokkur.jap.code.type.generic.GenericEnclosure;
@@ -132,6 +133,29 @@ class ClassGenTests extends AbstractGenTest {
       .build();
 
     check(expectedImports, expectedCode, ast);
+  }
+
+  @Test
+  void testExtendsAndInterfaces() {
+    final CodeClassType thisType = CodeTypes.ofClass("idk.MyClass");
+    final CodeClassType extendsType = CodeTypes.ofClass("this.Extends");
+    final CodeClassType implementsType1 = CodeTypes.ofClass("this.Implements1");
+    final CodeClassType implementsType2 = CodeTypes.ofClass("this.Implements2");
+
+    // language=java
+    final String java = """
+      class MyClass extends Extends implements Implements1, Implements2 {
+      }
+      """;
+
+    check(
+      Set.of(thisType, extendsType, implementsType1, implementsType2),
+      java,
+      CodeClass.builder(thisType)
+        .extendsClass(extendsType)
+        .implementsInterfaces(implementsType1, implementsType2)
+        .build()
+    );
   }
 
   @Test
