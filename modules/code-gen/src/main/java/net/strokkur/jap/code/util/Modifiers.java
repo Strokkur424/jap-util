@@ -29,6 +29,7 @@ public enum Modifiers {
   // Visibility
   PUBLIC(0),
   PRIVATE(1),
+  PROTECTED(2),
 
   // OOP
   ABSTRACT(10),
