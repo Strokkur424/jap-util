@@ -33,15 +33,19 @@ import net.strokkur.jap.code.visitor.CodeVisitor;
 import java.util.List;
 
 public record CodeParameterDefinition(
-  CodeType type, String name, List<CodeAnnotation> annotations
+  CodeType type, String name, boolean varargs, List<CodeAnnotation> annotations
 ) implements CodeVisitable, CodeAnnotated {
 
   public static CodeParameterDefinition of(ConvertToType type, String name) {
-    return new CodeParameterDefinition(type.toType(), name, List.of());
+    return new CodeParameterDefinition(type.toType(), name, false, List.of());
+  }
+
+  public static CodeParameterDefinition ofVarargs(ConvertToType type, String name) {
+    return new CodeParameterDefinition(type.toType(), name, true, List.of());
   }
 
   public static CodeParameterDefinition of(ConvertToType type, String name, CodeAnnotation... annotations) {
-    return new CodeParameterDefinition(type.toType(), name, List.of(annotations));
+    return new CodeParameterDefinition(type.toType(), name, false, List.of(annotations));
   }
 
   @Override
