@@ -57,6 +57,12 @@ public record CodeClassType(
     return codePackage().path() + "." + simpleName();
   }
 
+  /// A name in the format `com.package.name.ParentClass$NestedClass`. This string
+  /// is intended to be usable inside [CodeTypes#ofClass(String)].
+  public String identifiableName() {
+    return codePackage.path() + "." + simpleName.replace('.', '$');
+  }
+
   @Override
   public CodeClassType typed(ConvertToGenericType... types) {
     return new CodeClassType(
