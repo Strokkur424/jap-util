@@ -32,6 +32,7 @@ import net.strokkur.jap.code.convert.ConvertToMethod;
 import net.strokkur.jap.code.convert.ConvertToStatement;
 import net.strokkur.jap.code.convert.ConvertToType;
 import net.strokkur.jap.code.documentation.CodeDocumentation;
+import net.strokkur.jap.code.statement.CodeStatement;
 import net.strokkur.jap.code.type.CodeClassType;
 import net.strokkur.jap.code.type.CodePrimitiveType;
 import net.strokkur.jap.code.type.CodeType;
@@ -43,7 +44,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 
 public class MethodBuilder implements ConvertToMethod {
@@ -51,7 +51,7 @@ public class MethodBuilder implements ConvertToMethod {
 
   private CodeType returnType = CodePrimitiveType.VOID;
   private @Nullable CodeDocumentation documentation = null;
-  private CodeBlock codeBlock = CodeBlock.of();
+  private final List<CodeStatement> codeBlock = new ArrayList<>();
 
   private final List<CodeGenericTypeDefinition> generics = new ArrayList<>();
   private final List<CodeAnnotation> annotations = new ArrayList<>();
@@ -73,8 +73,15 @@ public class MethodBuilder implements ConvertToMethod {
     return this;
   }
 
-  public MethodBuilder setCodeBlock(ConvertToStatement... statements) {
-    this.codeBlock = CodeBlock.of(statements);
+  public MethodBuilder setCode(ConvertToStatement... statements) {
+    this.codeBlock.clear();
+    return addCode(statements);
+  }
+
+  public MethodBuilder addCode(ConvertToStatement... statements) {
+    this.codeBlock.addAll(Arrays.stream(statements)
+      .map(ConvertToStatement::toStatement)
+      .toList());
     return this;
   }
 
@@ -128,7 +135,7 @@ public class MethodBuilder implements ConvertToMethod {
       List.copyOf(throwsExceptions),
       documentation,
       List.copyOf(parameters),
-      Objects.requireNonNull(codeBlock)
+      new CodeBlock(List.copyOf(codeBlock))
     );
   }
 }

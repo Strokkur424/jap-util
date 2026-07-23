@@ -75,6 +75,9 @@ public final class Expressions {
   public static CodeVariableExpression thisExpr() {
     return new CodeVariableExpression("this");
   }
+  public static CodeVariableExpression superExpr() {
+    return new CodeVariableExpression("super");
+  }
 
   public static CodeVariableExpression variable(String name) {
     return new CodeVariableExpression(name);
