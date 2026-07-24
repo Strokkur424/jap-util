@@ -23,10 +23,13 @@
  */
 package net.strokkur.jap.code.test.java;
 
+import net.strokkur.jap.code.classmodel.CodeMethod;
 import net.strokkur.jap.code.convert.ConvertToClassType;
+import net.strokkur.jap.code.expression.Expressions;
 import net.strokkur.jap.code.statement.CodeStatement;
 import net.strokkur.jap.code.statement.Statements;
 import net.strokkur.jap.code.test.util.TestTypes;
+import net.strokkur.jap.code.type.CodeTypes;
 import net.strokkur.jap.code.type.preset.JavaTypes;
 import org.junit.jupiter.api.Test;
 
@@ -131,6 +134,27 @@ class StatementGenTests extends AbstractGenTest {
         "value",
         null
       )
+    );
+  }
+
+  @Test
+  void testMultilineComment() {
+    //language=java
+    final String code = """
+      @Override
+      void myMethod() {
+        // This is a multi-line
+        // comment, with a newline!
+        super.myMethod();
+      }
+      """;
+    checkCode(code, CodeMethod.builder("myMethod")
+      .addAnnotations(CodeTypes.ofJavaClass(Override.class))
+      .setCode(
+        Statements.comment("This is a multi-line \n comment, with a newline!"),
+        Expressions.superExpr().chainMethod("myMethod")
+      )
+      .toMethod()
     );
   }
 

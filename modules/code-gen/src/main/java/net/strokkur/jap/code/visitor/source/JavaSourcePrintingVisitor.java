@@ -392,6 +392,15 @@ public class JavaSourcePrintingVisitor extends AbstractSourcePrintingVisitor {
         builder.append("\n");
         return;
       }
+
+      if (statement instanceof CommentStatement(String content)) {
+        for (String line : content.split("\n")) {
+          appendIndent(builder);
+          builder.append("// ").append(line.strip()).append("\n");
+        }
+        return;
+      }
+
       appendIndent(builder);
 
       if (statement instanceof IfStatement(CodeExpression expr, CodeBlock ifTrue, @Nullable CodeBlock ifFalse)) {
@@ -406,11 +415,6 @@ public class JavaSourcePrintingVisitor extends AbstractSourcePrintingVisitor {
           builder.append("}");
         }
         builder.append("\n");
-        return;
-      }
-
-      if (statement instanceof CommentStatement(String content)) {
-        builder.append("// ").append(content).append("\n");
         return;
       }
 
