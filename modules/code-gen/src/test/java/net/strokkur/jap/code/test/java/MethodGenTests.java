@@ -75,7 +75,7 @@ class MethodGenTests extends AbstractGenTest {
       .addThrowsExceptions(JavaTypes.RUNTIME_EXCEPTION, JavaTypes.NULL_POINTER_EXCEPTION)
       .addParameter(listType, "list")
       .addParameters(CodeParameterDefinition.of(generic("T"), "value"))
-      .setCodeBlock(
+      .setCode(
         variable("list").chainMethod("add").addParameters(variable("value")),
         Statements.returnStmt(variable("list"))
       )

@@ -64,7 +64,7 @@ class CodeGenUtilTests {
       .addMethods(CodeMethod.builder("greet")
         .addModifiers(Modifiers.PUBLIC)
         .setDocumentation(CodeDocumentation.text("Greet the console!"))
-        .setCodeBlock(
+        .setCode(
           Statements.variableDeclarationFinal(
             JavaTypes.STRING,
             "message",
@@ -78,8 +78,7 @@ class CodeGenUtilTests {
       )
       .build();
 
-    final CodeGenUtil codeGen = new CodeGenUtil();
-    return codeGen.createJavaFile(compiled);
+    return CodeGenUtil.createJavaFile(compiled);
   }
 
   @Test

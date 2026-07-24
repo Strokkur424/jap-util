@@ -31,6 +31,10 @@ import org.jspecify.annotations.Nullable;
 
 public final class Statements {
 
+  public static CommentStatement comment(String content) {
+    return new CommentStatement(content);
+  }
+
   public static ExpressionStatement expressionStatement(ConvertToExpression expression) {
     return new ExpressionStatement(expression.toExpression());
   }

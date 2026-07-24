@@ -47,6 +47,7 @@ import net.strokkur.jap.code.expression.bool.OrExpression;
 import net.strokkur.jap.code.expression.simple.SimpleExpression;
 import net.strokkur.jap.code.statement.BlankStatement;
 import net.strokkur.jap.code.statement.CodeStatement;
+import net.strokkur.jap.code.statement.CommentStatement;
 import net.strokkur.jap.code.statement.ExpressionStatement;
 import net.strokkur.jap.code.statement.IfStatement;
 import net.strokkur.jap.code.statement.ReturnStatement;
@@ -215,6 +216,7 @@ public class ImportGatheringVisitor implements CodeVisitor<Set<CodeClassType>> {
     return switch (statement) {
 
       case BlankStatement ignored -> Set.of();
+      case CommentStatement ignored -> Set.of();
 
       case ExpressionStatement expr -> expr.expression().accept(this);
 

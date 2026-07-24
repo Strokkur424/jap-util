@@ -34,6 +34,7 @@ import java.util.Set;
 
 import static net.strokkur.jap.code.expression.Expressions.string;
 import static net.strokkur.jap.code.expression.Expressions.variable;
+import static net.strokkur.jap.code.statement.Statements.comment;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -69,6 +70,7 @@ class StatementGenTests extends AbstractGenTest {
   void testIfStatement() {
     final String expectedCode = """
       if (ctx.getSource() instanceof Player source) {
+        // Sends a message.
         source.sendPlainMessage("Hello!");
       }
       """;
@@ -78,6 +80,7 @@ class StatementGenTests extends AbstractGenTest {
 
     check(expectedImports, expectedCode, Statements.ifStmt(
       variable("ctx").chainMethod("getSource").instanceOf(TestTypes.PLAYER, "source"),
+      comment("Sends a message."),
       variable("source").chainMethod("sendPlainMessage").addParameters(
         string("Hello!")
       )

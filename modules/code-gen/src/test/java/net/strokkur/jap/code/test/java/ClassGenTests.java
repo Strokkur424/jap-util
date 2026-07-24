@@ -113,7 +113,7 @@ class ClassGenTests extends AbstractGenTest {
       .addMethods(CodeMethod.builder("getValue")
         .setReturnType(CodePrimitiveType.INT)
         .addModifiers(Modifiers.PUBLIC, Modifiers.STATIC)
-        .setCodeBlock(Statements.returnStmt(Expressions.fieldAccess("VALUE")))
+        .setCode(Statements.returnStmt(Expressions.fieldAccess("VALUE")))
       )
 
       .addConstructor(ctor -> ctor
@@ -127,7 +127,7 @@ class ClassGenTests extends AbstractGenTest {
       .addMethods(CodeMethod.builder("getList")
         .addModifiers(Modifiers.PUBLIC)
         .setReturnType(JavaTypes.LIST.typed(generic("T")))
-        .setCodeBlock(Statements.returnStmt(Expressions.thisExpr().chainField("list")))
+        .setCode(Statements.returnStmt(Expressions.thisExpr().chainField("list")))
       )
 
       .build();

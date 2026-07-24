@@ -59,6 +59,7 @@ import net.strokkur.jap.code.expression.source.FieldMethodSource;
 import net.strokkur.jap.code.expression.source.MethodReferenceSource;
 import net.strokkur.jap.code.statement.BlankStatement;
 import net.strokkur.jap.code.statement.CodeStatement;
+import net.strokkur.jap.code.statement.CommentStatement;
 import net.strokkur.jap.code.statement.ExpressionStatement;
 import net.strokkur.jap.code.statement.IfStatement;
 import net.strokkur.jap.code.statement.ReturnStatement;
@@ -405,6 +406,11 @@ public class JavaSourcePrintingVisitor extends AbstractSourcePrintingVisitor {
           builder.append("}");
         }
         builder.append("\n");
+        return;
+      }
+
+      if (statement instanceof CommentStatement(String content)) {
+        builder.append("// ").append(content).append("\n");
         return;
       }
 
