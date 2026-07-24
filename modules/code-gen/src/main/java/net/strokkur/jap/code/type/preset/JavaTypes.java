@@ -29,6 +29,7 @@ import net.strokkur.jap.code.type.CodeTypes;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -49,6 +50,7 @@ public interface JavaTypes extends ConvertToClassType {
 
   // java.util types
   JavaTypes LIST = create(List.class);
+  JavaTypes COLLECTION = create(Collection.class);
   JavaTypes ARRAY_LIST = create(ArrayList.class);
   JavaTypes RANDOM = create(Random.class);
   JavaTypes PREDICATE = create(Predicate.class);
