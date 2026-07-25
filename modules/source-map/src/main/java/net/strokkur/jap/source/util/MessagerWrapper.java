@@ -28,6 +28,8 @@ import net.strokkur.jap.source.implementation.javax.util.JavaxMessagerWrapperImp
 
 import javax.annotation.processing.Messager;
 import javax.tools.Diagnostic.Kind;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
 public interface MessagerWrapper {
 
@@ -40,6 +42,22 @@ public interface MessagerWrapper {
   void print(Kind kind, String format, Object... arguments);
 
   void printSource(Kind kind, String format, SourceElement element, Object... arguments);
+
+  private static String throwableToString(Throwable throwable) {
+    final StringWriter writer = new StringWriter();
+    throwable.printStackTrace(new PrintWriter(writer));
+    return writer.toString();
+  }
+
+  default void print(Kind kind, String format, Throwable throwable, Object... arguments) {
+    print(kind, format, arguments);
+    print(kind, throwableToString(throwable));
+  }
+
+  default void printSource(Kind kind, String format, Throwable throwable, SourceElement element, Object... arguments) {
+    printSource(kind, format, element, arguments);
+    printSource(kind, throwableToString(throwable), element);
+  }
 
   /**
    * Prints a formatted message to the {@link Kind#OTHER} channel.
@@ -64,6 +82,28 @@ public interface MessagerWrapper {
   }
 
   /**
+   * Prints a formatted message about this element to the {@link Kind#OTHER} channel.
+   * <p>
+   * The message is silently discarded unless the system property {@code -Dstrokk.command.debug} is set.
+   */
+  default void debug(String format, Throwable throwable, Object... args) {
+    if (System.getProperty(DEBUG_SYSTEM_PROPERTY) != null) {
+      print(Kind.OTHER, format, throwable, args);
+    }
+  }
+
+  /**
+   * Prints a formatted message about this element to the {@link Kind#OTHER} channel.
+   * <p>
+   * The message is silently discarded unless the system property {@code -Dstrokk.command.debug} is set.
+   */
+  default void debugSource(String format, Throwable throwable, SourceElement element, Object... args) {
+    if (System.getProperty(DEBUG_SYSTEM_PROPERTY) != null) {
+      printSource(Kind.OTHER, format, throwable, element, args);
+    }
+  }
+
+  /**
    * Prints a formatted message to the {@link Kind#NOTE} channel.
    */
   default void info(String format, Object... arguments) {
@@ -75,6 +115,20 @@ public interface MessagerWrapper {
    */
   default void infoSource(String format, SourceElement element, Object... arguments) {
     printSource(Kind.NOTE, format, element, arguments);
+  }
+
+  /**
+   * Prints a formatted message to the {@link Kind#NOTE} channel.
+   */
+  default void info(String format, Throwable throwable, Object... arguments) {
+    print(Kind.NOTE, format, throwable, arguments);
+  }
+
+  /**
+   * Prints a formatted message about this element to the {@link Kind#NOTE} channel.
+   */
+  default void infoSource(String format, Throwable throwable, SourceElement element, Object... arguments) {
+    printSource(Kind.NOTE, format, throwable, element, arguments);
   }
 
   /**
@@ -92,6 +146,20 @@ public interface MessagerWrapper {
   }
 
   /**
+   * Prints a formatted message to the {@link Kind#WARNING} channel.
+   */
+  default void warn(String format, Throwable throwable, Object... arguments) {
+    print(Kind.WARNING, format, throwable, arguments);
+  }
+
+  /**
+   * Prints a formatted message about this element to the {@link Kind#WARNING} channel.
+   */
+  default void warnSource(String format, Throwable throwable, SourceElement element, Object... arguments) {
+    printSource(Kind.WARNING, format, throwable, element, arguments);
+  }
+
+  /**
    * Prints a formatted message to the {@link Kind#ERROR} channel.
    */
   default void error(String format, Object... arguments) {
@@ -103,5 +171,19 @@ public interface MessagerWrapper {
    */
   default void errorSource(String format, SourceElement element, Object... arguments) {
     printSource(Kind.ERROR, format, element, arguments);
+  }
+
+  /**
+   * Prints a formatted message to the {@link Kind#ERROR} channel.
+   */
+  default void error(String format, Throwable throwable, Object... arguments) {
+    print(Kind.ERROR, format, throwable, arguments);
+  }
+
+  /**
+   * Prints a formatted message about this element to the {@link Kind#ERROR} channel.
+   */
+  default void errorSource(String format, Throwable throwable, SourceElement element, Object... arguments) {
+    printSource(Kind.ERROR, format, throwable, element, arguments);
   }
 }
