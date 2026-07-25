@@ -43,7 +43,7 @@ public record JavaxConstructor(
   Set<Modifiers> modifiers,
   List<SourceMethodParameter> parameters,
   List<SourceType> thrown
-) implements SourceConstructor {
+) implements SourceConstructor, JavaxElement {
 
   @Override
   public String toString() {
