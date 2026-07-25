@@ -55,15 +55,27 @@ public sealed interface GenericEnclosure extends CodeVisitable {
   record ExtendsEnclosure(
     CodeType encloses
   ) implements GenericEnclosure {
+    @Override
+    public String toString() {
+      return "extends " + encloses.simpleName();
+    }
   }
 
   record SuperEnclosure(
     CodeType encloses
   ) implements GenericEnclosure {
+    @Override
+    public String toString() {
+      return "super " + encloses.simpleName();
+    }
   }
 
   record TypeEnclosure(
     CodeType encloses
   ) implements GenericEnclosure {
+    @Override
+    public String toString() {
+      return encloses.simpleName();
+    }
   }
 }

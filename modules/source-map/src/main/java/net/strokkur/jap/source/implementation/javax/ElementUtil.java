@@ -24,7 +24,6 @@
 package net.strokkur.jap.source.implementation.javax;
 
 import com.sun.source.tree.ExpressionTree;
-import net.strokkur.jap.code.classmodel.CodeClass;
 import net.strokkur.jap.code.convert.ConvertToGenericType;
 import net.strokkur.jap.code.type.CodeClassType;
 import net.strokkur.jap.code.type.CodePackage;
@@ -38,7 +37,7 @@ import net.strokkur.jap.source.annotation.SourceAnnotationParameter;
 import net.strokkur.jap.source.classmodel.SourceClassLike;
 import net.strokkur.jap.source.implementation.javax.visitor.JavaxAnnotationValueToExpression;
 import net.strokkur.jap.source.implementation.javax.visitor.JavaxTreeToExpression;
-import net.strokkur.jap.source.type.LazySourceClassLikeType;
+import net.strokkur.jap.source.type.ClassLikeType;
 import net.strokkur.jap.source.type.SourceArrayType;
 import net.strokkur.jap.source.type.SourceType;
 import net.strokkur.jap.source.util.Lazy;
@@ -50,6 +49,7 @@ import javax.lang.model.AnnotatedConstruct;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.Modifier;
+import javax.lang.model.element.Name;
 import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.TypeParameterElement;
@@ -57,9 +57,9 @@ import javax.lang.model.type.ArrayType;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
+import javax.lang.model.type.WildcardType;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -123,21 +123,23 @@ public final class ElementUtil {
     );
   }
 
-  public static CodeClassType mapDeclared(DeclaredType declared) {
-    final String fqn = declared.toString()
-      .replaceAll("@[a-zA-Z0-9_.]+(\\([^)]*\\))?\\s*", "");
+  public static CodeClassType mapDeclared(SourceMapProcessor processor, DeclaredType declared) {
+    final Name name = processor.elements().getBinaryName((TypeElement) declared.asElement());
 
-    if (fqn.contains("<")) {
-      final String[] split = fqn.split("<");
-      return CodeTypes.ofClassTyped(
-        split[0],
-        Arrays.stream(split[1].substring(0, split[1].length() - 1).split(","))
-          .map(String::strip)
-          .map(CodeTypes::generic)
-          .toArray(ConvertToGenericType[]::new)
-      );
+    final List<? extends TypeMirror> typeArgs = declared.getTypeArguments();
+    final CodeClassType out = CodeTypes.ofClass(name.toString());
+
+    if (!typeArgs.isEmpty()) {
+      return out.typed(typeArgs.stream()
+        .map(mirror -> (ConvertToGenericType) switch (mirror) {
+          case DeclaredType dec -> mapDeclared(processor, dec);
+          case WildcardType wild -> CodeTypes.genericWildcard();
+          default -> throw new IllegalStateException("Unexpected value: " + mirror);
+        })
+        .toArray(ConvertToGenericType[]::new));
     }
-    return CodeTypes.ofClass(fqn);
+
+    return out;
   }
 
   public static @Nullable LazyExpression toLazyMirror(@Nullable ExpressionTree tree) {
@@ -172,12 +174,9 @@ public final class ElementUtil {
       };
     }
     if (mirror.getKind() == TypeKind.DECLARED && mirror instanceof DeclaredType declared) {
-      return new LazySourceClassLikeType(
-        mapDeclared(declared),
-        Lazy.of(() -> {
-          final Element element = declared.asElement();
-          return getClassLikeFor(processor, (TypeElement) element);
-        })
+      return new ClassLikeType(
+        mapDeclared(processor, declared),
+        getClassLikeFor(processor, (TypeElement) declared.asElement())
       );
     }
 

@@ -33,6 +33,7 @@ import org.jspecify.annotations.Nullable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public record CodeClassType(
   CodePackage codePackage,
@@ -55,6 +56,20 @@ public record CodeClassType(
   @Override
   public String fullyQualifiedName() {
     return codePackage().path() + "." + simpleName();
+  }
+
+  public CodeClassType toTopLevel() {
+    return new CodeClassType(
+      codePackage,
+      simpleName.split("\\.", 2)[0],
+      genericTypes
+    );
+  }
+
+  public CodeClassType withoutGenerics() {
+    return new CodeClassType(
+      codePackage, simpleName, null
+    );
   }
 
   /// A name in the format `com.package.name.ParentClass$NestedClass`. This string
@@ -105,5 +120,13 @@ public record CodeClassType(
   @Override
   public int hashCode() {
     return Objects.hash(codePackage(), simpleName());
+  }
+
+  @Override
+  public String toString() {
+    return identifiableName() + (genericTypes == null ? "" : genericTypes.stream()
+      .map(CodeGenericType::toString)
+      .collect(Collectors.joining(", ", "<", ">"))
+    );
   }
 }

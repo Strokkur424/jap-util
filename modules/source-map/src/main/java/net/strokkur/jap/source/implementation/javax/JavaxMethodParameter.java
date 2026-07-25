@@ -39,8 +39,6 @@ public record JavaxMethodParameter(
 ) implements SourceMethodParameter {
   @Override
   public String toString() {
-    return "JavaxMethodParameter{" +
-      type + ' ' + name +
-      '}';
+    return type.toType() + " " + name;
   }
 }

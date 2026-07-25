@@ -29,14 +29,10 @@ import net.strokkur.jap.code.type.CodeType;
 import net.strokkur.jap.source.classmodel.SourceClassLike;
 import net.strokkur.jap.source.util.Lazy;
 
-public record LazySourceClassLikeType(
+public record ClassLikeType(
   CodeClassType codeType,
-  Lazy<SourceClassLike> like
+  SourceClassLike like
 ) implements SourceType, ConvertToClassType {
-
-  public SourceClassLike toClassLike() {
-    return like.get();
-  }
 
   @Override
   public CodeClassType toClassType() {
@@ -50,6 +46,6 @@ public record LazySourceClassLikeType(
 
   @Override
   public String toString() {
-    return "LazyClassLikeType[" + codeType + "]";
+    return "LikeType[" + codeType + "]";
   }
 }

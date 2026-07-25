@@ -50,4 +50,9 @@ public record CodeGenericType(
   public CodeGenericType toGenericType() {
     return this;
   }
+
+  @Override
+  public String toString() {
+    return simpleName() + (enclosure == null ? "" : enclosure.toString());
+  }
 }
