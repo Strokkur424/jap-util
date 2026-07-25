@@ -29,6 +29,7 @@ import net.strokkur.jap.source.classmodel.SourceClassLike;
 import net.strokkur.jap.source.classmodel.SourceMethod;
 import net.strokkur.jap.source.classmodel.SourceMethodParameter;
 import net.strokkur.jap.source.type.SourceType;
+import net.strokkur.jap.source.util.Lazy;
 
 import javax.lang.model.element.Element;
 import java.util.List;
@@ -41,17 +42,22 @@ public record JavaxMethod(
   SourceClassLike enclosed,
   List<SourceAnnotation> annotations,
   Set<Modifiers> modifiers,
-  List<SourceMethodParameter> parameters,
+  Lazy<List<SourceMethodParameter>> lazyParameters,
   List<SourceType> thrown,
   SourceType returnType,
   String name
 ) implements SourceMethod {
   @Override
+  public List<SourceMethodParameter> parameters() {
+    return lazyParameters.get();
+  }
+
+  @Override
   public String toString() {
     return "JavaxMethod{" +
       enclosed.classType().simpleName() +
       '#' + name +
-      '(' + parameters.stream()
+      '(' + parameters().stream()
       .map(p -> p.type().toType().simpleName() + ' ' + p.name())
       .collect(Collectors.joining(", ")) +
       "): " + returnType.toType().simpleName() +

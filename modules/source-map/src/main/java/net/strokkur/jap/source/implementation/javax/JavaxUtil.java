@@ -29,6 +29,7 @@ import net.strokkur.jap.source.classmodel.SourceConstructor;
 import net.strokkur.jap.source.classmodel.SourceField;
 import net.strokkur.jap.source.classmodel.SourceMethod;
 import net.strokkur.jap.source.classmodel.SourceMethodParameter;
+import net.strokkur.jap.source.util.Lazy;
 
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
@@ -51,7 +52,7 @@ public final class JavaxUtil {
       ElementUtil.getClassLikeFor(processor, (TypeElement) element.getEnclosingElement()),
       ElementUtil.mapAnnotations(processor, element),
       ElementUtil.mapModifiers(element.getModifiers()),
-      element.getParameters().stream().map(e -> convertParameter(processor, e)).toList(),
+      Lazy.of(() -> element.getParameters().stream().map(e -> convertParameter(processor, e)).toList()),
       element.getThrownTypes().stream().map(type -> ElementUtil.mapType(processor, type)).toList(),
       ElementUtil.mapType(processor, element.getReturnType()),
       element.getSimpleName().toString()
