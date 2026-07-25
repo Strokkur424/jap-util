@@ -133,7 +133,7 @@ public class ImportGatheringVisitor implements CodeVisitor<Set<CodeClassType>> {
       case CodeGenericType(String genericName, GenericEnclosure enclosure) -> maybeAccept(enclosure);
       case CodeClassType codeClass -> join(
         codeClass.genericTypes() == null ? Set.of() : collect(codeClass.genericTypes()),
-        Set.of(codeClass.toTopLevel())
+        Set.of(codeClass.toTopLevel().withoutGenerics())
       );
       default -> Set.of();
     };
