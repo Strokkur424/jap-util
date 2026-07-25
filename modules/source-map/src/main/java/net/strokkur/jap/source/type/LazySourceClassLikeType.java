@@ -47,4 +47,9 @@ public record LazySourceClassLikeType(
   public CodeType toType() {
     return codeType;
   }
+
+  @Override
+  public String toString() {
+    return "LazyClassLikeType[" + codeType + "]";
+  }
 }

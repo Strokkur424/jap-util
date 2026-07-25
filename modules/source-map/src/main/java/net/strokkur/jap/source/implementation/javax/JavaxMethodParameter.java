@@ -37,4 +37,10 @@ public record JavaxMethodParameter(
   SourceType type,
   String name
 ) implements SourceMethodParameter {
+  @Override
+  public String toString() {
+    return "JavaxMethodParameter{" +
+      type + ' ' + name +
+      '}';
+  }
 }

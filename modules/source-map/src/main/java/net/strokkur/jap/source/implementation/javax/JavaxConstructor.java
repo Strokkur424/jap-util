@@ -33,6 +33,7 @@ import net.strokkur.jap.source.type.SourceType;
 import javax.lang.model.element.Element;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public record JavaxConstructor(
   Element javaxElement,
@@ -43,4 +44,15 @@ public record JavaxConstructor(
   List<SourceMethodParameter> parameters,
   List<SourceType> thrown
 ) implements SourceConstructor {
+
+  @Override
+  public String toString() {
+    return "JavaxConstructor{" +
+      enclosed.classType().simpleName() +
+      "#<ctor>" +
+      '(' + parameters.stream()
+      .map(Object::toString)
+      .collect(Collectors.joining(", ")) +
+      ")}";
+  }
 }

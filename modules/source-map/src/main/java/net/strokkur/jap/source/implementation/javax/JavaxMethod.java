@@ -33,6 +33,7 @@ import net.strokkur.jap.source.type.SourceType;
 import javax.lang.model.element.Element;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public record JavaxMethod(
   Element javaxElement,
@@ -45,4 +46,15 @@ public record JavaxMethod(
   SourceType returnType,
   String name
 ) implements SourceMethod {
+  @Override
+  public String toString() {
+    return "JavaxMethod{" +
+      enclosed.classType().simpleName() +
+      '#' + name +
+      '(' + parameters.stream()
+      .map(p -> p.type().toType().simpleName() + ' ' + p.name())
+      .collect(Collectors.joining(", ")) +
+      "): " + returnType.toType().simpleName() +
+      '}';
+  }
 }

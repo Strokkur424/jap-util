@@ -36,4 +36,11 @@ public record JavaxPackage(
   CodePackage codePackage,
   List<SourceAnnotation> annotations
 ) implements SourcePackage {
+
+  @Override
+  public String toString() {
+    return "JavaxPackage{" +
+      codePackage.path() +
+      '}';
+  }
 }

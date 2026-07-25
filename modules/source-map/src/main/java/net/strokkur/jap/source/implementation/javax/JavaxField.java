@@ -45,4 +45,10 @@ public record JavaxField(
   String name,
   @Nullable ConvertToExpression initializer
 ) implements SourceField {
+  @Override
+  public String toString() {
+    return "JavaxField{" +
+      type.toType().fullyQualifiedName() + ' ' + name +
+      '}';
+  }
 }

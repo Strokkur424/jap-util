@@ -179,4 +179,9 @@ abstract class JavaxClassLike implements SourceClassLike, JavaxElement {
         .toList()
     );
   }
+
+  @Override
+  public String toString() {
+    return getClass().getSimpleName() + "{" + type + '}';
+  }
 }

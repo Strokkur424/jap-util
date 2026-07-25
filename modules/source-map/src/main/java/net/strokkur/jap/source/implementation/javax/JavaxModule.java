@@ -35,4 +35,10 @@ public record JavaxModule(
   String moduleName,
   List<SourceAnnotation> annotations
 ) implements SourceModule {
+  @Override
+  public String toString() {
+    return "JavaxModule{" +
+      "moduleName='" + moduleName + '\'' +
+      '}';
+  }
 }

@@ -37,4 +37,12 @@ public record JavaxRecordComponent(
   SourceType type,
   String name
 ) implements SourceRecordComponent {
+
+  @Override
+  public String toString() {
+    return "JavaxRecordComponent{" +
+      "type=" + type +
+      ", name='" + name + '\'' +
+      '}';
+  }
 }
