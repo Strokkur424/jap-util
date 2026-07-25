@@ -21,31 +21,33 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.strokkur.jap.source.visitor;
+package net.strokkur.jap.source.classmodel;
 
-import net.strokkur.jap.source.classmodel.SourceAnnotationInterface;
-import net.strokkur.jap.source.classmodel.SourceClass;
-import net.strokkur.jap.source.classmodel.SourceConstructor;
-import net.strokkur.jap.source.classmodel.SourceEnum;
-import net.strokkur.jap.source.classmodel.SourceField;
-import net.strokkur.jap.source.classmodel.SourceInterface;
-import net.strokkur.jap.source.classmodel.SourceMethod;
-import net.strokkur.jap.source.classmodel.SourceRecord;
+import net.strokkur.jap.source.visitor.SourceVisitor;
 
-public interface SourceVisitor<R, D> {
-  R visitClass(SourceClass sourceClass, D data);
+import java.util.List;
 
-  R visitInterface(SourceInterface sourceInterface, D data);
+public interface SourceEnum extends SourceClassLike {
+  //
+  // Head
+  //
+  List<SourceInterface> implementsClasses();
 
-  R visitAnnotationInterface(SourceAnnotationInterface annotationInterface, D data);
+  //
+  // Body
+  //
+  List<SourceField> enumValues();
 
-  R visitRecord(SourceRecord record, D data);
+  //
+  // Other
+  //
+  @Override
+  default boolean isStatic() {
+    return true;
+  }
 
-  R visitEnum(SourceEnum sourceEnum, D data);
-
-  R visitMethod(SourceMethod method, D data);
-
-  R visitConstructor(SourceConstructor constructor, D data);
-
-  R visitField(SourceField field, D data);
+  @Override
+  default <R, D> R accept(SourceVisitor<R, D> visitor, D data) {
+    return visitor.visitEnum(this, data);
+  }
 }

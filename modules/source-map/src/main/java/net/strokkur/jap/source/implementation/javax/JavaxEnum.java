@@ -21,31 +21,39 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.strokkur.jap.source.visitor;
+package net.strokkur.jap.source.implementation.javax;
 
-import net.strokkur.jap.source.classmodel.SourceAnnotationInterface;
-import net.strokkur.jap.source.classmodel.SourceClass;
-import net.strokkur.jap.source.classmodel.SourceConstructor;
+import net.strokkur.jap.source.SourceMapProcessor;
 import net.strokkur.jap.source.classmodel.SourceEnum;
 import net.strokkur.jap.source.classmodel.SourceField;
 import net.strokkur.jap.source.classmodel.SourceInterface;
-import net.strokkur.jap.source.classmodel.SourceMethod;
-import net.strokkur.jap.source.classmodel.SourceRecord;
+import net.strokkur.jap.source.util.Lazy;
 
-public interface SourceVisitor<R, D> {
-  R visitClass(SourceClass sourceClass, D data);
+import javax.lang.model.element.ElementKind;
+import javax.lang.model.element.VariableElement;
+import javax.lang.model.type.DeclaredType;
+import java.util.List;
 
-  R visitInterface(SourceInterface sourceInterface, D data);
+public class JavaxEnum extends JavaxClassLike implements SourceEnum {
+  private final Lazy<List<SourceField>> enumValues = Lazy.of(() -> element.map(e ->
+    e.getEnclosedElements().stream()
+      .filter(f -> f.getKind() == ElementKind.ENUM_CONSTANT && f instanceof VariableElement)
+      .map(VariableElement.class::cast)
+      .map(field -> JavaxUtil.convertField(processor, field))
+      .toList()
+  ));
 
-  R visitAnnotationInterface(SourceAnnotationInterface annotationInterface, D data);
+  public JavaxEnum(SourceMapProcessor processor, DeclaredType type) {
+    super(processor, type);
+  }
 
-  R visitRecord(SourceRecord record, D data);
+  @Override
+  public List<SourceInterface> implementsClasses() {
+    return interfaces();
+  }
 
-  R visitEnum(SourceEnum sourceEnum, D data);
-
-  R visitMethod(SourceMethod method, D data);
-
-  R visitConstructor(SourceConstructor constructor, D data);
-
-  R visitField(SourceField field, D data);
+  @Override
+  public List<SourceField> enumValues() {
+    return enumValues.get();
+  }
 }

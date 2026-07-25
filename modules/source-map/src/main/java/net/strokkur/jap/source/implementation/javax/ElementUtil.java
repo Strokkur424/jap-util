@@ -39,6 +39,7 @@ import net.strokkur.jap.source.implementation.javax.visitor.JavaxAnnotationValue
 import net.strokkur.jap.source.implementation.javax.visitor.JavaxTreeToExpression;
 import net.strokkur.jap.source.type.ClassLikeType;
 import net.strokkur.jap.source.type.SourceArrayType;
+import net.strokkur.jap.source.type.SourceGenericType;
 import net.strokkur.jap.source.type.SourceType;
 import net.strokkur.jap.source.util.Lazy;
 import net.strokkur.jap.source.util.LazyExpression;
@@ -57,6 +58,7 @@ import javax.lang.model.type.ArrayType;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
+import javax.lang.model.type.TypeVariable;
 import javax.lang.model.type.WildcardType;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
@@ -134,7 +136,8 @@ public final class ElementUtil {
         .map(mirror -> (ConvertToGenericType) switch (mirror) {
           case DeclaredType dec -> mapDeclared(processor, dec);
           case WildcardType wild -> CodeTypes.genericWildcard();
-          default -> throw new IllegalStateException("Unexpected value: " + mirror);
+          case TypeVariable typeVar -> CodeTypes.generic(typeVar.toString());
+          default -> throw new IllegalStateException("Unexpected value: " + mirror + " (" + mirror.getKind() + ")");
         })
         .toArray(ConvertToGenericType[]::new));
     }
@@ -180,6 +183,10 @@ public final class ElementUtil {
       );
     }
 
+    if (mirror.getKind() == TypeKind.TYPEVAR) {
+      return new SourceGenericType(mirror.toString());
+    }
+
     throw new IllegalArgumentException("Unknown type kind: " + mirror.getKind());
   }
 
@@ -189,7 +196,8 @@ public final class ElementUtil {
       case RECORD -> new JavaxRecord(processor, (DeclaredType) element.asType());
       case INTERFACE -> new JavaxInterface(processor, (DeclaredType) element.asType());
       case ANNOTATION_TYPE -> new JavaxAnnotationInterface(processor, (DeclaredType) element.asType());
-      default -> throw new IllegalArgumentException("This should not happen.");
+      case ENUM -> new JavaxEnum(processor, (DeclaredType) element.asType());
+      default -> throw new IllegalArgumentException("This should not happen (" + element.getKind() + ".)");
     };
   }
 

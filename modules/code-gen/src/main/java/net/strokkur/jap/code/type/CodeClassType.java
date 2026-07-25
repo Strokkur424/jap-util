@@ -110,19 +110,6 @@ public record CodeClassType(
   }
 
   @Override
-  public boolean equals(Object o) {
-    if (!(o instanceof final CodeClassType that)) {
-      return false;
-    }
-    return Objects.equals(simpleName(), that.simpleName()) && Objects.equals(codePackage(), that.codePackage());
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(codePackage(), simpleName());
-  }
-
-  @Override
   public String toString() {
     return identifiableName() + (genericTypes == null ? "" : genericTypes.stream()
       .map(CodeGenericType::toString)
