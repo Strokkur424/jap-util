@@ -315,7 +315,11 @@ public class JavaSourcePrintingVisitor extends AbstractSourcePrintingVisitor {
             builder.append(".");
           }
           builder.append("new ");
-          builder.append(type.accept(this));
+          if (source != null) {
+            builder.append(type.name());
+          } else {
+            builder.append(type.accept(this));
+          }
           appendMethodCallParams(builder, parameters, style);
         }
 
