@@ -33,7 +33,6 @@ import net.strokkur.jap.code.statement.Statements;
 import net.strokkur.jap.code.test.util.TestTypes;
 import net.strokkur.jap.code.type.CodeClassType;
 import net.strokkur.jap.code.type.CodePrimitiveType;
-import net.strokkur.jap.code.type.CodeType;
 import net.strokkur.jap.code.type.CodeTypes;
 import net.strokkur.jap.code.type.generic.CodeGenericTypeDefinition;
 import net.strokkur.jap.code.type.generic.GenericEnclosure;

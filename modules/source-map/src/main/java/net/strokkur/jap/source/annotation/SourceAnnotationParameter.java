@@ -25,7 +25,6 @@ package net.strokkur.jap.source.annotation;
 
 import net.strokkur.jap.code.convert.ConvertToExpression;
 import net.strokkur.jap.code.type.CodeClassType;
-import net.strokkur.jap.code.type.CodeTypes;
 
 public record SourceAnnotationParameter(
   String name,

@@ -27,7 +27,6 @@ import net.strokkur.jap.code.convert.ConvertToClassType;
 import net.strokkur.jap.code.type.CodeClassType;
 import net.strokkur.jap.code.type.CodeType;
 import net.strokkur.jap.source.classmodel.SourceClassLike;
-import net.strokkur.jap.source.util.Lazy;
 
 public record ClassLikeType(
   CodeClassType codeType,

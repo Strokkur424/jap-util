@@ -21,3 +21,8 @@ java {
   withSourcesJar()
   withJavadocJar()
 }
+
+tasks.withType(Javadoc::class.java).configureEach {
+  val options = options as StandardJavadocDocletOptions
+  options.addStringOption("Xdoclint:all,-missing", "-quiet")
+}

@@ -45,7 +45,7 @@ import java.util.stream.Collectors;
 
 public final class CodeGenUtil {
   private final @Nullable CodeGenProcessor processor;
-  private static final ImportGatheringVisitor importVisitor = new ImportGatheringVisitor();
+  private static final ImportGatheringVisitor IMPORT_VISITOR = new ImportGatheringVisitor();
 
   public CodeGenUtil() {
     this(null);
@@ -72,7 +72,7 @@ public final class CodeGenUtil {
 
   public static String createJavaFile(CodeClass codeClass) {
     // The first step is to gather all imports.
-    final Set<CodeClassType> imports = codeClass.accept(importVisitor);
+    final Set<CodeClassType> imports = codeClass.accept(IMPORT_VISITOR);
     imports.removeIf(type -> CodePackage.isRedundantImport(codeClass.classType().codePackage(), type.codePackage()));
 
     final StringBuilder builder = new StringBuilder();

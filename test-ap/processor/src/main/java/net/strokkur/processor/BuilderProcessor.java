@@ -89,7 +89,7 @@ public class BuilderProcessor extends AbstractProcessor implements SourceMapProc
       builder.addMethods(CodeMethod.builder("create")
         .addModifiers(Modifiers.PUBLIC, Modifiers.STATIC)
         .setReturnType(builderType)
-        .setCodeBlock(
+        .setCode(
           Statements.returnStmt(builderType.ctor())
         )
       );
@@ -104,14 +104,14 @@ public class BuilderProcessor extends AbstractProcessor implements SourceMapProc
 
         if (component.hasAnnotation(DefaultsAnnotations.FOR_STRING)) {
           fieldBuilder.setInitializer(
-            component.firstAnnotationByType(DefaultsAnnotations.FOR_STRING)
-              .parameter("expression")
+            component.getAnnotation(DefaultsAnnotations.FOR_STRING)
+              .parameter("value")
               .expression()
           );
         } else if (component.hasAnnotation(DefaultsAnnotations.FOR_INT)) {
           fieldBuilder.setInitializer(
-            component.firstAnnotationByType(DefaultsAnnotations.FOR_INT)
-              .parameter("expression")
+            component.getAnnotation(DefaultsAnnotations.FOR_INT)
+              .parameter("value")
               .expression()
           );
         } else if (!(component.type() instanceof SourcePrimitiveType)) {
@@ -139,7 +139,7 @@ public class BuilderProcessor extends AbstractProcessor implements SourceMapProc
           .setReturnType(builderType)
           .addModifiers(Modifiers.PUBLIC)
           .addParameter(component.type(), component.name(), paramAnnotations)
-          .setCodeBlock(
+          .setCode(
             Expressions.thisExpr().chainField(component.name()).assign(Expressions.variable(component.name())),
             Statements.returnStmt(Expressions.thisExpr())
           )
@@ -147,7 +147,7 @@ public class BuilderProcessor extends AbstractProcessor implements SourceMapProc
         builder.addMethods(CodeMethod.builder("get" + uppercaseName)
           .setReturnType(component.type())
           .addModifiers(Modifiers.PUBLIC)
-          .setCodeBlock(
+          .setCode(
             Statements.returnStmt(Expressions.thisExpr().chainField(component.name()))
           )
         );
@@ -156,7 +156,7 @@ public class BuilderProcessor extends AbstractProcessor implements SourceMapProc
       builder.addMethods(CodeMethod.builder("build")
         .setReturnType(classLike)
         .addModifiers(Modifiers.PUBLIC)
-        .setCodeBlock(
+        .setCode(
           Statements.returnStmt(
             classLike.ctor(ctorParameters.toArray(ConvertToExpression[]::new))
               .setStyle(StyleConfig.MULTILINE)

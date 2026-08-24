@@ -31,8 +31,8 @@ public interface ConvertToType {
   CodeType toType();
 
   default boolean isType(ConvertToType other) {
-    CodeType thisType = toType();
-    CodeType otherType = other.toType();
+    final CodeType thisType = toType();
+    final CodeType otherType = other.toType();
     return thisType.equals(otherType);
   }
 

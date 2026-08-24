@@ -25,172 +25,134 @@ package net.strokkur.jap.source.annotation;
 
 import net.strokkur.jap.code.convert.ConvertToClassType;
 import net.strokkur.jap.code.type.CodeTypes;
-import net.strokkur.jap.source.classmodel.SourceAnnotationInterface;
 import net.strokkur.jap.source.classmodel.SourceElement;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Predicate;
-import java.util.stream.Stream;
 
 public interface AnnotationsHolder extends SourceElement {
 
+  int MAX_INHERITANCE_LAYER = 3;
+
   List<SourceAnnotation> annotations();
 
-  @ApiStatus.Internal
-  default Predicate<SourceAnnotation> predicateAnnotationWithType(ConvertToClassType type) {
-    return anno -> anno.type().equals(type.toClassType());
+  //
+  // Single-layer, single-value methods.
+  //
+
+  default Optional<SourceAnnotation> findAnnotation(ConvertToClassType type) {
+    return annotations().stream()
+      .filter(anno -> anno.type().equals(type.toClassType()))
+      .findFirst();
+  }
+
+  default Optional<SourceAnnotation> findAnnotation(Class<? extends Annotation> annotationClass) {
+    return findAnnotation(CodeTypes.ofJavaClass(annotationClass));
   }
 
   default boolean hasAnnotation(ConvertToClassType type) {
-    return annotations().stream()
-      .anyMatch(predicateAnnotationWithType(type));
+    return findAnnotation(type).isPresent();
   }
 
   default boolean hasAnnotation(Class<? extends Annotation> annotationClass) {
     return hasAnnotation(CodeTypes.ofJavaClass(annotationClass));
   }
 
-  default List<SourceAnnotation> annotationsByType(ConvertToClassType type) {
+  default SourceAnnotation getAnnotation(ConvertToClassType type) {
+    return findAnnotation(type).orElseThrow();
+  }
+
+  default SourceAnnotation getAnnotation(Class<? extends Annotation> type) {
+    return findAnnotation(type).orElseThrow();
+  }
+
+  default <T extends Annotation> Optional<T> findAnnotationValue(Class<T> annotationType) {
+    return findAnnotation(annotationType).map(a -> a.value(annotationType));
+  }
+
+  default <T extends Annotation> T getAnnotationValue(Class<T> annotationType) {
+    return getAnnotation(annotationType).value(annotationType);
+  }
+
+  //
+  // Multi-layer, single-value methods.
+  //
+
+  @ApiStatus.Internal
+  default Optional<SourceAnnotation> findAnnotationInherited(ConvertToClassType type, int layer) {
+    final Optional<SourceAnnotation> foundOnThisLevel = findAnnotation(type);
+    if (foundOnThisLevel.isPresent()) {
+      return foundOnThisLevel;
+    }
+
+    if (layer > MAX_INHERITANCE_LAYER) {
+      return Optional.empty();
+    }
+
     return annotations().stream()
-      .filter(predicateAnnotationWithType(type))
-      .toList();
-  }
-
-  default <T extends Annotation> List<T> annotationsValuesByType(Class<T> annotationClass) {
-    return annotationsByType(annotationClass).stream()
-      .map(a -> a.value(annotationClass))
-      .toList();
-  }
-
-  default List<SourceAnnotation> annotationsByType(Class<? extends Annotation> annotationClass) {
-    return annotationsByType(CodeTypes.ofJavaClass(annotationClass));
-  }
-
-  default SourceAnnotation firstAnnotationByType(ConvertToClassType type) {
-    return firstAnnotationByTypeOptional(type).orElseThrow();
-  }
-
-  default <T extends Annotation> T firstAnnotationValueByType(Class<T> annotationClass) {
-    return firstAnnotationByType(annotationClass).value(annotationClass);
-  }
-
-  default SourceAnnotation firstAnnotationByType(Class<? extends Annotation> annotationClass) {
-    return firstAnnotationByType(CodeTypes.ofJavaClass(annotationClass));
-  }
-
-  default Optional<SourceAnnotation> firstAnnotationByTypeOptional(ConvertToClassType type) {
-    return annotations().stream()
-      .filter(predicateAnnotationWithType(type))
+      .flatMap(anno -> anno.source().findAnnotationInherited(type, layer + 1).stream())
       .findFirst();
   }
 
-  default <T extends Annotation> Optional<T> firstAnnotationValueByTypeOptional(Class<T> annotationClass) {
-    return firstAnnotationByTypeOptional(annotationClass)
-      .map(a -> a.value(annotationClass));
+  default Optional<SourceAnnotation> findAnnotationInherited(ConvertToClassType type) {
+    return findAnnotationInherited(type, 1);
   }
 
-  default Optional<SourceAnnotation> firstAnnotationByTypeOptional(Class<? extends Annotation> annotationClass) {
-    return firstAnnotationByTypeOptional(CodeTypes.ofJavaClass(annotationClass));
+  default Optional<SourceAnnotation> findAnnotationInherited(Class<? extends Annotation> annotationClass) {
+    return findAnnotationInherited(CodeTypes.ofJavaClass(annotationClass));
   }
 
   default boolean hasAnnotationInherited(ConvertToClassType type) {
-    if (hasAnnotation(type)) {
-      return true;
-    }
-
-    class Internal {
-      static final int MAX_DEPTH = 3;
-
-      boolean recurseSearching(SourceAnnotationInterface annotation, int depth) {
-        if (annotation.hasAnnotation(type)) {
-          return true;
-        }
-
-        if (depth > MAX_DEPTH) {
-          return false;
-        }
-
-        return annotation.annotations().stream()
-          .anyMatch(anno -> recurseSearching(anno.source(), depth + 1));
-      }
-    }
-
-    final Internal internal = new Internal();
-    return annotations().stream()
-      .anyMatch(anno -> internal.recurseSearching(anno.source(), 1));
+    return findAnnotationInherited(type).isPresent();
   }
 
   default boolean hasAnnotationInherited(Class<? extends Annotation> annotationClass) {
     return hasAnnotationInherited(CodeTypes.ofJavaClass(annotationClass));
   }
 
-  default SourceAnnotation firstAnnotationInherited(ConvertToClassType type) {
-    return firstAnnotationInheritedOptional(type).orElseThrow();
+  default SourceAnnotation getAnnotationInherited(ConvertToClassType type) {
+    return findAnnotationInherited(type).orElseThrow();
   }
 
-  default Optional<SourceAnnotation> firstAnnotationInheritedOptional(ConvertToClassType type) {
-    if (hasAnnotation(type)) {
-      return firstAnnotationByTypeOptional(type);
+  default SourceAnnotation getAnnotationInherited(Class<? extends Annotation> type) {
+    return findAnnotationInherited(type).orElseThrow();
+  }
+
+  default <T extends Annotation> Optional<T> findAnnotationValueInherited(Class<T> annotationType) {
+    return findAnnotationInherited(annotationType).map(a -> a.value(annotationType));
+  }
+
+  default <T extends Annotation> T getAnnotationValueInherited(Class<T> annotationType) {
+    return getAnnotationInherited(annotationType).value(annotationType);
+  }
+
+  //
+  // Single-layer. multi-value methods.
+  //
+
+  default <T extends Annotation, P extends Annotation> List<T> getAnnotations(@Nullable Class<P> supertype, Class<T> type) {
+    if (supertype == null) {
+      return findAnnotationValue(type).map(List::of).orElseGet(List::of);
     }
 
-    return annotations().stream()
-      .filter(anno -> anno.source().hasAnnotationInherited(type))
-      .map(anno -> anno.source().firstAnnotationInherited(type))
-      .findFirst();
-  }
-
-  default SourceAnnotation firstAnnotationInherited(Class<? extends Annotation> annotationClass) {
-    return firstAnnotationInherited(CodeTypes.ofJavaClass(annotationClass));
-  }
-
-  default Optional<SourceAnnotation> firstAnnotationInheritedOptional(Class<? extends Annotation> annotationClass) {
-    return firstAnnotationInheritedOptional(CodeTypes.ofJavaClass(annotationClass));
-  }
-
-  default <T extends Annotation> T firstAnnotationValueInherited(Class<T> annotationClass) {
-    return firstAnnotationInherited(CodeTypes.ofJavaClass(annotationClass)).value(annotationClass);
-  }
-
-  default <T extends Annotation> Optional<T> firstAnnotationValueInheritedOptional(Class<T> annotationClass) {
-    return firstAnnotationInheritedOptional(CodeTypes.ofJavaClass(annotationClass))
-      .map(a -> a.value(annotationClass));
-  }
-
-  default List<SourceAnnotation> annotationsInherited(ConvertToClassType type) {
-    class Internal {
-      static final int MAX_DEPTH = 3;
-
-      Stream<SourceAnnotation> annotationsInherited(SourceAnnotationInterface anno, int depth) {
-        if (depth >= MAX_DEPTH) {
-          return Stream.empty();
+    return findAnnotation(supertype)
+      .map(anno -> {
+        try {
+          final P many = anno.value(supertype);
+          Method values = supertype.getDeclaredMethod("value");
+          return List.of((T[]) values.invoke(many));
+        } catch (ReflectiveOperationException ex) {
+          throw new RuntimeException("Reflection to value() method failed.", ex);
         }
-
-        return anno.annotations().stream()
-          .flatMap(annotation -> annotation.type().equals(type.toClassType())
-            ? Stream.of(annotation)
-            : annotationsInherited(annotation.source(), depth + 1)
-          );
-      }
-    }
-
-    final Internal internal = new Internal();
-    return annotations().stream()
-      .flatMap(annotation -> annotation.type().equals(type.toClassType())
-        ? Stream.of(annotation)
-        : internal.annotationsInherited(annotation.source(), 1))
-      .toList();
+      })
+      .orElseGet(() -> findAnnotationValue(type).map(List::of).orElseGet(List::of));
   }
 
-  default <T extends Annotation> List<T> annotationsValuesInherited(Class<T> annotationClass) {
-    return annotationsInherited(annotationClass).stream()
-      .map(a -> a.value(annotationClass))
-      .toList();
-  }
-
-  default List<SourceAnnotation> annotationsInherited(Class<? extends Annotation> annotationClass) {
-    return annotationsInherited(CodeTypes.ofJavaClass(annotationClass));
+  default boolean hasAnnotations(@Nullable Class<? extends Annotation> supertype, Class<? extends Annotation> type) {
+    return !getAnnotations(supertype, type).isEmpty();
   }
 }

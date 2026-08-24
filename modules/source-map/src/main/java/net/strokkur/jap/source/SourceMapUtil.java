@@ -30,7 +30,6 @@ import net.strokkur.jap.source.classmodel.SourceField;
 import net.strokkur.jap.source.classmodel.SourceMethod;
 import net.strokkur.jap.source.classmodel.SourceMethodParameter;
 import net.strokkur.jap.source.implementation.javax.ElementUtil;
-import net.strokkur.jap.source.implementation.javax.JavaxConstructor;
 import net.strokkur.jap.source.implementation.javax.JavaxUtil;
 
 import javax.lang.model.element.Element;

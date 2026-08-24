@@ -23,8 +23,6 @@
  */
 package net.strokkur.jap.code.type;
 
-import org.jspecify.annotations.NonNull;
-
 public record CodePrimitiveType(
   String name,
   String boxedName
