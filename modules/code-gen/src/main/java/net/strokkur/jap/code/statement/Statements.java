@@ -24,10 +24,13 @@
 package net.strokkur.jap.code.statement;
 
 import net.strokkur.jap.code.classmodel.CodeBlock;
+import net.strokkur.jap.code.convert.ConvertToClassType;
 import net.strokkur.jap.code.convert.ConvertToExpression;
 import net.strokkur.jap.code.convert.ConvertToStatement;
 import net.strokkur.jap.code.convert.ConvertToType;
 import org.jspecify.annotations.Nullable;
+
+import java.util.List;
 
 public final class Statements {
 
@@ -72,6 +75,14 @@ public final class Statements {
       booleanExpr.toExpression(),
       ifTrue,
       ifFalse
+    );
+  }
+
+  public static TryStatement tryStmt(CodeBlock tryBlock, ConvertToClassType catchType, String catchName, CodeBlock catchBlock) {
+    return new TryStatement(
+      tryBlock,
+      List.of(new TryStatement.CatchStatement(List.of(catchType.toClassType()), catchName, catchBlock)),
+      null
     );
   }
 

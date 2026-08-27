@@ -65,6 +65,7 @@ import net.strokkur.jap.code.statement.ExpressionStatement;
 import net.strokkur.jap.code.statement.IfStatement;
 import net.strokkur.jap.code.statement.ReturnStatement;
 import net.strokkur.jap.code.statement.ThrowStatement;
+import net.strokkur.jap.code.statement.TryStatement;
 import net.strokkur.jap.code.statement.VariableDeclarationStatement;
 import net.strokkur.jap.code.type.CodeArrayType;
 import net.strokkur.jap.code.type.CodeClassType;
@@ -416,6 +417,31 @@ public class JavaSourcePrintingVisitor extends AbstractSourcePrintingVisitor {
         if (ifFalse != null) {
           builder.append(" {\n");
           builder.append(ifFalse.accept(this));
+          appendIndent(builder);
+          builder.append("}");
+        }
+        builder.append("\n");
+        return;
+      }
+
+      if (statement instanceof TryStatement(CodeBlock tryBlock, List<TryStatement.CatchStatement> catchStatements, @Nullable CodeBlock finallyBlock)) {
+        builder.append("try {\n");
+        builder.append(tryBlock.accept(this));
+        appendIndent(builder);
+        builder.append("}");
+        for (TryStatement.CatchStatement catchStmt : catchStatements) {
+          builder.append(" catch (");
+          builder.append(catchStmt.exceptionTypes().stream()
+            .map(type -> type.accept(this).toString())
+            .collect(Collectors.joining(" | ")));
+          builder.append(" ").append(catchStmt.catchName()).append(") {\n");
+          builder.append(catchStmt.catchBlock().accept(this));
+          appendIndent(builder);
+          builder.append("}");
+        }
+        if (finallyBlock != null) {
+          builder.append(" finally {\n");
+          builder.append(finallyBlock.accept(this));
           appendIndent(builder);
           builder.append("}");
         }

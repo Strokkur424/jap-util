@@ -23,6 +23,7 @@
  */
 package net.strokkur.jap.code.test.java;
 
+import net.strokkur.jap.code.classmodel.CodeBlock;
 import net.strokkur.jap.code.classmodel.CodeMethod;
 import net.strokkur.jap.code.convert.ConvertToClassType;
 import net.strokkur.jap.code.expression.Expressions;
@@ -33,6 +34,7 @@ import net.strokkur.jap.code.type.CodeTypes;
 import net.strokkur.jap.code.type.preset.JavaTypes;
 import org.junit.jupiter.api.Test;
 
+import javax.swing.plaf.nimbus.State;
 import java.util.Set;
 
 import static net.strokkur.jap.code.expression.Expressions.string;
@@ -102,6 +104,30 @@ class StatementGenTests extends AbstractGenTest {
       variable("ctx").chainMethod("getSource").instanceOf(TestTypes.PLAYER).not(),
       JavaTypes.ILLEGAL_STATE_EXCEPTION.ctor(string("Don't do that.")).throwStmt()
     ));
+  }
+
+  @Test
+  void testTryCatchExpr() {
+    check(
+      Set.of(JavaTypes.STRING, JavaTypes.RUNTIME_EXCEPTION),
+      """
+        try {
+          return String.valueOf(a);
+        } catch (RuntimeException ex) {
+          throw new RuntimeException(ex);
+        }
+        """,
+      Statements.tryStmt(
+        CodeBlock.of(
+          Statements.returnStmt(JavaTypes.STRING.chainMethod("valueOf", Expressions.variable("a")))
+        ),
+        JavaTypes.RUNTIME_EXCEPTION,
+        "ex",
+        CodeBlock.of(
+          JavaTypes.RUNTIME_EXCEPTION.ctor(Expressions.variable("ex")).throwStmt()
+        )
+      )
+    );
   }
 
   @Test

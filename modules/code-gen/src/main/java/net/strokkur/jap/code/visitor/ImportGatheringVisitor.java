@@ -53,6 +53,7 @@ import net.strokkur.jap.code.statement.ExpressionStatement;
 import net.strokkur.jap.code.statement.IfStatement;
 import net.strokkur.jap.code.statement.ReturnStatement;
 import net.strokkur.jap.code.statement.ThrowStatement;
+import net.strokkur.jap.code.statement.TryStatement;
 import net.strokkur.jap.code.statement.VariableDeclarationStatement;
 import net.strokkur.jap.code.type.CodeArrayType;
 import net.strokkur.jap.code.type.CodeClassType;
@@ -63,6 +64,7 @@ import net.strokkur.jap.code.type.generic.GenericEnclosure;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -239,6 +241,19 @@ public class ImportGatheringVisitor implements CodeVisitor<Set<CodeClassType>> {
         maybeAccept(ifStmt.ifFalse())
       );
 
+      case TryStatement(
+        CodeBlock tryBlock, List<TryStatement.CatchStatement> catchStatements, @Nullable CodeBlock finallyBlock
+      ) -> join(
+        tryBlock.accept(this),
+        catchStatements.stream()
+          .flatMap(catchStmt -> join(
+            collect(catchStmt.exceptionTypes()),
+            catchStmt.catchBlock().accept(this)
+          ).stream())
+          .collect(Collectors.toSet()),
+        maybeAccept(finallyBlock)
+      );
+
       default -> throw new IllegalArgumentException("Statement of type " + statement.getClass() + " was not handled.");
     };
   }
@@ -278,7 +293,8 @@ public class ImportGatheringVisitor implements CodeVisitor<Set<CodeClassType>> {
       case CodeDocumentation.ClassReferenceMeta classReferenceMeta -> Set.of(classReferenceMeta.type());
       case CodeDocumentation.MethodReference methodReference -> maybeAccept(methodReference.source());
       case CodeDocumentation.MethodReferenceMeta methodReferenceMeta -> maybeAccept(methodReferenceMeta.source());
-      case CodeDocumentation.DocumentationComponentList documentationComponentList -> collect(documentationComponentList.components());
+      case CodeDocumentation.DocumentationComponentList documentationComponentList ->
+        collect(documentationComponentList.components());
       default -> Set.of();
     };
   }
