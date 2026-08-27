@@ -94,11 +94,6 @@ public record CodeClassType(
   }
 
   @Override
-  public FieldMethodSource toFieldMethodSource() {
-    return this;
-  }
-
-  @Override
   public CodeType toType() {
     return this;
   }

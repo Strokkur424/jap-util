@@ -23,11 +23,12 @@
  */
 package net.strokkur.jap.code.convert;
 
+import net.strokkur.jap.code.expression.source.FieldMethodSource;
 import net.strokkur.jap.code.type.CodeArrayType;
 import net.strokkur.jap.code.type.CodeType;
 import net.strokkur.jap.code.type.CodeTypes;
 
-public interface ConvertToType {
+public interface ConvertToType extends ConvertToFieldMethodSource {
   CodeType toType();
 
   default boolean isType(ConvertToType other) {
@@ -38,5 +39,10 @@ public interface ConvertToType {
 
   default CodeArrayType toArray() {
     return CodeTypes.asArray(toType());
+  }
+
+  @Override
+  default FieldMethodSource toFieldMethodSource() {
+    return toType();
   }
 }

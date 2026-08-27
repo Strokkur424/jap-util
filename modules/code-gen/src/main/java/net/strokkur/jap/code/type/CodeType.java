@@ -24,10 +24,11 @@
 package net.strokkur.jap.code.type;
 
 import net.strokkur.jap.code.convert.ConvertToType;
+import net.strokkur.jap.code.expression.source.FieldMethodSource;
 import net.strokkur.jap.code.visitor.CodeVisitable;
 import net.strokkur.jap.code.visitor.CodeVisitor;
 
-public interface CodeType extends ConvertToType, CodeVisitable {
+public interface CodeType extends ConvertToType, CodeVisitable, FieldMethodSource {
 
   /// A code-representable name of this type, if an import is present.
   String simpleName();
@@ -43,5 +44,10 @@ public interface CodeType extends ConvertToType, CodeVisitable {
   @Override
   default <R> R accept(CodeVisitor<R> visitor) {
     return visitor.visitType(this);
+  }
+
+  @Override
+  default FieldMethodSource toFieldMethodSource() {
+    return this;
   }
 }

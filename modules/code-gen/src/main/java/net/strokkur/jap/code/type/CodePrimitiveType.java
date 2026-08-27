@@ -23,10 +23,13 @@
  */
 package net.strokkur.jap.code.type;
 
+import net.strokkur.jap.code.expression.source.FieldMethodSource;
+
 public record CodePrimitiveType(
   String name,
   String boxedName
-) implements CodeType {
+) implements CodeType, FieldMethodSource {
+
   /// This cannot be used anywhere else except the return value of a method. Nothing
   /// has to specifically enforce this, but the JVM does not allow otherwise.
   public static final CodePrimitiveType VOID = new CodePrimitiveType("void", "Void");

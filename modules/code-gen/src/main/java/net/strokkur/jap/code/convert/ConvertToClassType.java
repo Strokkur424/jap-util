@@ -54,11 +54,6 @@ public interface ConvertToClassType extends ConvertToType, ConvertToGenericType,
     return toClassType().typed(types);
   }
 
-  @Override
-  default FieldMethodSource toFieldMethodSource() {
-    return toClassType();
-  }
-
   default ConstructorInvocationBuilder ctor(ConvertToExpression... parameters) {
     return Expressions.ctorInvocation(this)
       .addParameters(parameters);
