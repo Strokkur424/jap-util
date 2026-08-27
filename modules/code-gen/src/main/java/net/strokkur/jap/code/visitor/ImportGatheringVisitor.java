@@ -31,6 +31,7 @@ import net.strokkur.jap.code.classmodel.CodeConstructor;
 import net.strokkur.jap.code.classmodel.CodeField;
 import net.strokkur.jap.code.classmodel.CodeMethod;
 import net.strokkur.jap.code.classmodel.CodeParameterDefinition;
+import net.strokkur.jap.code.documentation.CodeDocumentation;
 import net.strokkur.jap.code.expression.AssignExpression;
 import net.strokkur.jap.code.expression.CodeExpression;
 import net.strokkur.jap.code.expression.ConstructorInvocation;
@@ -93,6 +94,7 @@ public class ImportGatheringVisitor implements CodeVisitor<Set<CodeClassType>> {
   public Set<CodeClassType> visitClass(CodeClass codeClass) {
     return join(
       Set.of(codeClass.classType()),
+      maybeAccept(codeClass.documentation()),
       collect(codeClass.methods()),
       collect(codeClass.constructors()),
       maybeAccept(codeClass.extendsType()),
@@ -106,6 +108,7 @@ public class ImportGatheringVisitor implements CodeVisitor<Set<CodeClassType>> {
   @Override
   public Set<CodeClassType> visitMethod(CodeMethod codeMethod) {
     return join(
+      maybeAccept(codeMethod.documentation()),
       collect(codeMethod.parameters()),
       collect(codeMethod.throwsExceptions()),
       codeMethod.returnType().accept(this),
@@ -118,6 +121,7 @@ public class ImportGatheringVisitor implements CodeVisitor<Set<CodeClassType>> {
   @Override
   public Set<CodeClassType> visitConstructor(CodeConstructor ctor) {
     return join(
+      maybeAccept(ctor.documentation()),
       collect(ctor.annotations()),
       collect(ctor.generics()),
       collect(ctor.throwsExceptions()),
@@ -265,5 +269,17 @@ public class ImportGatheringVisitor implements CodeVisitor<Set<CodeClassType>> {
   @Override
   public Set<CodeClassType> visitGenericEnclosure(GenericEnclosure enclosure) {
     return enclosure.encloses().accept(this);
+  }
+
+  @Override
+  public Set<CodeClassType> visitDocumentation(CodeDocumentation documentation) {
+    return switch (documentation) {
+      case CodeDocumentation.ClassReference classReference -> Set.of(classReference.codeClass());
+      case CodeDocumentation.ClassReferenceMeta classReferenceMeta -> Set.of(classReferenceMeta.type());
+      case CodeDocumentation.MethodReference methodReference -> maybeAccept(methodReference.source());
+      case CodeDocumentation.MethodReferenceMeta methodReferenceMeta -> maybeAccept(methodReferenceMeta.source());
+      case CodeDocumentation.DocumentationComponentList documentationComponentList -> collect(documentationComponentList.components());
+      default -> Set.of();
+    };
   }
 }

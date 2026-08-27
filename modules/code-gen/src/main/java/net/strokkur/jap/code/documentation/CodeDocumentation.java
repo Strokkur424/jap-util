@@ -27,12 +27,19 @@ import net.strokkur.jap.code.classmodel.CodeMethod;
 import net.strokkur.jap.code.convert.ConvertToClassType;
 import net.strokkur.jap.code.convert.ConvertToMethod;
 import net.strokkur.jap.code.type.CodeClassType;
+import net.strokkur.jap.code.visitor.CodeVisitable;
+import net.strokkur.jap.code.visitor.CodeVisitor;
 import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 
-public interface CodeDocumentation {
+public sealed interface CodeDocumentation extends CodeVisitable {
   void accept(DocumentationVisitor visitor);
+
+  @Override
+  default <R> R accept(CodeVisitor<R> visitor) {
+    return visitor.visitDocumentation(this);
+  }
 
   //<editor-fold desc="Static methods">
   static CodeDocumentation combine(CodeDocumentation... children) {
@@ -77,9 +84,7 @@ public interface CodeDocumentation {
 
   /// Intended to be used inside [#combineLines(CodeDocumentation...)] for a true blank line.
   static CodeDocumentation blank() {
-    return visitor -> {
-      // noop
-    };
+    return new Blank();
   }
 
   static CodeDocumentation linebreak() {
@@ -225,6 +230,13 @@ public interface CodeDocumentation {
     @Override
     public void accept(DocumentationVisitor visitor) {
       visitor.visit(this);
+    }
+  }
+
+  final class Blank implements CodeDocumentation {
+    @Override
+    public void accept(DocumentationVisitor visitor) {
+      // noop
     }
   }
 }

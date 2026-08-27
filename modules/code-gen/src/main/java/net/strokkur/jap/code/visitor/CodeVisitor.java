@@ -31,6 +31,7 @@ import net.strokkur.jap.code.classmodel.CodeConstructor;
 import net.strokkur.jap.code.classmodel.CodeField;
 import net.strokkur.jap.code.classmodel.CodeMethod;
 import net.strokkur.jap.code.classmodel.CodeParameterDefinition;
+import net.strokkur.jap.code.documentation.CodeDocumentation;
 import net.strokkur.jap.code.expression.CodeExpression;
 import net.strokkur.jap.code.statement.CodeStatement;
 import net.strokkur.jap.code.type.CodeType;
@@ -63,4 +64,6 @@ public interface CodeVisitor<R> {
   R visitGenericTypeDefinition(CodeGenericTypeDefinition genericTypeDefinition);
 
   R visitGenericEnclosure(GenericEnclosure enclosure);
+
+  R visitDocumentation(CodeDocumentation documentation);
 }

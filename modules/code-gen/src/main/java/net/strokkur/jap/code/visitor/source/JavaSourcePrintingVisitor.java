@@ -33,6 +33,7 @@ import net.strokkur.jap.code.classmodel.CodeMethod;
 import net.strokkur.jap.code.classmodel.CodeParameterDefinition;
 import net.strokkur.jap.code.classmodel.MethodLike;
 import net.strokkur.jap.code.documentation.AbstractDocumentationRenderer;
+import net.strokkur.jap.code.documentation.CodeDocumentation;
 import net.strokkur.jap.code.expression.AssignExpression;
 import net.strokkur.jap.code.expression.CodeExpression;
 import net.strokkur.jap.code.expression.ConstructorInvocation;
@@ -523,6 +524,11 @@ public class JavaSourcePrintingVisitor extends AbstractSourcePrintingVisitor {
         case GenericEnclosure.TypeEnclosure(CodeType encloses) -> builder.append(encloses.accept(this));
       }
     });
+  }
+
+  @Override
+  public StringBuilder visitDocumentation(CodeDocumentation documentation) {
+    throw new IllegalStateException("Not implemented; use the DocumentationRenderer instead.");
   }
 
   private void appendLambdaHead(StringBuilder builder, List<String> lambdaParams) {
