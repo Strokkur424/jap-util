@@ -308,21 +308,14 @@ public class JavaSourcePrintingVisitor extends AbstractSourcePrintingVisitor {
         case ConstructorInvocation(
           CodeClassType type, List<CodeExpression> parameters, @Nullable FieldMethodSource source, StyleConfig style
         ) -> {
-          if (source != null) {
-            builder.append(source.accept(this));
-            if (style.newline()) {
-              builder.append("\n");
-              appendIndentedContinuation(() -> appendIndent(builder));
-            }
-            builder.append(".");
-          }
+          final boolean hasLambdaBlock = printMethodHead(builder, parameters, source, style);
           builder.append("new ");
           if (source != null) {
             builder.append(type.name());
           } else {
             builder.append(type.accept(this));
           }
-          appendMethodCallParams(builder, parameters, style);
+          appendInvocationParams(builder, parameters, style, hasLambdaBlock);
         }
 
         case FieldAccess(@Nullable FieldMethodSource source, String fieldName) -> {
@@ -353,16 +346,9 @@ public class JavaSourcePrintingVisitor extends AbstractSourcePrintingVisitor {
         case MethodInvocation(
           String methodName, @Nullable FieldMethodSource source, List<CodeExpression> parameters, StyleConfig style
         ) -> {
-          if (source != null) {
-            builder.append(source.accept(this));
-            if (style.newline()) {
-              builder.append("\n");
-              appendIndentedContinuation(() -> appendIndent(builder));
-            }
-            builder.append(".");
-          }
+          final boolean hasLambdaBlock = printMethodHead(builder, parameters, source, style);
           builder.append(methodName);
-          appendMethodCallParams(builder, parameters, style);
+          appendInvocationParams(builder, parameters, style, hasLambdaBlock);
         }
 
         case MethodReference(MethodReferenceSource source, String methodName) -> {
@@ -374,8 +360,10 @@ public class JavaSourcePrintingVisitor extends AbstractSourcePrintingVisitor {
         case MultilineLambda(List<String> lambdaParameters, CodeBlock lambdaBlock) -> {
           appendLambdaHead(builder, lambdaParameters);
           builder.append("{\n");
-          builder.append(lambdaBlock.accept(this));
-          appendIndent(builder);
+          dedentContinuation(() -> {
+            builder.append(lambdaBlock.accept(this));
+            appendIndent(builder);
+          });
           builder.append("}");
         }
 
@@ -389,6 +377,19 @@ public class JavaSourcePrintingVisitor extends AbstractSourcePrintingVisitor {
         default -> throw new IllegalArgumentException("Unrecognized expression type: " + expression.getClass());
       }
     });
+  }
+
+  private boolean printMethodHead(StringBuilder builder, List<CodeExpression> parameters, @Nullable FieldMethodSource source, StyleConfig style) {
+    final boolean hasLambdaBlock = source != null && opensLambdaBlock(parameters, style);
+    if (source != null) {
+      builder.append(source.accept(this));
+      if (style.newline()) {
+        builder.append("\n");
+        appendContinuationIndent(builder, hasLambdaBlock);
+      }
+      builder.append(".");
+    }
+    return hasLambdaBlock;
   }
 
   @Override
@@ -555,6 +556,26 @@ public class JavaSourcePrintingVisitor extends AbstractSourcePrintingVisitor {
   @Override
   public StringBuilder visitDocumentation(CodeDocumentation documentation) {
     throw new IllegalStateException("Not implemented; use the DocumentationRenderer instead.");
+  }
+
+  private boolean opensLambdaBlock(List<CodeExpression> parameters, StyleConfig style) {
+    return style.newline() && parameters.stream().anyMatch(MultilineLambda.class::isInstance);
+  }
+
+  private void appendContinuationIndent(StringBuilder builder, boolean lambdaBlockArg) {
+    if (lambdaBlockArg) {
+      appendIndented(() -> appendIndent(builder));
+    } else {
+      appendIndentedContinuation(() -> appendIndent(builder));
+    }
+  }
+
+  private void appendInvocationParams(StringBuilder builder, List<CodeExpression> parameters, StyleConfig style, boolean lambdaBlockArg) {
+    if (lambdaBlockArg) {
+      appendIndented(() -> appendMethodCallParams(builder, parameters, style));
+    } else {
+      appendMethodCallParams(builder, parameters, style);
+    }
   }
 
   private void appendLambdaHead(StringBuilder builder, List<String> lambdaParams) {

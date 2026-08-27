@@ -179,6 +179,39 @@ class ExpressionGenTests extends AbstractGenTest {
     check(Set.of(TestTypes.CUSTOM_TYPE), "() -> CustomType.get()",
       Expressions.lambdaInline(TestTypes.CUSTOM_TYPE.chainMethod("get"))
     );
+
+    final String doubleNestedTest =
+      """
+        return Commands.literal(NAME)
+           .then(Commands.literal("item")
+              .executes(CustomType.log(ctx -> {
+                return Command.SINGLE_SUCCESS;
+              }, doThis()))
+              .then(Commands.literal("unset")
+                .executes(ctx -> {
+                  return Command.SINGLE_SUCCESS;
+                })
+              )
+           );
+        """;
+    check(Set.of(TestTypes.COMMANDS, TestTypes.COMMAND, TestTypes.CUSTOM_TYPE), doubleNestedTest,
+      Statements.returnStmt(
+        TestTypes.COMMANDS.chainMethod("literal", Expressions.variable("NAME"))
+          .chainMethod("then", StyleConfig.NEWLINE_BOTH,
+            TestTypes.COMMANDS.chainMethod("literal", Expressions.string("item"))
+              .chainMethod("executes", StyleConfig.NEWLINE, TestTypes.CUSTOM_TYPE.chainMethod("log",
+                Expressions.lambda("ctx", Statements.returnStmt(TestTypes.COMMAND.chainField("SINGLE_SUCCESS"))),
+                Expressions.methodInvocation("doThis")
+              ))
+              .chainMethod("then", StyleConfig.NEWLINE_BOTH,
+                TestTypes.COMMANDS.chainMethod("literal", Expressions.string("unset"))
+                  .chainMethod("executes", StyleConfig.NEWLINE,
+                    Expressions.lambda("ctx", Statements.returnStmt(TestTypes.COMMAND.chainField("SINGLE_SUCCESS")))
+                  )
+              )
+          )
+      )
+    );
   }
 
   @Test

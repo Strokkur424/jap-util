@@ -76,6 +76,13 @@ public abstract class AbstractSourcePrintingVisitor implements CodeVisitor<Strin
     continuationIndent--;
   }
 
+  protected final void dedentContinuation(Runnable run) {
+    final int previous = continuationIndent;
+    continuationIndent = Math.max(0, continuationIndent - 1);
+    run.run();
+    continuationIndent = previous;
+  }
+
   protected final StringBuilder append(Consumer<StringBuilder> run) {
     final StringBuilder builder = new StringBuilder();
     run.accept(builder);
