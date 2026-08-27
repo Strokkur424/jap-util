@@ -293,8 +293,7 @@ public class ImportGatheringVisitor implements CodeVisitor<Set<CodeClassType>> {
       case CodeDocumentation.ClassReferenceMeta classReferenceMeta -> Set.of(classReferenceMeta.type());
       case CodeDocumentation.MethodReference methodReference -> maybeAccept(methodReference.source());
       case CodeDocumentation.MethodReferenceMeta methodReferenceMeta -> maybeAccept(methodReferenceMeta.source());
-      case CodeDocumentation.DocumentationComponentList documentationComponentList ->
-        collect(documentationComponentList.components());
+      case CodeDocumentation.DocumentationComponentList documentationComponentList -> collect(documentationComponentList.components());
       default -> Set.of();
     };
   }

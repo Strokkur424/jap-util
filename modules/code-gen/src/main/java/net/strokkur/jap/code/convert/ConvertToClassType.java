@@ -25,7 +25,6 @@ package net.strokkur.jap.code.convert;
 
 import net.strokkur.jap.code.expression.Expressions;
 import net.strokkur.jap.code.expression.builder.ConstructorInvocationBuilder;
-import net.strokkur.jap.code.expression.source.FieldMethodSource;
 import net.strokkur.jap.code.expression.source.MethodReferenceSource;
 import net.strokkur.jap.code.type.CodeClassType;
 import net.strokkur.jap.code.type.CodeType;

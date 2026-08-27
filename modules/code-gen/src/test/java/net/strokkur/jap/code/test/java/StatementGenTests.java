@@ -34,7 +34,6 @@ import net.strokkur.jap.code.type.CodeTypes;
 import net.strokkur.jap.code.type.preset.JavaTypes;
 import org.junit.jupiter.api.Test;
 
-import javax.swing.plaf.nimbus.State;
 import java.util.Set;
 
 import static net.strokkur.jap.code.expression.Expressions.string;

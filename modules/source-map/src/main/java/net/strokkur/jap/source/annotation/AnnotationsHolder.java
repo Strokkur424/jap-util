@@ -27,7 +27,7 @@ import net.strokkur.jap.code.convert.ConvertToClassType;
 import net.strokkur.jap.code.type.CodeTypes;
 import net.strokkur.jap.source.classmodel.SourceElement;
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -143,7 +143,7 @@ public interface AnnotationsHolder extends SourceElement {
       .map(anno -> {
         try {
           final P many = anno.value(supertype);
-          Method values = supertype.getDeclaredMethod("value");
+          final Method values = supertype.getDeclaredMethod("value");
           return List.of((T[]) values.invoke(many));
         } catch (ReflectiveOperationException ex) {
           throw new RuntimeException("Reflection to value() method failed.", ex);
