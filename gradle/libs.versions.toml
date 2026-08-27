@@ -5,7 +5,7 @@ jetbrains-annotations = "24.0.0"
 junit = "6.0.3"
 
 # Plugins
-strokk-conventions = "0.1.1"
+strokk-conventions = "0.1.2"
 
 [libraries]
 jetbrains-annotations = { module = "org.jetbrains:annotations", version.ref = "jetbrains-annotations" }
