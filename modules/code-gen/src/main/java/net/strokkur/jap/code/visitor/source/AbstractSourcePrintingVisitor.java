@@ -27,6 +27,7 @@ import net.strokkur.jap.code.annotations.CodeAnnotation;
 import net.strokkur.jap.code.documentation.AbstractDocumentationRenderer;
 import net.strokkur.jap.code.documentation.CodeDocumentation;
 import net.strokkur.jap.code.expression.CodeExpression;
+import net.strokkur.jap.code.expression.RequiresBracketsOnAccess;
 import net.strokkur.jap.code.util.Modifiers;
 import net.strokkur.jap.code.util.StyleConfig;
 import net.strokkur.jap.code.visitor.CodeVisitable;
@@ -52,6 +53,14 @@ public abstract class AbstractSourcePrintingVisitor implements CodeVisitor<Strin
     this.documentationRenderer = documentationRenderer;
     this.indentString = indentString;
     this.continuationIndentString = continuationIndentString;
+  }
+
+  protected final void appendBrackets(StringBuilder builder, CodeVisitable element) {
+    if (element instanceof RequiresBracketsOnAccess) {
+      builder.append('(').append(element.accept(this)).append(')');
+    } else {
+      builder.append(element.accept(this));
+    }
   }
 
   protected final void appendIndented(Runnable run) {

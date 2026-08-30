@@ -35,6 +35,7 @@ import net.strokkur.jap.code.classmodel.MethodLike;
 import net.strokkur.jap.code.documentation.AbstractDocumentationRenderer;
 import net.strokkur.jap.code.documentation.CodeDocumentation;
 import net.strokkur.jap.code.expression.AssignExpression;
+import net.strokkur.jap.code.expression.CastExpression;
 import net.strokkur.jap.code.expression.CodeExpression;
 import net.strokkur.jap.code.expression.ConstructorInvocation;
 import net.strokkur.jap.code.expression.FieldAccess;
@@ -42,6 +43,7 @@ import net.strokkur.jap.code.expression.InstanceOfExpr;
 import net.strokkur.jap.code.expression.MethodInvocation;
 import net.strokkur.jap.code.expression.MethodReference;
 import net.strokkur.jap.code.expression.MultilineLambda;
+import net.strokkur.jap.code.expression.RequiresBracketsOnAccess;
 import net.strokkur.jap.code.expression.SingleLineLambda;
 import net.strokkur.jap.code.expression.UnaryMinusExpression;
 import net.strokkur.jap.code.expression.bool.AndExpression;
@@ -284,19 +286,19 @@ public class JavaSourcePrintingVisitor extends AbstractSourcePrintingVisitor {
         // Boolean expressions
         case NotExpression(CodeExpression contained) -> {
           builder.append('!');
-          appendParenthesesMaybe(builder, contained, contained instanceof ScopedNot);
+          appendParenthesesMaybe(builder, contained, contained instanceof ScopedNot || contained instanceof RequiresBracketsOnAccess);
         }
 
         case AndExpression(CodeExpression left, CodeExpression right) -> {
-          appendParenthesesMaybe(builder, left, left instanceof OrExpression);
+          appendParenthesesMaybe(builder, left, left instanceof OrExpression || left instanceof RequiresBracketsOnAccess);
           builder.append(" && ");
-          appendParenthesesMaybe(builder, right, right instanceof OrExpression);
+          appendParenthesesMaybe(builder, right, right instanceof OrExpression || right instanceof RequiresBracketsOnAccess);
         }
 
         case OrExpression(CodeExpression left, CodeExpression right) -> {
-          builder.append(left.accept(this));
+          appendBrackets(builder, left);
           builder.append(" || ");
-          builder.append(right.accept(this));
+          appendBrackets(builder, right);
         }
 
         // Other
@@ -304,6 +306,12 @@ public class JavaSourcePrintingVisitor extends AbstractSourcePrintingVisitor {
           .append(leftSide.accept(this))
           .append(" = ")
           .append(rightSide.accept(this));
+
+        case CastExpression(CodeExpression from, CodeType into) -> builder
+          .append('(')
+          .append(into.accept(this))
+          .append(") ")
+          .append(from.accept(this));
 
         case ConstructorInvocation(
           CodeClassType type, List<CodeExpression> parameters, @Nullable FieldMethodSource source, StyleConfig style
@@ -322,7 +330,8 @@ public class JavaSourcePrintingVisitor extends AbstractSourcePrintingVisitor {
           if (source == null) {
             builder.append(fieldName);
           } else {
-            builder.append(source.accept(this)).append(".").append(fieldName);
+            appendBrackets(builder, source);
+            builder.append(".").append(fieldName);
           }
         }
 
@@ -352,7 +361,8 @@ public class JavaSourcePrintingVisitor extends AbstractSourcePrintingVisitor {
         }
 
         case MethodReference(MethodReferenceSource source, String methodName) -> {
-          builder.append(source.accept(this))
+          appendBrackets(builder, source);
+          builder
             .append("::")
             .append(methodName);
         }
@@ -372,7 +382,10 @@ public class JavaSourcePrintingVisitor extends AbstractSourcePrintingVisitor {
           builder.append(codeExpression.accept(this));
         }
 
-        case UnaryMinusExpression(CodeExpression expr) -> builder.append("-").append(expr.accept(this));
+        case UnaryMinusExpression(CodeExpression expr) -> {
+          builder.append("-");
+          appendBrackets(builder, expr);
+        }
 
         default -> throw new IllegalArgumentException("Unrecognized expression type: " + expression.getClass());
       }
@@ -382,7 +395,7 @@ public class JavaSourcePrintingVisitor extends AbstractSourcePrintingVisitor {
   private boolean printMethodHead(StringBuilder builder, List<CodeExpression> parameters, @Nullable FieldMethodSource source, StyleConfig style) {
     final boolean hasLambdaBlock = source != null && opensLambdaBlock(parameters, style);
     if (source != null) {
-      builder.append(source.accept(this));
+      appendBrackets(builder, source);
       if (style.newline()) {
         builder.append("\n");
         appendContinuationIndent(builder, hasLambdaBlock);

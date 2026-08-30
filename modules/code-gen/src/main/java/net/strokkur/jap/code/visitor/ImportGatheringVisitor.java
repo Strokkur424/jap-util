@@ -33,6 +33,7 @@ import net.strokkur.jap.code.classmodel.CodeMethod;
 import net.strokkur.jap.code.classmodel.CodeParameterDefinition;
 import net.strokkur.jap.code.documentation.CodeDocumentation;
 import net.strokkur.jap.code.expression.AssignExpression;
+import net.strokkur.jap.code.expression.CastExpression;
 import net.strokkur.jap.code.expression.CodeExpression;
 import net.strokkur.jap.code.expression.ConstructorInvocation;
 import net.strokkur.jap.code.expression.FieldAccess;
@@ -176,6 +177,11 @@ public class ImportGatheringVisitor implements CodeVisitor<Set<CodeClassType>> {
       );
 
       case FieldAccess field -> maybeAccept(field.source());
+
+      case CastExpression(CodeExpression from, CodeType into) -> join(
+        from.accept(this),
+        maybeAccept(into)
+      );
 
       case InstanceOfExpr inst -> join(
         Set.of(inst.classType()),

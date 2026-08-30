@@ -28,6 +28,7 @@ import net.strokkur.jap.code.convert.ConvertToClassType;
 import net.strokkur.jap.code.convert.ConvertToExpression;
 import net.strokkur.jap.code.convert.ConvertToMethodReferenceSource;
 import net.strokkur.jap.code.convert.ConvertToStatement;
+import net.strokkur.jap.code.convert.ConvertToType;
 import net.strokkur.jap.code.expression.builder.ConstructorInvocationBuilder;
 import net.strokkur.jap.code.expression.builder.MethodInvocationBuilder;
 import net.strokkur.jap.code.expression.simple.CodeBooleanExpression;
@@ -91,6 +92,10 @@ public final class Expressions {
 
   public static UnaryMinusExpression unaryMinus(ConvertToExpression expr) {
     return new UnaryMinusExpression(expr.toExpression());
+  }
+
+  public static CastExpression cast(ConvertToExpression expr, ConvertToType to) {
+    return new CastExpression(expr.toExpression(), to.toType());
   }
 
   public static ConstructorInvocationBuilder ctorInvocation(ConvertToClassType classType) {

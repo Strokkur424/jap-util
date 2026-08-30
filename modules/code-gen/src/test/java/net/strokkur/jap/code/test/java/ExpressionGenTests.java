@@ -28,6 +28,7 @@ import net.strokkur.jap.code.expression.FieldAccess;
 import net.strokkur.jap.code.expression.simple.CodeBooleanExpression;
 import net.strokkur.jap.code.statement.Statements;
 import net.strokkur.jap.code.test.util.TestTypes;
+import net.strokkur.jap.code.type.CodePrimitiveType;
 import net.strokkur.jap.code.type.preset.JavaTypes;
 import net.strokkur.jap.code.util.StyleConfig;
 import org.junit.jupiter.api.Test;
@@ -77,6 +78,27 @@ class ExpressionGenTests extends AbstractGenTest {
             )
         )
         .chainMethod("build", StyleConfig.NEWLINE)
+    );
+  }
+
+  @Test
+  void testBrackets() {
+    check(
+      Set.of(JavaTypes.STRING),
+      "((String) val).access",
+      Expressions.variable("val")
+        .cast(JavaTypes.STRING)
+        .chainField("access")
+    );
+  }
+
+  @Test
+  void testCast() {
+    check(
+      Set.of(),
+      "(byte) 25",
+      Expressions.intExpr(25)
+        .cast(CodePrimitiveType.BYTE)
     );
   }
 

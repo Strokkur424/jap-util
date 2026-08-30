@@ -23,6 +23,7 @@
  */
 package net.strokkur.jap.code.convert;
 
+import net.strokkur.jap.code.expression.CastExpression;
 import net.strokkur.jap.code.expression.CodeExpression;
 import net.strokkur.jap.code.expression.Expressions;
 import net.strokkur.jap.code.expression.InstanceOfExpr;
@@ -40,6 +41,10 @@ public interface ConvertToExpression extends ConvertToStatement {
   @Override
   default CodeStatement toStatement() {
     return Statements.expressionStatement(this);
+  }
+
+  default CastExpression cast(ConvertToType into) {
+    return Expressions.cast(this, into);
   }
 
   default InstanceOfExpr instanceOf(ConvertToClassType type) {
