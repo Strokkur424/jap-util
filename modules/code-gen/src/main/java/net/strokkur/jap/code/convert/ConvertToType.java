@@ -31,6 +31,10 @@ import net.strokkur.jap.code.type.CodeTypes;
 public interface ConvertToType extends ConvertToFieldMethodSource {
   CodeType toType();
 
+  default CodeType withoutGenerics() {
+    return toType();
+  }
+
   default boolean isType(ConvertToType other) {
     final CodeType thisType = toType();
     final CodeType otherType = other.toType();

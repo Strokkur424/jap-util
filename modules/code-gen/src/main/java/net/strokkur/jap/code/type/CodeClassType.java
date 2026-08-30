@@ -64,6 +64,7 @@ public record CodeClassType(
     );
   }
 
+  @Override
   public CodeClassType withoutGenerics() {
     return new CodeClassType(
       codePackage, simpleName, null

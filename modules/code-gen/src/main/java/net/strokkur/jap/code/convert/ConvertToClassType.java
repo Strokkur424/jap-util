@@ -45,6 +45,11 @@ public interface ConvertToClassType extends ConvertToType, ConvertToGenericType,
   }
 
   @Override
+  default CodeClassType withoutGenerics() {
+    return toClassType().withoutGenerics();
+  }
+
+  @Override
   default CodeGenericType toGenericType() {
     return new CodeGenericType(null, GenericEnclosure.withType(this));
   }
