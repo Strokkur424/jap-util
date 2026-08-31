@@ -35,6 +35,7 @@ import net.strokkur.jap.code.documentation.CodeDocumentation;
 import net.strokkur.jap.code.expression.AssignExpression;
 import net.strokkur.jap.code.expression.CastExpression;
 import net.strokkur.jap.code.expression.CodeExpression;
+import net.strokkur.jap.code.expression.ConcatExpression;
 import net.strokkur.jap.code.expression.ConstructorInvocation;
 import net.strokkur.jap.code.expression.FieldAccess;
 import net.strokkur.jap.code.expression.InstanceOfExpr;
@@ -203,6 +204,8 @@ public class ImportGatheringVisitor implements CodeVisitor<Set<CodeClassType>> {
         leftSide.accept(this),
         rightSide.accept(this)
       );
+
+      case ConcatExpression(List<CodeExpression> expressions) -> collect(expressions);
 
       case UnaryMinusExpression(CodeExpression expr) -> expr.accept(this);
 

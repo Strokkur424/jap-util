@@ -119,10 +119,14 @@ public abstract class AbstractSourcePrintingVisitor implements CodeVisitor<Strin
   }
 
   protected <S extends CodeVisitable> String joining(Collection<S> nested) {
+    return joining(nested, ", ");
+  }
+
+  protected <S extends CodeVisitable> String joining(Collection<S> nested, String delimiter) {
     return nested.stream()
       .map(visitable -> visitable.accept(this))
       .map(StringBuilder::toString)
-      .collect(Collectors.joining(", "));
+      .collect(Collectors.joining(delimiter));
   }
 
   protected void printDocumentationIndented(StringBuilder builder, @Nullable CodeDocumentation documentation) {

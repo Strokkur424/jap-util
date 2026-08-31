@@ -37,6 +37,7 @@ import net.strokkur.jap.code.documentation.CodeDocumentation;
 import net.strokkur.jap.code.expression.AssignExpression;
 import net.strokkur.jap.code.expression.CastExpression;
 import net.strokkur.jap.code.expression.CodeExpression;
+import net.strokkur.jap.code.expression.ConcatExpression;
 import net.strokkur.jap.code.expression.ConstructorInvocation;
 import net.strokkur.jap.code.expression.FieldAccess;
 import net.strokkur.jap.code.expression.InstanceOfExpr;
@@ -381,6 +382,8 @@ public class JavaSourcePrintingVisitor extends AbstractSourcePrintingVisitor {
           appendLambdaHead(builder, lambdaParameters);
           builder.append(codeExpression.accept(this));
         }
+
+        case ConcatExpression(List<CodeExpression> expressions) -> builder.append(joining(expressions, " + "));
 
         case UnaryMinusExpression(CodeExpression expr) -> {
           builder.append("-");

@@ -93,6 +93,18 @@ class ExpressionGenTests extends AbstractGenTest {
   }
 
   @Test
+  void testConcat() {
+    check(
+      Set.of(),
+      "\"one\" + \"two\"",
+      Expressions.concat(
+        Expressions.string("one"),
+        Expressions.string("two")
+      )
+    );
+  }
+
+  @Test
   void testCast() {
     check(
       Set.of(),

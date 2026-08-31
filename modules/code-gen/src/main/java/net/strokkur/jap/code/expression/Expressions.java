@@ -41,6 +41,7 @@ import net.strokkur.jap.code.expression.simple.CodeStringExpression;
 import net.strokkur.jap.code.expression.simple.CodeVariableExpression;
 import org.jspecify.annotations.Nullable;
 
+import java.util.Arrays;
 import java.util.List;
 
 public final class Expressions {
@@ -88,6 +89,12 @@ public final class Expressions {
   public static MethodInvocationBuilder methodInvocation(String methodName) {
     return new MethodInvocationBuilder()
       .setName(methodName);
+  }
+
+  public static ConcatExpression concat(ConvertToExpression... expressions) {
+    return new ConcatExpression(Arrays.stream(expressions)
+      .map(ConvertToExpression::toExpression)
+      .toList());
   }
 
   public static UnaryMinusExpression unaryMinus(ConvertToExpression expr) {

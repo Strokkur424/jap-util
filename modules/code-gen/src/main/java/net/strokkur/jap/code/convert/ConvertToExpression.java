@@ -25,6 +25,7 @@ package net.strokkur.jap.code.convert;
 
 import net.strokkur.jap.code.expression.CastExpression;
 import net.strokkur.jap.code.expression.CodeExpression;
+import net.strokkur.jap.code.expression.ConcatExpression;
 import net.strokkur.jap.code.expression.Expressions;
 import net.strokkur.jap.code.expression.InstanceOfExpr;
 import net.strokkur.jap.code.expression.UnaryMinusExpression;
@@ -61,6 +62,10 @@ public interface ConvertToExpression extends ConvertToStatement {
 
   default CodeExpression assign(ConvertToExpression right) {
     return Expressions.assign(this, right);
+  }
+
+  default ConcatExpression concat(ConvertToExpression other) {
+    return Expressions.concat(this, other);
   }
 
   default UnaryMinusExpression negate() {
