@@ -23,6 +23,7 @@
  */
 package net.strokkur.jap.source;
 
+import net.strokkur.jap.code.type.CodeClassType;
 import net.strokkur.jap.source.classmodel.SourceClassLike;
 import net.strokkur.jap.source.classmodel.SourceConstructor;
 import net.strokkur.jap.source.classmodel.SourceElement;
@@ -45,6 +46,12 @@ public class SourceMapUtil {
     this.processor = processor;
   }
 
+  // CodeGen type mapping
+  public SourceClassLike mapClassType(CodeClassType type) {
+    return parseClassElement(processor.elements().getTypeElement(type.identifiableName()));
+  }
+
+  // javax.lang.model.Element mapping
   public SourceElement parseElement(Element element) {
     return switch (element) {
       case TypeElement typeElement -> parseClassElement(typeElement);
