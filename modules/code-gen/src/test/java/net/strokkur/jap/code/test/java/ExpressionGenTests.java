@@ -246,6 +246,22 @@ class ExpressionGenTests extends AbstractGenTest {
           )
       )
     );
+
+    final String expected = """
+      method(() -> new CustomType(
+        "My String"
+      ))""";
+    check(
+      Set.of(TestTypes.CUSTOM_TYPE),
+      expected,
+      Expressions
+        .methodInvocation("method")
+        .addParameters(Expressions.lambdaInline(
+          TestTypes.CUSTOM_TYPE.ctor(
+            Expressions.string("My String")
+          ).setStyle(StyleConfig.MULTILINE)
+        ))
+    );
   }
 
   @Test

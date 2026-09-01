@@ -172,16 +172,14 @@ public abstract class AbstractSourcePrintingVisitor implements CodeVisitor<Strin
 
   protected void appendMethodCallParams(StringBuilder builder, List<CodeExpression> parameters, StyleConfig style) {
     builder.append("(");
-    appendIndentedContinuation(() -> {
-      if (style.multilineParameters()) {
-        appendMethodParametersMultiline(builder, parameters);
-      } else {
-        builder.append(joining(parameters));
-      }
-    });
 
     if (style.multilineParameters()) {
-      appendIndent(builder);
+      dedentContinuation(() -> {
+        appendIndented(() -> appendMethodParametersMultiline(builder, parameters));
+        appendIndent(builder);
+      });
+    } else {
+      appendIndentedContinuation(() -> builder.append(joining(parameters)));
     }
 
     if (style.newlineClosingBrace()) {
