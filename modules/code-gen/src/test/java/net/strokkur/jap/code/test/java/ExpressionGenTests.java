@@ -247,13 +247,13 @@ class ExpressionGenTests extends AbstractGenTest {
       )
     );
 
-    final String expected = """
+    final String lambdaMultilineTest = """
       method(() -> new CustomType(
         "My String"
       ))""";
     check(
       Set.of(TestTypes.CUSTOM_TYPE),
-      expected,
+      lambdaMultilineTest,
       Expressions
         .methodInvocation("method")
         .addParameters(Expressions.lambdaInline(
@@ -261,6 +261,21 @@ class ExpressionGenTests extends AbstractGenTest {
             Expressions.string("My String")
           ).setStyle(StyleConfig.MULTILINE)
         ))
+    );
+
+    final String continuationLambdaTest = """
+      builder
+         .execute(outer(inner(ctx -> {
+           run();
+         })))""";
+    check(Set.of(), continuationLambdaTest, variable("builder")
+      .chainMethod("execute", StyleConfig.NEWLINE,
+        Expressions.methodInvocation("outer").addParameters(
+          Expressions.methodInvocation("inner").addParameters(
+            Expressions.lambda("ctx", Expressions.methodInvocation("run").toStatement())
+          )
+        )
+      )
     );
   }
 

@@ -48,6 +48,28 @@ class BooleanExpressionGenTests extends AbstractGenTest {
   }
 
   @Test
+  void testEq() {
+    checkCode("left == right", variable("left")
+      .eq(variable("right"))
+    );
+    checkCode("left != right", variable("left")
+      .eq(variable("right"))
+      .not()
+    );
+  }
+
+  @Test
+  void testNeq() {
+    checkCode("left != right", variable("left")
+      .neq(variable("right"))
+    );
+    checkCode("left == right", variable("left")
+      .neq(variable("right"))
+      .not()
+    );
+  }
+
+  @Test
   void testOr() {
     checkCode("left || right", variable("left")
       .or(variable("right"))

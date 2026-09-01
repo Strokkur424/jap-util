@@ -45,6 +45,8 @@ import net.strokkur.jap.code.expression.MultilineLambda;
 import net.strokkur.jap.code.expression.SingleLineLambda;
 import net.strokkur.jap.code.expression.UnaryMinusExpression;
 import net.strokkur.jap.code.expression.bool.AndExpression;
+import net.strokkur.jap.code.expression.bool.EqExpression;
+import net.strokkur.jap.code.expression.bool.NeqExpression;
 import net.strokkur.jap.code.expression.bool.NotExpression;
 import net.strokkur.jap.code.expression.bool.OrExpression;
 import net.strokkur.jap.code.expression.simple.SimpleExpression;
@@ -217,6 +219,16 @@ public class ImportGatheringVisitor implements CodeVisitor<Set<CodeClassType>> {
       );
 
       case OrExpression(CodeExpression left, CodeExpression right) -> join(
+        left.accept(this),
+        right.accept(this)
+      );
+
+      case EqExpression(CodeExpression left, CodeExpression right) -> join(
+        left.accept(this),
+        right.accept(this)
+      );
+
+      case NeqExpression(CodeExpression left, CodeExpression right) -> join(
         left.accept(this),
         right.accept(this)
       );

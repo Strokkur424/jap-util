@@ -46,8 +46,12 @@ public abstract class AbstractSourcePrintingVisitor implements CodeVisitor<Strin
   protected final Supplier<AbstractDocumentationRenderer> documentationRenderer;
   private final String indentString;
   private final String continuationIndentString;
-  private int indentation = 0;
-  private int continuationIndent = 0;
+
+  private int blockIndent = 0;
+  private int wrapIndent = 0;
+
+  private int lineBlockIndent = 0;
+  private int lineWrapIndent = 0;
 
   public AbstractSourcePrintingVisitor(Supplier<AbstractDocumentationRenderer> documentationRenderer, String indentString, String continuationIndentString) {
     this.documentationRenderer = documentationRenderer;
@@ -64,32 +68,31 @@ public abstract class AbstractSourcePrintingVisitor implements CodeVisitor<Strin
   }
 
   protected final void appendIndented(Runnable run) {
-    indentation++;
+    blockIndent++;
     run.run();
-    indentation--;
+    blockIndent--;
   }
 
-  protected final void appendIndentedContinuationConditional(boolean condition, Runnable run) {
-    if (condition) {
-      continuationIndent++;
-    }
+  protected final void appendWrapIndented(Runnable run) {
+    wrapIndent++;
     run.run();
-    if (condition) {
-      continuationIndent--;
-    }
+    wrapIndent--;
   }
 
-  protected final void appendIndentedContinuation(Runnable run) {
-    continuationIndent++;
-    run.run();
-    continuationIndent--;
-  }
+  protected final void appendBlockFromLineIndent(Runnable run) {
+    final int savedBlock = blockIndent;
+    final int savedWrap = wrapIndent;
+    final int savedLineBlock = lineBlockIndent;
+    final int savedLineWrap = lineWrapIndent;
 
-  protected final void dedentContinuation(Runnable run) {
-    final int previous = continuationIndent;
-    continuationIndent = Math.max(0, continuationIndent - 1);
+    blockIndent = lineBlockIndent;
+    wrapIndent = lineWrapIndent;
     run.run();
-    continuationIndent = previous;
+
+    blockIndent = savedBlock;
+    wrapIndent = savedWrap;
+    lineBlockIndent = savedLineBlock;
+    lineWrapIndent = savedLineWrap;
   }
 
   protected final StringBuilder append(Consumer<StringBuilder> run) {
@@ -99,7 +102,9 @@ public abstract class AbstractSourcePrintingVisitor implements CodeVisitor<Strin
   }
 
   protected final void appendIndent(StringBuilder builder) {
-    builder.repeat(indentString, indentation).repeat(continuationIndentString, continuationIndent);
+    lineBlockIndent = blockIndent;
+    lineWrapIndent = wrapIndent;
+    builder.repeat(indentString, blockIndent).repeat(continuationIndentString, wrapIndent);
   }
 
   // Utility methods
@@ -174,19 +179,18 @@ public abstract class AbstractSourcePrintingVisitor implements CodeVisitor<Strin
     builder.append("(");
 
     if (style.multilineParameters()) {
-      dedentContinuation(() -> {
+      appendBlockFromLineIndent(() -> {
         appendIndented(() -> appendMethodParametersMultiline(builder, parameters));
         appendIndent(builder);
       });
-    } else {
-      appendIndentedContinuation(() -> builder.append(joining(parameters)));
-    }
-
-    if (style.newlineClosingBrace()) {
-      appendIndentedContinuation(() -> {
+    } else if (style.newlineClosingBrace()) {
+      appendWrapIndented(() -> {
+        builder.append(joining(parameters));
         builder.append("\n");
         appendIndent(builder);
       });
+    } else {
+      appendWrapIndented(() -> builder.append(joining(parameters)));
     }
 
     builder.append(")");

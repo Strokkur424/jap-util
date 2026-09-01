@@ -31,6 +31,8 @@ import net.strokkur.jap.code.expression.InstanceOfExpr;
 import net.strokkur.jap.code.expression.UnaryMinusExpression;
 import net.strokkur.jap.code.expression.bool.AndExpression;
 import net.strokkur.jap.code.expression.bool.BooleanExpressions;
+import net.strokkur.jap.code.expression.bool.EqExpression;
+import net.strokkur.jap.code.expression.bool.NeqExpression;
 import net.strokkur.jap.code.expression.bool.OrExpression;
 import net.strokkur.jap.code.statement.CodeStatement;
 import net.strokkur.jap.code.statement.Statements;
@@ -82,5 +84,13 @@ public interface ConvertToExpression extends ConvertToStatement {
 
   default OrExpression or(ConvertToExpression right) {
     return BooleanExpressions.or(this.toExpression(), right.toExpression());
+  }
+
+  default EqExpression eq(ConvertToExpression right) {
+    return BooleanExpressions.eq(this, right);
+  }
+
+  default NeqExpression neq(ConvertToExpression right) {
+    return BooleanExpressions.neq(this, right);
   }
 }

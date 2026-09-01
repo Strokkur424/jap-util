@@ -48,6 +48,8 @@ import net.strokkur.jap.code.expression.RequiresBracketsOnAccess;
 import net.strokkur.jap.code.expression.SingleLineLambda;
 import net.strokkur.jap.code.expression.UnaryMinusExpression;
 import net.strokkur.jap.code.expression.bool.AndExpression;
+import net.strokkur.jap.code.expression.bool.EqExpression;
+import net.strokkur.jap.code.expression.bool.NeqExpression;
 import net.strokkur.jap.code.expression.bool.NotExpression;
 import net.strokkur.jap.code.expression.bool.OrExpression;
 import net.strokkur.jap.code.expression.bool.ScopedNot;
@@ -302,6 +304,18 @@ public class JavaSourcePrintingVisitor extends AbstractSourcePrintingVisitor {
           appendBrackets(builder, right);
         }
 
+        case EqExpression(CodeExpression left, CodeExpression right) -> {
+          builder.append(left.accept(this));
+          builder.append(" == ");
+          builder.append(right.accept(this));
+        }
+
+        case NeqExpression(CodeExpression left, CodeExpression right) -> {
+          builder.append(left.accept(this));
+          builder.append(" != ");
+          builder.append(right.accept(this));
+        }
+
         // Other
         case AssignExpression(CodeExpression leftSide, CodeExpression rightSide) -> builder
           .append(leftSide.accept(this))
@@ -371,7 +385,7 @@ public class JavaSourcePrintingVisitor extends AbstractSourcePrintingVisitor {
         case MultilineLambda(List<String> lambdaParameters, CodeBlock lambdaBlock) -> {
           appendLambdaHead(builder, lambdaParameters);
           builder.append("{\n");
-          dedentContinuation(() -> {
+          appendBlockFromLineIndent(() -> {
             builder.append(lambdaBlock.accept(this));
             appendIndent(builder);
           });
@@ -441,7 +455,9 @@ public class JavaSourcePrintingVisitor extends AbstractSourcePrintingVisitor {
         return;
       }
 
-      if (statement instanceof TryStatement(CodeBlock tryBlock, List<TryStatement.CatchStatement> catchStatements, @Nullable CodeBlock finallyBlock)) {
+      if (statement instanceof TryStatement(
+        CodeBlock tryBlock, List<TryStatement.CatchStatement> catchStatements, @Nullable CodeBlock finallyBlock
+      )) {
         builder.append("try {\n");
         builder.append(tryBlock.accept(this));
         appendIndent(builder);
@@ -582,7 +598,7 @@ public class JavaSourcePrintingVisitor extends AbstractSourcePrintingVisitor {
     if (lambdaBlockArg) {
       appendIndented(() -> appendIndent(builder));
     } else {
-      appendIndentedContinuation(() -> appendIndent(builder));
+      appendWrapIndented(() -> appendIndent(builder));
     }
   }
 
