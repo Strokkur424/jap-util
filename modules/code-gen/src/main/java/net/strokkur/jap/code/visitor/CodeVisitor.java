@@ -25,6 +25,7 @@ package net.strokkur.jap.code.visitor;
 
 import net.strokkur.jap.code.annotations.CodeAnnotation;
 import net.strokkur.jap.code.annotations.CodeAnnotationParameter;
+import net.strokkur.jap.code.classmodel.CodeAnnotationType;
 import net.strokkur.jap.code.classmodel.CodeBlock;
 import net.strokkur.jap.code.classmodel.CodeClass;
 import net.strokkur.jap.code.classmodel.CodeConstructor;
@@ -60,6 +61,8 @@ public interface CodeVisitor<R> {
   R visitRecord(CodeRecord record);
 
   R visitRecordComponent(CodeRecordComponent recordComponent);
+
+  R visitAnnotationType(CodeAnnotationType annotationType);
 
   R visitConstructor(CodeConstructor ctor);
 

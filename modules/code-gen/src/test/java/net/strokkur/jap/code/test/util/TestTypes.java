@@ -48,6 +48,7 @@ public interface TestTypes extends ConvertToClassType {
   TestTypes EMPTY_TRIPPLE = create("util.EmptyTriple");
 
   TestTypes COOL_PEOPLE = create("enum.CoolPeople");
+  TestTypes MY_ANNOTATION_TYPE = create("at.MyAnnotationType");
 
   static TestTypes create(String fqn) {
     return () -> CodeTypes.of(fqn);

@@ -52,7 +52,7 @@ public record CodeRecord(
   List<CodeConstructor> additionalConstructors,
 
   @Nullable CodeDocumentation documentation
-) implements CodeClassLike.Typed {
+) implements CodeClassLikeTyped {
 
   public static RecordBuilder builder(String fqn) {
     return builder(CodeTypes.of(fqn));

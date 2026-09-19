@@ -24,12 +24,11 @@
 package net.strokkur.jap.code.classmodel;
 
 import net.strokkur.jap.code.annotations.CodeAnnotation;
-import net.strokkur.jap.code.classmodel.builder.ClassBuilder;
+import net.strokkur.jap.code.classmodel.builder.AnnotationTypeBuilder;
 import net.strokkur.jap.code.convert.ConvertToClassType;
 import net.strokkur.jap.code.documentation.CodeDocumentation;
 import net.strokkur.jap.code.type.CodeClassType;
 import net.strokkur.jap.code.type.CodeTypes;
-import net.strokkur.jap.code.type.generic.CodeGenericTypeDefinition;
 import net.strokkur.jap.code.util.Modifiers;
 import net.strokkur.jap.code.visitor.CodeVisitor;
 import org.jspecify.annotations.Nullable;
@@ -37,31 +36,27 @@ import org.jspecify.annotations.Nullable;
 import java.util.List;
 import java.util.Set;
 
-public record CodeClass(
+public record CodeAnnotationType(
   CodeClassType classType,
-  List<CodeGenericTypeDefinition> genericTypes,
   Set<Modifiers> modifiers,
   List<CodeAnnotation> annotations,
-  @Nullable CodeClassType extendsType,
-  List<CodeClassType> implementsTypes,
 
   List<CodeField> fields,
   List<CodeMethod> methods,
-  List<CodeConstructor> constructors,
 
   @Nullable CodeDocumentation documentation
-) implements CodeClassLikeTyped {
+) implements CodeClassLike {
 
-  public static ClassBuilder builder(String fqn) {
+  public static AnnotationTypeBuilder builder(String fqn) {
     return builder(CodeTypes.of(fqn));
   }
 
-  public static ClassBuilder builder(ConvertToClassType type) {
-    return new ClassBuilder(type.toClassType());
+  public static AnnotationTypeBuilder builder(ConvertToClassType type) {
+    return new AnnotationTypeBuilder(type.toClassType());
   }
 
   @Override
   public <R> R accept(CodeVisitor<R> visitor) {
-    return visitor.visitClass(this);
+    return visitor.visitAnnotationType(this);
   }
 }

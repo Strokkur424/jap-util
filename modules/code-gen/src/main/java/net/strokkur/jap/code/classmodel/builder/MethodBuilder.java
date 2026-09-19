@@ -92,7 +92,7 @@ public class MethodBuilder implements ConvertToMethod {
     return this;
   }
 
-  public MethodBuilder withDefaults(ConvertToExpression defaultsExpr) {
+  public MethodBuilder withDefault(ConvertToExpression defaultsExpr) {
     this.code = null;
     this.defaults = defaultsExpr.toExpression();
     return this;

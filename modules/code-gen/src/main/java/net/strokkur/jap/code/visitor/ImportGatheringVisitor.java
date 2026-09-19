@@ -25,8 +25,11 @@ package net.strokkur.jap.code.visitor;
 
 import net.strokkur.jap.code.annotations.CodeAnnotation;
 import net.strokkur.jap.code.annotations.CodeAnnotationParameter;
+import net.strokkur.jap.code.classmodel.CodeAnnotationType;
 import net.strokkur.jap.code.classmodel.CodeBlock;
 import net.strokkur.jap.code.classmodel.CodeClass;
+import net.strokkur.jap.code.classmodel.CodeClassLike;
+import net.strokkur.jap.code.classmodel.CodeClassLikeTyped;
 import net.strokkur.jap.code.classmodel.CodeConstructor;
 import net.strokkur.jap.code.classmodel.CodeEnum;
 import net.strokkur.jap.code.classmodel.CodeEnumValue;
@@ -102,44 +105,45 @@ public class ImportGatheringVisitor implements CodeVisitor<Set<CodeClassType>> {
       .collect(Collectors.toSet());
   }
 
+  private Set<CodeClassType> acceptClassLike(CodeClassLike classLike) {
+    final Set<CodeClassType> base = join(
+      Set.of(classLike.classType()),
+      maybeAccept(classLike.documentation()),
+      collect(classLike.methods()),
+      collect(classLike.fields()),
+      collect(classLike.annotations())
+    );
+    if (classLike instanceof CodeClassLikeTyped typed) {
+      return join(base, collect(typed.genericTypes()));
+    } else {
+      return base;
+    }
+  }
+
   @Override
   public Set<CodeClassType> visitClass(CodeClass codeClass) {
     return join(
-      Set.of(codeClass.classType()),
-      maybeAccept(codeClass.documentation()),
-      collect(codeClass.methods()),
+      acceptClassLike(codeClass),
       collect(codeClass.constructors()),
       maybeAccept(codeClass.extendsType()),
-      collect(codeClass.implementsTypes()),
-      collect(codeClass.fields()),
-      collect(codeClass.annotations()),
-      collect(codeClass.genericTypes())
+      collect(codeClass.implementsTypes())
     );
   }
 
   @Override
   public Set<CodeClassType> visitInterface(CodeInterface codeInterface) {
     return join(
-      Set.of(codeInterface.classType()),
-      maybeAccept(codeInterface.documentation()),
-      collect(codeInterface.methods()),
-      collect(codeInterface.extendsTypes()),
-      collect(codeInterface.fields()),
-      collect(codeInterface.annotations()),
-      collect(codeInterface.genericTypes())
+      acceptClassLike(codeInterface),
+      collect(codeInterface.extendsTypes())
     );
   }
 
   @Override
   public Set<CodeClassType> visitEnum(CodeEnum codeEnum) {
     return join(
-      Set.of(codeEnum.classType()),
+      acceptClassLike(codeEnum),
       collect(codeEnum.values()),
-      maybeAccept(codeEnum.documentation()),
-      collect(codeEnum.methods()),
-      collect(codeEnum.implementsTypes()),
-      collect(codeEnum.fields()),
-      collect(codeEnum.annotations())
+      collect(codeEnum.implementsTypes())
     );
   }
 
@@ -151,16 +155,11 @@ public class ImportGatheringVisitor implements CodeVisitor<Set<CodeClassType>> {
   @Override
   public Set<CodeClassType> visitRecord(CodeRecord record) {
     return join(
-      Set.of(record.classType()),
+      acceptClassLike(record),
       collect(record.components()),
-      maybeAccept(record.documentation()),
-      collect(record.fields()),
-      collect(record.methods()),
       maybeAccept(record.primaryConstructor()),
       collect(record.additionalConstructors()),
-      collect(record.implementsTypes()),
-      collect(record.annotations()),
-      collect(record.genericTypes())
+      collect(record.implementsTypes())
     );
   }
 
@@ -170,6 +169,11 @@ public class ImportGatheringVisitor implements CodeVisitor<Set<CodeClassType>> {
       maybeAccept(recordComponent.type()),
       collect(recordComponent.annotations())
     );
+  }
+
+  @Override
+  public Set<CodeClassType> visitAnnotationType(CodeAnnotationType annotationType) {
+    return acceptClassLike(annotationType);
   }
 
   @Override

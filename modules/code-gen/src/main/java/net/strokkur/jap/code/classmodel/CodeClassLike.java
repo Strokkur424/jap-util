@@ -28,7 +28,6 @@ import net.strokkur.jap.code.annotations.CodeAnnotation;
 import net.strokkur.jap.code.convert.ConvertToClassType;
 import net.strokkur.jap.code.documentation.CodeDocumentation;
 import net.strokkur.jap.code.type.CodeClassType;
-import net.strokkur.jap.code.type.generic.CodeGenericTypeDefinition;
 import net.strokkur.jap.code.util.Modifiers;
 import net.strokkur.jap.code.visitor.CodeVisitable;
 import org.jspecify.annotations.Nullable;
@@ -45,12 +44,12 @@ public interface CodeClassLike extends CodeAnnotated, ConvertToClassType, CodeVi
 
   @Nullable CodeDocumentation documentation();
 
+  List<CodeMethod> methods();
+
+  List<CodeField> fields();
+
   @Override
   default CodeClassType toClassType() {
     return classType();
-  }
-
-  interface Typed extends CodeClassLike {
-    List<CodeGenericTypeDefinition> genericTypes();
   }
 }

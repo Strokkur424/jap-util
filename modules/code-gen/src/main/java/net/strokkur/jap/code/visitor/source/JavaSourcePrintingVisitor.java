@@ -25,9 +25,11 @@ package net.strokkur.jap.code.visitor.source;
 
 import net.strokkur.jap.code.annotations.CodeAnnotation;
 import net.strokkur.jap.code.annotations.CodeAnnotationParameter;
+import net.strokkur.jap.code.classmodel.CodeAnnotationType;
 import net.strokkur.jap.code.classmodel.CodeBlock;
 import net.strokkur.jap.code.classmodel.CodeClass;
 import net.strokkur.jap.code.classmodel.CodeClassLike;
+import net.strokkur.jap.code.classmodel.CodeClassLikeTyped;
 import net.strokkur.jap.code.classmodel.CodeConstructor;
 import net.strokkur.jap.code.classmodel.CodeEnum;
 import net.strokkur.jap.code.classmodel.CodeEnumValue;
@@ -122,7 +124,7 @@ public class JavaSourcePrintingVisitor extends AbstractSourcePrintingVisitor {
       builder.append(classTypeName).append(" ");
       builder.append(like.classType().name());
 
-      if (like instanceof CodeClassLike.Typed typed && !typed.genericTypes().isEmpty()) {
+      if (like instanceof CodeClassLikeTyped typed && !typed.genericTypes().isEmpty()) {
         builder.append("<");
         builder.append(joining(typed.genericTypes()));
         builder.append(">");
@@ -405,6 +407,21 @@ public class JavaSourcePrintingVisitor extends AbstractSourcePrintingVisitor {
       builder.append(recordComponent.type());
       builder.append(' ').append(recordComponent.name());
     });
+  }
+
+  @Override
+  public StringBuilder visitAnnotationType(CodeAnnotationType annotationType) {
+    return visitClassLike(annotationType, "@interface",
+      this::nullConsumer,
+      builder -> {
+        builder.append('\n');
+        appendIndented(() -> {
+          annotationType.fields().forEach(field -> appendNested(builder, field));
+          printSpaced(builder, annotationType.methods());
+        });
+        appendIndent(builder);
+      }
+    );
   }
 
   @Override
@@ -838,5 +855,9 @@ public class JavaSourcePrintingVisitor extends AbstractSourcePrintingVisitor {
       builder.append(lambdaParams.getFirst());
     }
     builder.append(" -> ");
+  }
+
+  private <R> void nullConsumer(R value) {
+
   }
 }

@@ -48,7 +48,7 @@ public record CodeInterface(
   List<CodeMethod> methods,
 
   @Nullable CodeDocumentation documentation
-) implements CodeClassLike.Typed {
+) implements CodeClassLikeTyped {
 
   public static InterfaceBuilder builder(String fqn) {
     return builder(CodeTypes.of(fqn));
