@@ -21,35 +21,45 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.strokkur.jap.code.test.util;
+package net.strokkur.jap.code.classmodel;
 
+import net.strokkur.jap.code.annotations.CodeAnnotation;
+import net.strokkur.jap.code.classmodel.builder.EnumBuilder;
 import net.strokkur.jap.code.convert.ConvertToClassType;
+import net.strokkur.jap.code.documentation.CodeDocumentation;
+import net.strokkur.jap.code.type.CodeClassType;
 import net.strokkur.jap.code.type.CodeTypes;
+import net.strokkur.jap.code.util.Modifiers;
+import net.strokkur.jap.code.visitor.CodeVisitor;
+import org.jspecify.annotations.Nullable;
 
-public interface TestTypes extends ConvertToClassType {
-  TestTypes JAVA_PLUGIN = create("org.bukkit.plugin.java.JavaPlugin");
-  TestTypes PLUGIN_BOOTSTRAP = create("io.papermc.paper.plugin.bootstrap.PluginBootstrap");
-  TestTypes BOOTSTRAP_CONTEXT = create("io.papermc.paper.plugin.bootstrap.BootstrapContext");
+import java.util.List;
+import java.util.Set;
 
-  TestTypes PLAYER = create("org.bukkit.entity.Player");
+public record CodeEnum(
+  CodeClassType classType,
+  Set<Modifiers> modifiers,
+  List<CodeAnnotation> annotations,
+  List<CodeClassType> implementsTypes,
 
-  TestTypes SIMPLE_COMMAND_EXCEPTION_TYPE = create("com.mojang.brigadier.exceptions.SimpleCommandExceptionType");
-  TestTypes LITERAL_MESSAGE = create("com.mojang.brigadier.LiteralMessage");
-  TestTypes COMMAND = create("com.mojang.brigadier.Command");
+  List<CodeEnumValue> values,
+  List<CodeField> fields,
+  List<CodeConstructor> constructors,
+  List<CodeMethod> methods,
 
-  TestTypes COMMANDS = create("com.test.Commands");
+  @Nullable CodeDocumentation documentation
+) implements CodeClassLike {
 
-  // Custom
-  TestTypes LIST_HOLDER = create("com.ListHolder");
-  TestTypes CUSTOM_TYPE = create("com.CustomType");
-  TestTypes MY_CLASS = create("com.MyClass");
-  TestTypes DOUBLE = create("util.Double");
-  TestTypes TRIPLE = create("util.Triple");
-  TestTypes EMPTY_TRIPPLE = create("util.EmptyTriple");
+  public static EnumBuilder builder(String fqn) {
+    return builder(CodeTypes.of(fqn));
+  }
 
-  TestTypes COOL_PEOPLE = create("enum.CoolPeople");
+  public static EnumBuilder builder(ConvertToClassType type) {
+    return new EnumBuilder(type);
+  }
 
-  static TestTypes create(String fqn) {
-    return () -> CodeTypes.of(fqn);
+  @Override
+  public <R> R accept(CodeVisitor<R> visitor) {
+    return visitor.visitEnum(this);
   }
 }

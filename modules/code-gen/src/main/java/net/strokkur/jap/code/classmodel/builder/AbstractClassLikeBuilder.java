@@ -24,7 +24,11 @@
 package net.strokkur.jap.code.classmodel.builder;
 
 import net.strokkur.jap.code.annotations.CodeAnnotation;
+import net.strokkur.jap.code.classmodel.CodeField;
+import net.strokkur.jap.code.classmodel.CodeMethod;
 import net.strokkur.jap.code.convert.ConvertToClassType;
+import net.strokkur.jap.code.convert.ConvertToField;
+import net.strokkur.jap.code.convert.ConvertToMethod;
 import net.strokkur.jap.code.documentation.CodeDocumentation;
 import net.strokkur.jap.code.type.CodeClassType;
 import net.strokkur.jap.code.type.generic.CodeGenericTypeDefinition;
@@ -41,9 +45,10 @@ import java.util.Set;
 @SuppressWarnings("unchecked")
 abstract class AbstractClassLikeBuilder<R extends AbstractClassLikeBuilder<R>> {
   protected final CodeClassType type;
-  protected final List<CodeGenericTypeDefinition> genericTypes = new ArrayList<>();
   protected final Set<Modifiers> modifiers = new HashSet<>();
   protected final List<CodeAnnotation> annotations = new ArrayList<>();
+  protected final List<CodeField> fields = new ArrayList<>();
+  protected final List<CodeMethod> methods = new ArrayList<>();
 
   protected @Nullable CodeDocumentation documentation;
 
@@ -54,12 +59,6 @@ abstract class AbstractClassLikeBuilder<R extends AbstractClassLikeBuilder<R>> {
   @Contract(value = "_ -> this", mutates = "this")
   public R setDocumentation(CodeDocumentation documentation) {
     this.documentation = documentation;
-    return (R) this;
-  }
-
-  @Contract(value = "_ -> this", mutates = "this")
-  public R addGenericTypes(CodeGenericTypeDefinition... generics) {
-    this.genericTypes.addAll(List.of(generics));
     return (R) this;
   }
 
@@ -81,5 +80,37 @@ abstract class AbstractClassLikeBuilder<R extends AbstractClassLikeBuilder<R>> {
   public R addAnnotations(CodeAnnotation... annotations) {
     this.annotations.addAll(List.of(annotations));
     return (R) this;
+  }
+
+  @Contract(value = "_ -> this", mutates = "this")
+  public R addFields(ConvertToField... fields) {
+    this.fields.addAll(Arrays.stream(fields)
+      .map(ConvertToField::toField)
+      .toList()
+    );
+    return (R) this;
+  }
+
+  @Contract(value = "_ -> this", mutates = "this")
+  public R addMethods(ConvertToMethod... methods) {
+    this.methods.addAll(Arrays.stream(methods)
+      .map(ConvertToMethod::toMethod)
+      .toList()
+    );
+    return (R) this;
+  }
+
+  abstract static class Typed<R extends Typed<R>> extends AbstractClassLikeBuilder<R> {
+    protected final List<CodeGenericTypeDefinition> genericTypes = new ArrayList<>();
+
+    Typed(ConvertToClassType type) {
+      super(type);
+    }
+
+    @Contract(value = "_ -> this", mutates = "this")
+    public R addGenericTypes(CodeGenericTypeDefinition... generics) {
+      this.genericTypes.addAll(List.of(generics));
+      return (R) this;
+    }
   }
 }

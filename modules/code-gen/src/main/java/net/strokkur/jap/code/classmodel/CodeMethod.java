@@ -27,6 +27,7 @@ import net.strokkur.jap.code.annotations.CodeAnnotation;
 import net.strokkur.jap.code.classmodel.builder.MethodBuilder;
 import net.strokkur.jap.code.convert.ConvertToMethod;
 import net.strokkur.jap.code.documentation.CodeDocumentation;
+import net.strokkur.jap.code.expression.CodeExpression;
 import net.strokkur.jap.code.type.CodeClassType;
 import net.strokkur.jap.code.type.CodeType;
 import net.strokkur.jap.code.type.generic.CodeGenericTypeDefinition;
@@ -49,7 +50,9 @@ public record CodeMethod(
   @Nullable CodeDocumentation documentation,
 
   List<CodeParameterDefinition> parameters,
-  @Nullable CodeBlock codeBlock
+  @Nullable CodeBlock codeBlock,
+  /// For use in annotation type parameters
+  @Nullable CodeExpression defaults
 ) implements ConvertToMethod, MethodLike {
 
   public static MethodBuilder builder(String name) {

@@ -25,12 +25,8 @@ package net.strokkur.jap.code.classmodel.builder;
 
 import net.strokkur.jap.code.classmodel.CodeClass;
 import net.strokkur.jap.code.classmodel.CodeConstructor;
-import net.strokkur.jap.code.classmodel.CodeField;
-import net.strokkur.jap.code.classmodel.CodeMethod;
 import net.strokkur.jap.code.convert.ConvertToClassType;
 import net.strokkur.jap.code.convert.ConvertToConstructor;
-import net.strokkur.jap.code.convert.ConvertToField;
-import net.strokkur.jap.code.convert.ConvertToMethod;
 import net.strokkur.jap.code.type.CodeClassType;
 import org.jetbrains.annotations.Contract;
 import org.jspecify.annotations.Nullable;
@@ -41,33 +37,13 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
 
-public class ClassBuilder extends AbstractClassLikeBuilder<ClassBuilder> {
-  private final List<CodeField> fields = new ArrayList<>();
-  private final List<CodeMethod> methods = new ArrayList<>();
+public class ClassBuilder extends AbstractClassLikeBuilder.Typed<ClassBuilder> {
   private final List<CodeConstructor> constructors = new ArrayList<>();
   private @Nullable CodeClassType extendsClass = null;
   private final List<CodeClassType> implementsInterfaces = new ArrayList<>();
 
   public ClassBuilder(ConvertToClassType type) {
     super(type);
-  }
-
-  @Contract(value = "_ -> this", mutates = "this")
-  public ClassBuilder addFields(ConvertToField... fields) {
-    this.fields.addAll(Arrays.stream(fields)
-      .map(ConvertToField::toField)
-      .toList()
-    );
-    return this;
-  }
-
-  @Contract(value = "_ -> this", mutates = "this")
-  public ClassBuilder addMethods(ConvertToMethod... methods) {
-    this.methods.addAll(Arrays.stream(methods)
-      .map(ConvertToMethod::toMethod)
-      .toList()
-    );
-    return this;
   }
 
   @Contract(value = "_ -> this", mutates = "this")

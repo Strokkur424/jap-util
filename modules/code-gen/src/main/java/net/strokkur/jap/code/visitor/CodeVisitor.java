@@ -28,6 +28,8 @@ import net.strokkur.jap.code.annotations.CodeAnnotationParameter;
 import net.strokkur.jap.code.classmodel.CodeBlock;
 import net.strokkur.jap.code.classmodel.CodeClass;
 import net.strokkur.jap.code.classmodel.CodeConstructor;
+import net.strokkur.jap.code.classmodel.CodeEnum;
+import net.strokkur.jap.code.classmodel.CodeEnumValue;
 import net.strokkur.jap.code.classmodel.CodeField;
 import net.strokkur.jap.code.classmodel.CodeInterface;
 import net.strokkur.jap.code.classmodel.CodeMethod;
@@ -50,6 +52,10 @@ public interface CodeVisitor<R> {
   R visitClass(CodeClass codeClass);
 
   R visitInterface(CodeInterface codeInterface);
+
+  R visitEnum(CodeEnum codeEnum);
+
+  R visitEnumValue(CodeEnumValue enumValue);
 
   R visitRecord(CodeRecord record);
 

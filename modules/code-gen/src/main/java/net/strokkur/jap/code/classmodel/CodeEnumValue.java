@@ -21,43 +21,46 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.strokkur.jap.code.classmodel.builder;
+package net.strokkur.jap.code.classmodel;
 
-import net.strokkur.jap.code.classmodel.CodeInterface;
-import net.strokkur.jap.code.convert.ConvertToClassType;
-import net.strokkur.jap.code.type.CodeClassType;
-import org.jetbrains.annotations.Contract;
+import net.strokkur.jap.code.convert.ConvertToExpression;
+import net.strokkur.jap.code.documentation.CodeDocumentation;
+import net.strokkur.jap.code.expression.CodeExpression;
+import net.strokkur.jap.code.visitor.CodeVisitable;
+import net.strokkur.jap.code.visitor.CodeVisitor;
+import org.jspecify.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 
-public class InterfaceBuilder extends AbstractClassLikeBuilder.Typed<InterfaceBuilder> {
-  private final List<CodeClassType> extendsInterfaces = new ArrayList<>();
+public record CodeEnumValue(
+  String name,
+  List<CodeExpression> parameters,
+  @Nullable CodeDocumentation documentation
+) implements CodeVisitable {
 
-  public InterfaceBuilder(ConvertToClassType type) {
-    super(type);
+  public static CodeEnumValue of(String name, ConvertToExpression... parameters) {
+    return new CodeEnumValue(
+      name,
+      Arrays.stream(parameters)
+        .map(ConvertToExpression::toExpression)
+        .toList(),
+      null
+    );
   }
 
-  @Contract(value = "_ -> this", mutates = "this")
-  public InterfaceBuilder extendsInterfaces(ConvertToClassType... implementsInterfaces) {
-    this.extendsInterfaces.addAll(Arrays.stream(implementsInterfaces)
-      .map(ConvertToClassType::toClassType)
-      .toList());
-    return this;
-  }
-
-  public CodeInterface toInterface() {
-    return new CodeInterface(
-      type,
-      List.copyOf(genericTypes),
-      Set.copyOf(modifiers),
-      List.copyOf(annotations),
-      List.copyOf(extendsInterfaces),
-      List.copyOf(fields),
-      List.copyOf(methods),
+  public static CodeEnumValue of(String name, CodeDocumentation documentation, ConvertToExpression... parameters) {
+    return new CodeEnumValue(
+      name,
+      Arrays.stream(parameters)
+        .map(ConvertToExpression::toExpression)
+        .toList(),
       documentation
     );
+  }
+
+  @Override
+  public <R> R accept(CodeVisitor<R> visitor) {
+    return visitor.visitEnumValue(this);
   }
 }

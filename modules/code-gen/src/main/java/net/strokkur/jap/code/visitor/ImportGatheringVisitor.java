@@ -28,6 +28,8 @@ import net.strokkur.jap.code.annotations.CodeAnnotationParameter;
 import net.strokkur.jap.code.classmodel.CodeBlock;
 import net.strokkur.jap.code.classmodel.CodeClass;
 import net.strokkur.jap.code.classmodel.CodeConstructor;
+import net.strokkur.jap.code.classmodel.CodeEnum;
+import net.strokkur.jap.code.classmodel.CodeEnumValue;
 import net.strokkur.jap.code.classmodel.CodeField;
 import net.strokkur.jap.code.classmodel.CodeInterface;
 import net.strokkur.jap.code.classmodel.CodeMethod;
@@ -129,6 +131,24 @@ public class ImportGatheringVisitor implements CodeVisitor<Set<CodeClassType>> {
   }
 
   @Override
+  public Set<CodeClassType> visitEnum(CodeEnum codeEnum) {
+    return join(
+      Set.of(codeEnum.classType()),
+      collect(codeEnum.values()),
+      maybeAccept(codeEnum.documentation()),
+      collect(codeEnum.methods()),
+      collect(codeEnum.implementsTypes()),
+      collect(codeEnum.fields()),
+      collect(codeEnum.annotations())
+    );
+  }
+
+  @Override
+  public Set<CodeClassType> visitEnumValue(CodeEnumValue enumValue) {
+    return join(collect(enumValue.parameters()), maybeAccept(enumValue.documentation()));
+  }
+
+  @Override
   public Set<CodeClassType> visitRecord(CodeRecord record) {
     return join(
       Set.of(record.classType()),
@@ -160,6 +180,7 @@ public class ImportGatheringVisitor implements CodeVisitor<Set<CodeClassType>> {
       collect(codeMethod.throwsExceptions()),
       codeMethod.returnType().accept(this),
       maybeAccept(codeMethod.codeBlock()),
+      maybeAccept(codeMethod.defaults()),
       collect(codeMethod.generics()),
       collect(codeMethod.annotations())
     );

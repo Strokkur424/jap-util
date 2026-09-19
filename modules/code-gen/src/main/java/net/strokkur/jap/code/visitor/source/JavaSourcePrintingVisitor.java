@@ -29,6 +29,8 @@ import net.strokkur.jap.code.classmodel.CodeBlock;
 import net.strokkur.jap.code.classmodel.CodeClass;
 import net.strokkur.jap.code.classmodel.CodeClassLike;
 import net.strokkur.jap.code.classmodel.CodeConstructor;
+import net.strokkur.jap.code.classmodel.CodeEnum;
+import net.strokkur.jap.code.classmodel.CodeEnumValue;
 import net.strokkur.jap.code.classmodel.CodeField;
 import net.strokkur.jap.code.classmodel.CodeInterface;
 import net.strokkur.jap.code.classmodel.CodeMethod;
@@ -101,10 +103,6 @@ public class JavaSourcePrintingVisitor extends AbstractSourcePrintingVisitor {
   }
 
   //<editor-fold desc="Utilities"
-  private <E> void nullConsumer(E value) {
-    // noop
-  }
-
   private void printSpaced(StringBuilder builder, List<? extends CodeVisitable> methods) {
     methods.forEach(method -> {
       builder.append("\n");
@@ -166,6 +164,9 @@ public class JavaSourcePrintingVisitor extends AbstractSourcePrintingVisitor {
         appendIndent(builder);
         builder.append("}\n");
       } else {
+        if (method instanceof CodeMethod cm && cm.defaults() != null) {
+          builder.append(" default ").append(cm.defaults().accept(this));
+        }
         builder.append(";\n");
       }
     });
@@ -265,6 +266,77 @@ public class JavaSourcePrintingVisitor extends AbstractSourcePrintingVisitor {
         appendIndent(builder);
       }
     );
+  }
+
+  @Override
+  public StringBuilder visitEnum(CodeEnum codeEnum) {
+    return visitClassLike(codeEnum, "enum",
+      builder -> {
+        if (!codeEnum.implementsTypes().isEmpty()) {
+          builder.append(" implements ").append(joining(codeEnum.implementsTypes()));
+        }
+      },
+      builder -> {
+        builder.append('\n');
+        appendIndented(() -> {
+          final List<CodeEnumValue> values = codeEnum.values();
+          for (int i = 0, valuesSize = values.size(); i < valuesSize; i++) {
+            final CodeEnumValue value = values.get(i);
+            builder.append(value.accept(this));
+            if (i + 1 < valuesSize) {
+              builder.append(",\n");
+            } else {
+              builder.append(";\n");
+              break;
+            }
+          }
+
+          if (!codeEnum.fields().isEmpty() || !codeEnum.methods().isEmpty() || !codeEnum.constructors().isEmpty()) {
+            builder.append("\n");
+          }
+
+          final List<CodeField> staticFields = codeEnum.fields().stream()
+            .filter(field -> field.modifiers().contains(Modifiers.STATIC))
+            .toList();
+          staticFields.forEach(field -> appendNested(builder, field));
+
+          final List<CodeField> instanceFields = codeEnum.fields().stream()
+            .filter(field -> !field.modifiers().contains(Modifiers.STATIC))
+            .toList();
+
+          if (!staticFields.isEmpty() && !instanceFields.isEmpty()) {
+            builder.append("\n");
+          }
+          instanceFields.forEach(field -> appendNested(builder, field));
+
+          final List<CodeMethod> staticMethods = codeEnum.methods().stream()
+            .filter(method -> method.modifiers().contains(Modifiers.STATIC))
+            .toList();
+          printSpaced(builder, staticMethods);
+
+          final List<CodeConstructor> constructors = codeEnum.constructors();
+          printSpaced(builder, constructors);
+
+          final List<CodeMethod> instanceMethods = codeEnum.methods().stream()
+            .filter(Predicate.not(method -> method.modifiers().contains(Modifiers.STATIC)))
+            .toList();
+          printSpaced(builder, instanceMethods);
+        });
+        appendIndent(builder);
+      }
+    );
+  }
+
+  @Override
+  public StringBuilder visitEnumValue(CodeEnumValue enumValue) {
+    return append(builder -> {
+      printDocumentationIndented(builder, enumValue.documentation());
+      appendIndent(builder);
+      builder.append(enumValue.name());
+      if (!enumValue.parameters().isEmpty()) {
+        builder.append('(').append(joining(enumValue.parameters())).append(')');
+      }
+    });
   }
 
   @Override

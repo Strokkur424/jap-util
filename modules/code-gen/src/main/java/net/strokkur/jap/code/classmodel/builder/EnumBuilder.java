@@ -23,18 +23,15 @@
  */
 package net.strokkur.jap.code.classmodel.builder;
 
-import net.strokkur.jap.code.annotations.CodeAnnotation;
 import net.strokkur.jap.code.classmodel.CodeConstructor;
-import net.strokkur.jap.code.classmodel.CodePrimaryConstructor;
-import net.strokkur.jap.code.classmodel.CodeRecord;
-import net.strokkur.jap.code.classmodel.CodeRecordComponent;
+import net.strokkur.jap.code.classmodel.CodeEnum;
+import net.strokkur.jap.code.classmodel.CodeEnumValue;
 import net.strokkur.jap.code.convert.ConvertToClassType;
 import net.strokkur.jap.code.convert.ConvertToConstructor;
-import net.strokkur.jap.code.convert.ConvertToPrimaryConstructor;
-import net.strokkur.jap.code.convert.ConvertToType;
+import net.strokkur.jap.code.convert.ConvertToExpression;
+import net.strokkur.jap.code.documentation.CodeDocumentation;
 import net.strokkur.jap.code.type.CodeClassType;
 import org.jetbrains.annotations.Contract;
-import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -42,40 +39,32 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
 
-public class RecordBuilder extends AbstractClassLikeBuilder.Typed<RecordBuilder> {
+public class EnumBuilder extends AbstractClassLikeBuilder<EnumBuilder> {
   private final List<CodeClassType> implementsInterfaces = new ArrayList<>();
-  private final List<CodeRecordComponent> components = new ArrayList<>();
-
-  private @Nullable CodePrimaryConstructor primaryConstructor = null;
+  private final List<CodeEnumValue> enumValues = new ArrayList<>();
   private final List<CodeConstructor> constructors = new ArrayList<>();
 
-  public RecordBuilder(ConvertToClassType type) {
+  public EnumBuilder(ConvertToClassType type) {
     super(type);
   }
 
   @Contract(value = "_ -> this", mutates = "this")
-  public RecordBuilder withPrimaryConstructor(ConvertToPrimaryConstructor ctor) {
-    this.primaryConstructor = ctor.toPrimaryConstructor();
+  public EnumBuilder implementsInterfaces(ConvertToClassType... implementsInterfaces) {
+    this.implementsInterfaces.addAll(Arrays.stream(implementsInterfaces)
+      .map(ConvertToClassType::toClassType)
+      .toList());
     return this;
   }
 
   @Contract(value = "_ -> this", mutates = "this")
-  public RecordBuilder withPrimaryConstructor(Consumer<PrimaryConstructorBuilder> consumer) {
-    final PrimaryConstructorBuilder builder = CodePrimaryConstructor.builder(this.type);
-    consumer.accept(builder);
-    this.primaryConstructor = builder.toPrimaryConstructor();
-    return this;
-  }
-
-  @Contract(value = "_ -> this", mutates = "this")
-  public RecordBuilder addConstructor(Consumer<ConstructorBuilder> consumer) {
+  public EnumBuilder addConstructor(Consumer<ConstructorBuilder> consumer) {
     final ConstructorBuilder builder = CodeConstructor.builder(this.type);
     consumer.accept(builder);
     return addConstructor(builder);
   }
 
   @Contract(value = "_ -> this", mutates = "this")
-  public RecordBuilder addConstructor(ConvertToConstructor... constructors) {
+  public EnumBuilder addConstructor(ConvertToConstructor... constructors) {
     this.constructors.addAll(Arrays.stream(constructors)
       .map(ConvertToConstructor::toConstructor)
       .toList()
@@ -83,39 +72,34 @@ public class RecordBuilder extends AbstractClassLikeBuilder.Typed<RecordBuilder>
     return this;
   }
 
+  @Contract(value = "_,_ -> this", mutates = "this")
+  public EnumBuilder addValue(String name, ConvertToExpression... parameters) {
+    this.enumValues.add(CodeEnumValue.of(name, parameters));
+    return this;
+  }
+
   @Contract(value = "_,_,_ -> this", mutates = "this")
-  public RecordBuilder addComponent(ConvertToType type, String name, CodeAnnotation... annotations) {
-    this.components.add(CodeRecordComponent.of(type, name, annotations));
+  public EnumBuilder addValue(String name, CodeDocumentation documentation, ConvertToExpression... parameters) {
+    this.enumValues.add(CodeEnumValue.of(name, documentation, parameters));
     return this;
   }
 
   @Contract(value = "_ -> this", mutates = "this")
-  public RecordBuilder addComponents(CodeRecordComponent... components) {
-    this.components.addAll(List.of(components));
+  public EnumBuilder addValues(CodeEnumValue... values) {
+    this.enumValues.addAll(List.of(values));
     return this;
   }
 
-  @Contract(value = "_ -> this", mutates = "this")
-  public RecordBuilder implementsInterfaces(ConvertToClassType... implementsInterfaces) {
-    this.implementsInterfaces.addAll(Arrays.stream(implementsInterfaces)
-      .map(ConvertToClassType::toClassType)
-      .toList());
-    return this;
-  }
-
-  @Contract(pure = true)
-  public CodeRecord toRecord() {
-    return new CodeRecord(
+  public CodeEnum toEnum() {
+    return new CodeEnum(
       type,
-      List.copyOf(genericTypes),
       Set.copyOf(modifiers),
       List.copyOf(annotations),
       List.copyOf(implementsInterfaces),
-      List.copyOf(components),
+      List.copyOf(enumValues),
       List.copyOf(fields),
-      List.copyOf(methods),
-      primaryConstructor,
       List.copyOf(constructors),
+      List.copyOf(methods),
       documentation
     );
   }

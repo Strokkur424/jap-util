@@ -70,6 +70,10 @@ public interface ConvertToExpression extends ConvertToStatement {
     return Expressions.concat(this, other);
   }
 
+  default ConcatExpression concat(String otherString) {
+    return Expressions.concat(this, Expressions.string(otherString));
+  }
+
   default UnaryMinusExpression negate() {
     return Expressions.unaryMinus(this);
   }
