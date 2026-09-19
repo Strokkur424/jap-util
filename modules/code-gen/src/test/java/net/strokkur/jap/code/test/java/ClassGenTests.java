@@ -129,7 +129,7 @@ class ClassGenTests extends AbstractGenTest {
         .setCode(Statements.returnStmt(Expressions.thisExpr().chainField("list")))
       )
 
-      .build();
+      .toClass();
 
     check(expectedImports, expectedCode, ast);
   }
@@ -153,14 +153,14 @@ class ClassGenTests extends AbstractGenTest {
       CodeClass.builder(thisType)
         .extendsClass(extendsType)
         .implementsInterfaces(implementsType1, implementsType2)
-        .build()
+        .toClass()
     );
   }
 
   @Test
   void ensureTypesMatch() {
     final CodeClassType type = CodeTypes.of("some.cool.Type");
-    final CodeClass built = CodeClass.builder(type).build();
+    final CodeClass built = CodeClass.builder(type).toClass();
 
     Assertions.assertEquals(type, built.classType());
     Assertions.assertEquals(type, built.toType());

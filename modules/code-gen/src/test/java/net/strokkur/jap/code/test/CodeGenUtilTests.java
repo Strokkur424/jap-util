@@ -76,7 +76,7 @@ class CodeGenUtilTests {
           JavaTypes.SYSTEM.chainField("out").chainMethod("println").addParameters(Expressions.variable("message"))
         )
       )
-      .build();
+      .toClass();
 
     return CodeGenUtil.createJavaFile(compiled);
   }

@@ -21,31 +21,32 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.strokkur.jap.code.test.util;
+package net.strokkur.jap.code.classmodel.builder;
 
-import net.strokkur.jap.code.convert.ConvertToClassType;
-import net.strokkur.jap.code.type.CodeTypes;
+import net.strokkur.jap.code.classmodel.CodePrimaryConstructor;
+import net.strokkur.jap.code.convert.ConvertToPrimaryConstructor;
+import net.strokkur.jap.code.type.CodeClassType;
 
-public interface TestTypes extends ConvertToClassType {
-  TestTypes JAVA_PLUGIN = create("org.bukkit.plugin.java.JavaPlugin");
-  TestTypes PLUGIN_BOOTSTRAP = create("io.papermc.paper.plugin.bootstrap.PluginBootstrap");
-  TestTypes BOOTSTRAP_CONTEXT = create("io.papermc.paper.plugin.bootstrap.BootstrapContext");
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
-  TestTypes PLAYER = create("org.bukkit.entity.Player");
+public class PrimaryConstructorBuilder extends AbstractConstructorLikeBuilder<PrimaryConstructorBuilder> implements ConvertToPrimaryConstructor {
 
-  TestTypes SIMPLE_COMMAND_EXCEPTION_TYPE = create("com.mojang.brigadier.exceptions.SimpleCommandExceptionType");
-  TestTypes LITERAL_MESSAGE = create("com.mojang.brigadier.LiteralMessage");
-  TestTypes COMMAND = create("com.mojang.brigadier.Command");
+  public PrimaryConstructorBuilder(CodeClassType type) {
+    super(type);
+  }
 
-  TestTypes COMMANDS = create("com.test.Commands");
-
-  // Custom
-  TestTypes LIST_HOLDER = create("com.ListHolder");
-  TestTypes CUSTOM_TYPE = create("com.CustomType");
-  TestTypes MY_CLASS = create("com.MyClass");
-  TestTypes TRIPLE = create("util.Triple");
-
-  static TestTypes create(String fqn) {
-    return () -> CodeTypes.of(fqn);
+  @Override
+  public CodePrimaryConstructor toPrimaryConstructor() {
+    return new CodePrimaryConstructor(
+      type,
+      List.copyOf(generics),
+      List.copyOf(annotations),
+      Set.copyOf(modifiers),
+      List.copyOf(throwsExceptions),
+      documentation,
+      Objects.requireNonNull(codeBlock)
+    );
   }
 }

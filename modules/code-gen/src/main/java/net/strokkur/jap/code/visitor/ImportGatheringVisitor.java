@@ -31,6 +31,9 @@ import net.strokkur.jap.code.classmodel.CodeConstructor;
 import net.strokkur.jap.code.classmodel.CodeField;
 import net.strokkur.jap.code.classmodel.CodeMethod;
 import net.strokkur.jap.code.classmodel.CodeParameterDefinition;
+import net.strokkur.jap.code.classmodel.CodePrimaryConstructor;
+import net.strokkur.jap.code.classmodel.CodeRecord;
+import net.strokkur.jap.code.classmodel.CodeRecordComponent;
 import net.strokkur.jap.code.documentation.CodeDocumentation;
 import net.strokkur.jap.code.expression.AssignExpression;
 import net.strokkur.jap.code.expression.CastExpression;
@@ -112,6 +115,30 @@ public class ImportGatheringVisitor implements CodeVisitor<Set<CodeClassType>> {
   }
 
   @Override
+  public Set<CodeClassType> visitRecord(CodeRecord record) {
+    return join(
+      Set.of(record.classType()),
+      collect(record.components()),
+      maybeAccept(record.documentation()),
+      collect(record.fields()),
+      collect(record.methods()),
+      maybeAccept(record.primaryConstructor()),
+      collect(record.additionalConstructors()),
+      collect(record.implementsTypes()),
+      collect(record.annotations()),
+      collect(record.genericTypes())
+    );
+  }
+
+  @Override
+  public Set<CodeClassType> visitRecordComponent(CodeRecordComponent recordComponent) {
+    return join(
+      maybeAccept(recordComponent.type()),
+      collect(recordComponent.annotations())
+    );
+  }
+
+  @Override
   public Set<CodeClassType> visitMethod(CodeMethod codeMethod) {
     return join(
       maybeAccept(codeMethod.documentation()),
@@ -121,6 +148,17 @@ public class ImportGatheringVisitor implements CodeVisitor<Set<CodeClassType>> {
       collect(codeMethod.codeBlock().statements()),
       collect(codeMethod.generics()),
       collect(codeMethod.annotations())
+    );
+  }
+
+  @Override
+  public Set<CodeClassType> visitPrimaryConstructor(CodePrimaryConstructor ctor) {
+    return join(
+      maybeAccept(ctor.documentation()),
+      collect(ctor.annotations()),
+      collect(ctor.generics()),
+      collect(ctor.throwsExceptions()),
+      ctor.code().accept(this)
     );
   }
 
@@ -314,7 +352,8 @@ public class ImportGatheringVisitor implements CodeVisitor<Set<CodeClassType>> {
       case CodeDocumentation.ClassReferenceMeta classReferenceMeta -> Set.of(classReferenceMeta.type());
       case CodeDocumentation.MethodReference methodReference -> maybeAccept(methodReference.source());
       case CodeDocumentation.MethodReferenceMeta methodReferenceMeta -> maybeAccept(methodReferenceMeta.source());
-      case CodeDocumentation.DocumentationComponentList documentationComponentList -> collect(documentationComponentList.components());
+      case CodeDocumentation.DocumentationComponentList documentationComponentList ->
+        collect(documentationComponentList.components());
       default -> Set.of();
     };
   }

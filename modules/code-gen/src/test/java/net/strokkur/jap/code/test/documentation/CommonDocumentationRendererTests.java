@@ -111,11 +111,11 @@ abstract class CommonDocumentationRendererTests {
   }
 
   CodeClass sourceClass() {
-    return CodeClass.builder("com.example.CommandClass").build();
+    return CodeClass.builder("com.example.CommandClass").toClass();
   }
 
   CodeClass targetClass() {
-    return CodeClass.builder("com.example.CommandClassBrigadier").build();
+    return CodeClass.builder("com.example.CommandClassBrigadier").toClass();
   }
 
   CodeMethod createMethod() {

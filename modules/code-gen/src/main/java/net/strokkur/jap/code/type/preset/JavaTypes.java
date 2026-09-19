@@ -62,6 +62,8 @@ public interface JavaTypes extends ConvertToClassType {
 
   JavaTypes SYSTEM = create(System.class);
 
+  JavaTypes OVERRIDE = create(Override.class);
+
   // Exceptions
   JavaTypes NULL_POINTER_EXCEPTION = create(NullPointerException.class);
   JavaTypes ILLEGAL_STATE_EXCEPTION = create(IllegalStateException.class);

@@ -83,7 +83,7 @@ class ConstructorGenTests extends AbstractGenTest {
           variable("genericList").chainMethod("addFirst").addParameters(variable("firstEntry"))
         )
       )
-      .build();
+      .toClass();
 
     check(expectedImports, expectedCode, ast);
   }

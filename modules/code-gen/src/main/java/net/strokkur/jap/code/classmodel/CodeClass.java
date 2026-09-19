@@ -23,7 +23,6 @@
  */
 package net.strokkur.jap.code.classmodel;
 
-import net.strokkur.jap.code.annotations.CodeAnnotated;
 import net.strokkur.jap.code.annotations.CodeAnnotation;
 import net.strokkur.jap.code.classmodel.builder.ClassBuilder;
 import net.strokkur.jap.code.convert.ConvertToClassType;
@@ -32,7 +31,6 @@ import net.strokkur.jap.code.type.CodeClassType;
 import net.strokkur.jap.code.type.CodeTypes;
 import net.strokkur.jap.code.type.generic.CodeGenericTypeDefinition;
 import net.strokkur.jap.code.util.Modifiers;
-import net.strokkur.jap.code.visitor.CodeVisitable;
 import net.strokkur.jap.code.visitor.CodeVisitor;
 import org.jspecify.annotations.Nullable;
 
@@ -52,7 +50,7 @@ public record CodeClass(
   List<CodeConstructor> constructors,
 
   @Nullable CodeDocumentation documentation
-) implements CodeAnnotated, ConvertToClassType, CodeVisitable {
+) implements CodeClassLike.Typed {
 
   public static ClassBuilder builder(String fqn) {
     return builder(CodeTypes.of(fqn));

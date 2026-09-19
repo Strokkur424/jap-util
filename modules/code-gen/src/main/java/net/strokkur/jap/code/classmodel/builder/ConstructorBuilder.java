@@ -24,88 +24,43 @@
 package net.strokkur.jap.code.classmodel.builder;
 
 import net.strokkur.jap.code.annotations.CodeAnnotation;
-import net.strokkur.jap.code.classmodel.CodeBlock;
 import net.strokkur.jap.code.classmodel.CodeConstructor;
 import net.strokkur.jap.code.classmodel.CodeParameterDefinition;
-import net.strokkur.jap.code.convert.ConvertToClassType;
 import net.strokkur.jap.code.convert.ConvertToConstructor;
-import net.strokkur.jap.code.convert.ConvertToStatement;
 import net.strokkur.jap.code.convert.ConvertToType;
-import net.strokkur.jap.code.documentation.CodeDocumentation;
 import net.strokkur.jap.code.type.CodeClassType;
-import net.strokkur.jap.code.type.generic.CodeGenericTypeDefinition;
-import net.strokkur.jap.code.util.Modifiers;
-import org.jspecify.annotations.Nullable;
+import org.jetbrains.annotations.Contract;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-public class ConstructorBuilder implements ConvertToConstructor {
-  private final CodeClassType type;
-  private @Nullable CodeDocumentation documentation = null;
-  private CodeBlock codeBlock = CodeBlock.of();
-
-  private final List<CodeGenericTypeDefinition> generics = new ArrayList<>();
-  private final List<CodeAnnotation> annotations = new ArrayList<>();
-  private final Set<Modifiers> modifiers = new HashSet<>();
-  private final List<CodeClassType> throwsExceptions = new ArrayList<>();
+public class ConstructorBuilder extends AbstractConstructorLikeBuilder<ConstructorBuilder> implements ConvertToConstructor {
   private final List<CodeParameterDefinition> parameters = new ArrayList<>();
 
   public ConstructorBuilder(CodeClassType type) {
-    this.type = type;
+    super(type);
   }
 
-  public ConstructorBuilder setDocumentation(CodeDocumentation documentation) {
-    this.documentation = documentation;
-    return this;
-  }
-
-  public ConstructorBuilder setCodeBlock(ConvertToStatement... statements) {
-    this.codeBlock = CodeBlock.of(statements);
-    return this;
-  }
-
-  public ConstructorBuilder addAnnotations(CodeAnnotation... annotations) {
-    this.annotations.addAll(List.of(annotations));
-    return this;
-  }
-
-  public ConstructorBuilder addGenerics(CodeGenericTypeDefinition... generics) {
-    this.generics.addAll(List.of(generics));
-    return this;
-  }
-
-  public ConstructorBuilder addModifiers(Modifiers... modifiers) {
-    this.modifiers.addAll(List.of(modifiers));
-    return this;
-  }
-
-  public ConstructorBuilder addThrowsExceptions(ConvertToClassType... throwsExceptions) {
-    this.throwsExceptions.addAll(Arrays.stream(throwsExceptions)
-      .map(ConvertToClassType::toClassType)
-      .toList()
-    );
-    return this;
-  }
-
+  @Contract(value = "_ -> this", mutates = "this")
   public ConstructorBuilder addParameters(CodeParameterDefinition... parameters) {
     this.parameters.addAll(List.of(parameters));
     return this;
   }
 
+  @Contract(value = "_,_,_ -> this", mutates = "this")
   public ConstructorBuilder addParameter(ConvertToType type, String name, CodeAnnotation... annotations) {
     return addParameters(CodeParameterDefinition.of(type, name, annotations));
   }
 
+  @Contract(value = "_,_ -> this", mutates = "this")
   public ConstructorBuilder addParameter(ConvertToType type, String name) {
     return addParameters(CodeParameterDefinition.of(type, name));
   }
 
   @Override
+  @Contract(pure = true)
   public CodeConstructor toConstructor() {
     return new CodeConstructor(
       type,

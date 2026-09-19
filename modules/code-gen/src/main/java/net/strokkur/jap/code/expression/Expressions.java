@@ -86,9 +86,10 @@ public final class Expressions {
     return new CodeVariableExpression(name);
   }
 
-  public static MethodInvocationBuilder methodInvocation(String methodName) {
+  public static MethodInvocationBuilder methodInvocation(String methodName, ConvertToExpression... parameters) {
     return new MethodInvocationBuilder()
-      .setName(methodName);
+      .setName(methodName)
+      .addParameters(parameters);
   }
 
   public static ConcatExpression concat(ConvertToExpression... expressions) {

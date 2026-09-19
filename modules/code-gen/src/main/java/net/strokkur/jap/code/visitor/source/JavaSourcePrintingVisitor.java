@@ -27,10 +27,14 @@ import net.strokkur.jap.code.annotations.CodeAnnotation;
 import net.strokkur.jap.code.annotations.CodeAnnotationParameter;
 import net.strokkur.jap.code.classmodel.CodeBlock;
 import net.strokkur.jap.code.classmodel.CodeClass;
+import net.strokkur.jap.code.classmodel.CodeClassLike;
 import net.strokkur.jap.code.classmodel.CodeConstructor;
 import net.strokkur.jap.code.classmodel.CodeField;
 import net.strokkur.jap.code.classmodel.CodeMethod;
 import net.strokkur.jap.code.classmodel.CodeParameterDefinition;
+import net.strokkur.jap.code.classmodel.CodePrimaryConstructor;
+import net.strokkur.jap.code.classmodel.CodeRecord;
+import net.strokkur.jap.code.classmodel.CodeRecordComponent;
 import net.strokkur.jap.code.classmodel.MethodLike;
 import net.strokkur.jap.code.documentation.AbstractDocumentationRenderer;
 import net.strokkur.jap.code.documentation.CodeDocumentation;
@@ -85,6 +89,7 @@ import net.strokkur.jap.code.visitor.CodeVisitable;
 import org.jspecify.annotations.Nullable;
 
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -95,6 +100,42 @@ public class JavaSourcePrintingVisitor extends AbstractSourcePrintingVisitor {
   }
 
   //<editor-fold desc="Utilities"
+  private <E> void nullConsumer(E value) {
+    // noop
+  }
+
+  private void printSpaced(StringBuilder builder, List<? extends CodeVisitable> methods) {
+    methods.forEach(method -> {
+      builder.append("\n");
+      appendNested(builder, method);
+    });
+  }
+
+  private StringBuilder visitClassLike(
+    CodeClassLike like, String classTypeName,
+    Consumer<StringBuilder> printExtra,
+    Consumer<StringBuilder> printBody
+  ) {
+    return append(builder -> {
+      printDocumentationIndented(builder, like.documentation());
+      printAnnotationsIndented(builder, like.annotations());
+      printModifiersIndented(builder, like.modifiers());
+      builder.append(classTypeName).append(" ");
+      builder.append(like.classType().name());
+
+      if (like instanceof CodeClassLike.Typed typed && !typed.genericTypes().isEmpty()) {
+        builder.append("<");
+        builder.append(joining(typed.genericTypes()));
+        builder.append(">");
+      }
+
+      printExtra.accept(builder);
+      builder.append(" {");
+      printBody.accept(builder);
+      builder.append("}\n");
+    });
+  }
+
   private StringBuilder visitMethodLike(MethodLike method, Supplier<StringBuilder> typeAndName) {
     return append(builder -> {
       printDocumentationIndented(builder, method.documentation());
@@ -149,75 +190,148 @@ public class JavaSourcePrintingVisitor extends AbstractSourcePrintingVisitor {
 
   @Override
   public StringBuilder visitClass(CodeClass codeClass) {
-    class ClassPrintUtil {
-      private void printSpaced(StringBuilder builder, List<? extends CodeVisitable> methods) {
-        methods.forEach(method -> {
-          builder.append("\n");
-          appendNested(builder, method);
-        });
-      }
-    }
-
-    final ClassPrintUtil util = new ClassPrintUtil();
-    return append(builder -> {
-      printDocumentationIndented(builder, codeClass.documentation());
-      printAnnotationsIndented(builder, codeClass.annotations());
-      printModifiersIndented(builder, codeClass.modifiers());
-      builder.append("class ");
-      builder.append(codeClass.classType().name());
-
-      if (!codeClass.genericTypes().isEmpty()) {
-        builder.append("<");
-        builder.append(joining(codeClass.genericTypes()));
-        builder.append(">");
-      }
-
-      if (codeClass.extendsType() != null) {
-        builder.append(" extends ").append(codeClass.extendsType().name());
-      }
-      if (!codeClass.implementsTypes().isEmpty()) {
-        builder.append(" implements ").append(joining(codeClass.implementsTypes()));
-      }
-
-      builder.append(" {\n");
-
-      appendIndented(() -> {
-        final List<CodeField> staticFields = codeClass.fields().stream()
-          .filter(field -> field.modifiers().contains(Modifiers.STATIC))
-          .toList();
-        staticFields.forEach(field -> appendNested(builder, field));
-
-        final List<CodeField> instanceFields = codeClass.fields().stream()
-          .filter(field -> !field.modifiers().contains(Modifiers.STATIC))
-          .toList();
-
-        if (!staticFields.isEmpty() && !instanceFields.isEmpty()) {
-          builder.append("\n");
+    return visitClassLike(codeClass, "class",
+      builder -> {
+        if (codeClass.extendsType() != null) {
+          builder.append(" extends ").append(codeClass.extendsType().name());
         }
-        instanceFields.forEach(field -> appendNested(builder, field));
+        if (!codeClass.implementsTypes().isEmpty()) {
+          builder.append(" implements ").append(joining(codeClass.implementsTypes()));
+        }
+      },
+      builder -> {
+        builder.append('\n');
+        appendIndented(() -> {
+          final List<CodeField> staticFields = codeClass.fields().stream()
+            .filter(field -> field.modifiers().contains(Modifiers.STATIC))
+            .toList();
+          staticFields.forEach(field -> appendNested(builder, field));
 
-        final List<CodeMethod> staticMethods = codeClass.methods().stream()
-          .filter(method -> method.modifiers().contains(Modifiers.STATIC))
-          .toList();
-        util.printSpaced(builder, staticMethods);
+          final List<CodeField> instanceFields = codeClass.fields().stream()
+            .filter(field -> !field.modifiers().contains(Modifiers.STATIC))
+            .toList();
 
-        final List<CodeConstructor> constructors = codeClass.constructors();
-        util.printSpaced(builder, constructors);
+          if (!staticFields.isEmpty() && !instanceFields.isEmpty()) {
+            builder.append("\n");
+          }
+          instanceFields.forEach(field -> appendNested(builder, field));
 
-        final List<CodeMethod> instanceMethods = codeClass.methods().stream()
-          .filter(Predicate.not(method -> method.modifiers().contains(Modifiers.STATIC)))
-          .toList();
-        util.printSpaced(builder, instanceMethods);
-      });
+          final List<CodeMethod> staticMethods = codeClass.methods().stream()
+            .filter(method -> method.modifiers().contains(Modifiers.STATIC))
+            .toList();
+          printSpaced(builder, staticMethods);
 
-      appendIndent(builder);
-      builder.append("}\n");
+          final List<CodeConstructor> constructors = codeClass.constructors();
+          printSpaced(builder, constructors);
+
+          final List<CodeMethod> instanceMethods = codeClass.methods().stream()
+            .filter(Predicate.not(method -> method.modifiers().contains(Modifiers.STATIC)))
+            .toList();
+          printSpaced(builder, instanceMethods);
+        });
+        appendIndent(builder);
+      }
+    );
+  }
+
+  @Override
+  public StringBuilder visitRecord(CodeRecord record) {
+    return visitClassLike(record, "record",
+      builder -> {
+        builder.append("(");
+        if (!record.components().isEmpty()) {
+          builder.append('\n');
+          appendIndented(() -> {
+            final int components = record.components().size();
+            for (int i = 0; i < components; i++) {
+              final CodeRecordComponent component = record.components().get(i);
+              appendIndent(builder);
+              builder.append(component.accept(this));
+              if (i + 1 < components) {
+                builder.append(",\n");
+              } else {
+                builder.append("\n");
+              }
+            }
+          });
+          appendIndent(builder);
+        }
+        builder.append(")");
+
+        if (!record.implementsTypes().isEmpty()) {
+          builder.append(" implements ").append(joining(record.implementsTypes()));
+        }
+      },
+      builder -> {
+        builder.append('\n');
+        appendIndented(() -> {
+          record.fields().forEach(field -> appendNested(builder, field));
+
+          final List<CodeMethod> staticMethods = record.methods().stream()
+            .filter(method -> method.modifiers().contains(Modifiers.STATIC))
+            .toList();
+          printSpaced(builder, staticMethods);
+
+          final CodePrimaryConstructor primaryConstructor = record.primaryConstructor();
+          if (primaryConstructor != null) {
+            printSpaced(builder, List.of(primaryConstructor));
+          }
+
+          final List<CodeConstructor> constructors = record.additionalConstructors();
+          printSpaced(builder, constructors);
+
+          final List<CodeMethod> instanceMethods = record.methods().stream()
+            .filter(Predicate.not(method -> method.modifiers().contains(Modifiers.STATIC)))
+            .toList();
+          printSpaced(builder, instanceMethods);
+        });
+        appendIndent(builder);
+      }
+    );
+  }
+
+  @Override
+  public StringBuilder visitRecordComponent(CodeRecordComponent recordComponent) {
+    return append(builder -> {
+      if (recordComponent.hasAnnotations()) {
+        joining(recordComponent.annotations(), " ");
+        builder.append(' ');
+      }
+      builder.append(recordComponent.type());
+      builder.append(' ').append(recordComponent.name());
     });
   }
 
   @Override
   public StringBuilder visitConstructor(CodeConstructor ctor) {
     return visitMethodLike(ctor, () -> ctor.type().accept(this));
+  }
+
+  @Override
+  public StringBuilder visitPrimaryConstructor(CodePrimaryConstructor ctor) {
+    return append(builder -> {
+      printDocumentationIndented(builder, ctor.documentation());
+      printAnnotationsIndented(builder, ctor.annotations());
+      printModifiersIndented(builder, ctor.modifiers());
+
+      if (!ctor.generics().isEmpty()) {
+        builder.append("<");
+        builder.append(joining(ctor.generics()));
+        builder.append("> ");
+      }
+
+      builder.append(ctor.type().accept(this));
+
+      if (!ctor.throwsExceptions().isEmpty()) {
+        builder.append(" throws ");
+        builder.append(joining(ctor.throwsExceptions()));
+      }
+
+      builder.append(" {\n");
+      builder.append(ctor.code().accept(this));
+      appendIndent(builder);
+      builder.append("}\n");
+    });
   }
 
   @Override
@@ -234,7 +348,7 @@ public class JavaSourcePrintingVisitor extends AbstractSourcePrintingVisitor {
     return append(builder -> {
       printModifiersIndented(builder, field.modifiers());
       if (!field.annotations().isEmpty()) {
-        builder.append(joining(field.annotations()));
+        builder.append(joining(field.annotations(), " "));
         builder.append(" ");
       }
       appendNested(builder, field.type());
@@ -455,7 +569,9 @@ public class JavaSourcePrintingVisitor extends AbstractSourcePrintingVisitor {
         return;
       }
 
-      if (statement instanceof TryStatement(CodeBlock tryBlock, List<TryStatement.CatchStatement> catchStatements, @Nullable CodeBlock finallyBlock)) {
+      if (statement instanceof TryStatement(
+        CodeBlock tryBlock, List<TryStatement.CatchStatement> catchStatements, @Nullable CodeBlock finallyBlock
+      )) {
         builder.append("try {\n");
         builder.append(tryBlock.accept(this));
         appendIndent(builder);
