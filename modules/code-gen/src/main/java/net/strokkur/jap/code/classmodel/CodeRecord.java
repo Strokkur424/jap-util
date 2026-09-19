@@ -63,11 +63,6 @@ public record CodeRecord(
   }
 
   @Override
-  public CodeClassType toClassType() {
-    return classType();
-  }
-
-  @Override
   public <R> R accept(CodeVisitor<R> visitor) {
     return visitor.visitRecord(this);
   }

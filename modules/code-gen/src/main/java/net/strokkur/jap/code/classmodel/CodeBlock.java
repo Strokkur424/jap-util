@@ -27,6 +27,8 @@ import net.strokkur.jap.code.convert.ConvertToStatement;
 import net.strokkur.jap.code.statement.CodeStatement;
 import net.strokkur.jap.code.visitor.CodeVisitable;
 import net.strokkur.jap.code.visitor.CodeVisitor;
+import org.jetbrains.annotations.Contract;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.List;
@@ -39,11 +41,17 @@ public record CodeBlock(List<CodeStatement> statements) implements CodeVisitable
     );
   }
 
-  public static CodeBlock of(List<ConvertToStatement> statements) {
-    return new CodeBlock(statements.stream()
-      .map(ConvertToStatement::toStatement)
-      .toList()
-    );
+  @Contract("!null -> !null")
+  @Nullable
+  public static CodeBlock of(@Nullable List<ConvertToStatement> statements) {
+    if (statements == null) {
+      return null;
+    } else {
+      return new CodeBlock(statements.stream()
+        .map(ConvertToStatement::toStatement)
+        .toList()
+      );
+    }
   }
 
   @Override

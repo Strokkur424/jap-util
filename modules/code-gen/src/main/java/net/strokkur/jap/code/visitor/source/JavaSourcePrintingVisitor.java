@@ -30,6 +30,7 @@ import net.strokkur.jap.code.classmodel.CodeClass;
 import net.strokkur.jap.code.classmodel.CodeClassLike;
 import net.strokkur.jap.code.classmodel.CodeConstructor;
 import net.strokkur.jap.code.classmodel.CodeField;
+import net.strokkur.jap.code.classmodel.CodeInterface;
 import net.strokkur.jap.code.classmodel.CodeMethod;
 import net.strokkur.jap.code.classmodel.CodeParameterDefinition;
 import net.strokkur.jap.code.classmodel.CodePrimaryConstructor;
@@ -159,10 +160,14 @@ public class JavaSourcePrintingVisitor extends AbstractSourcePrintingVisitor {
         builder.append(joining(method.throwsExceptions()));
       }
 
-      builder.append(" {\n");
-      builder.append(method.codeBlock().accept(this));
-      appendIndent(builder);
-      builder.append("}\n");
+      if (method.codeBlock() instanceof CodeBlock codeBlock) {
+        builder.append(" {\n");
+        builder.append(codeBlock.accept(this));
+        appendIndent(builder);
+        builder.append("}\n");
+      } else {
+        builder.append(";\n");
+      }
     });
   }
   //</editor-fold>
@@ -225,6 +230,34 @@ public class JavaSourcePrintingVisitor extends AbstractSourcePrintingVisitor {
           printSpaced(builder, constructors);
 
           final List<CodeMethod> instanceMethods = codeClass.methods().stream()
+            .filter(Predicate.not(method -> method.modifiers().contains(Modifiers.STATIC)))
+            .toList();
+          printSpaced(builder, instanceMethods);
+        });
+        appendIndent(builder);
+      }
+    );
+  }
+
+  @Override
+  public StringBuilder visitInterface(CodeInterface codeInterface) {
+    return visitClassLike(codeInterface, "interface",
+      builder -> {
+        if (!codeInterface.extendsTypes().isEmpty()) {
+          builder.append(" extends ").append(joining(codeInterface.extendsTypes()));
+        }
+      },
+      builder -> {
+        builder.append('\n');
+        appendIndented(() -> {
+          codeInterface.fields().forEach(field -> appendNested(builder, field));
+
+          final List<CodeMethod> staticMethods = codeInterface.methods().stream()
+            .filter(method -> method.modifiers().contains(Modifiers.STATIC))
+            .toList();
+          printSpaced(builder, staticMethods);
+
+          final List<CodeMethod> instanceMethods = codeInterface.methods().stream()
             .filter(Predicate.not(method -> method.modifiers().contains(Modifiers.STATIC)))
             .toList();
           printSpaced(builder, instanceMethods);

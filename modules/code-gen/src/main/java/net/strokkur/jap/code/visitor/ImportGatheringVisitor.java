@@ -29,6 +29,7 @@ import net.strokkur.jap.code.classmodel.CodeBlock;
 import net.strokkur.jap.code.classmodel.CodeClass;
 import net.strokkur.jap.code.classmodel.CodeConstructor;
 import net.strokkur.jap.code.classmodel.CodeField;
+import net.strokkur.jap.code.classmodel.CodeInterface;
 import net.strokkur.jap.code.classmodel.CodeMethod;
 import net.strokkur.jap.code.classmodel.CodeParameterDefinition;
 import net.strokkur.jap.code.classmodel.CodePrimaryConstructor;
@@ -115,6 +116,19 @@ public class ImportGatheringVisitor implements CodeVisitor<Set<CodeClassType>> {
   }
 
   @Override
+  public Set<CodeClassType> visitInterface(CodeInterface codeInterface) {
+    return join(
+      Set.of(codeInterface.classType()),
+      maybeAccept(codeInterface.documentation()),
+      collect(codeInterface.methods()),
+      collect(codeInterface.extendsTypes()),
+      collect(codeInterface.fields()),
+      collect(codeInterface.annotations()),
+      collect(codeInterface.genericTypes())
+    );
+  }
+
+  @Override
   public Set<CodeClassType> visitRecord(CodeRecord record) {
     return join(
       Set.of(record.classType()),
@@ -145,7 +159,7 @@ public class ImportGatheringVisitor implements CodeVisitor<Set<CodeClassType>> {
       collect(codeMethod.parameters()),
       collect(codeMethod.throwsExceptions()),
       codeMethod.returnType().accept(this),
-      collect(codeMethod.codeBlock().statements()),
+      maybeAccept(codeMethod.codeBlock()),
       collect(codeMethod.generics()),
       collect(codeMethod.annotations())
     );

@@ -29,6 +29,7 @@ import net.strokkur.jap.code.classmodel.CodeBlock;
 import net.strokkur.jap.code.classmodel.CodeClass;
 import net.strokkur.jap.code.classmodel.CodeConstructor;
 import net.strokkur.jap.code.classmodel.CodeField;
+import net.strokkur.jap.code.classmodel.CodeInterface;
 import net.strokkur.jap.code.classmodel.CodeMethod;
 import net.strokkur.jap.code.classmodel.CodeParameterDefinition;
 import net.strokkur.jap.code.classmodel.CodePrimaryConstructor;
@@ -47,6 +48,8 @@ public interface CodeVisitor<R> {
   R visitAnnotationParameter(CodeAnnotationParameter annotationParameter);
 
   R visitClass(CodeClass codeClass);
+
+  R visitInterface(CodeInterface codeInterface);
 
   R visitRecord(CodeRecord record);
 

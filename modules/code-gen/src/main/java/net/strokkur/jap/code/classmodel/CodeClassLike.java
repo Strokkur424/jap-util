@@ -45,6 +45,11 @@ public interface CodeClassLike extends CodeAnnotated, ConvertToClassType, CodeVi
 
   @Nullable CodeDocumentation documentation();
 
+  @Override
+  default CodeClassType toClassType() {
+    return classType();
+  }
+
   interface Typed extends CodeClassLike {
     List<CodeGenericTypeDefinition> genericTypes();
   }

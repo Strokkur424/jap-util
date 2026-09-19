@@ -21,33 +21,45 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.strokkur.jap.code.test.util;
+package net.strokkur.jap.code.classmodel;
 
+import net.strokkur.jap.code.annotations.CodeAnnotation;
+import net.strokkur.jap.code.classmodel.builder.InterfaceBuilder;
 import net.strokkur.jap.code.convert.ConvertToClassType;
+import net.strokkur.jap.code.documentation.CodeDocumentation;
+import net.strokkur.jap.code.type.CodeClassType;
 import net.strokkur.jap.code.type.CodeTypes;
+import net.strokkur.jap.code.type.generic.CodeGenericTypeDefinition;
+import net.strokkur.jap.code.util.Modifiers;
+import net.strokkur.jap.code.visitor.CodeVisitor;
+import org.jspecify.annotations.Nullable;
 
-public interface TestTypes extends ConvertToClassType {
-  TestTypes JAVA_PLUGIN = create("org.bukkit.plugin.java.JavaPlugin");
-  TestTypes PLUGIN_BOOTSTRAP = create("io.papermc.paper.plugin.bootstrap.PluginBootstrap");
-  TestTypes BOOTSTRAP_CONTEXT = create("io.papermc.paper.plugin.bootstrap.BootstrapContext");
+import java.util.List;
+import java.util.Set;
 
-  TestTypes PLAYER = create("org.bukkit.entity.Player");
+public record CodeInterface(
+  CodeClassType classType,
+  List<CodeGenericTypeDefinition> genericTypes,
+  Set<Modifiers> modifiers,
+  List<CodeAnnotation> annotations,
+  List<CodeClassType> extendsTypes,
 
-  TestTypes SIMPLE_COMMAND_EXCEPTION_TYPE = create("com.mojang.brigadier.exceptions.SimpleCommandExceptionType");
-  TestTypes LITERAL_MESSAGE = create("com.mojang.brigadier.LiteralMessage");
-  TestTypes COMMAND = create("com.mojang.brigadier.Command");
+  List<CodeField> fields,
+  List<CodeMethod> methods,
 
-  TestTypes COMMANDS = create("com.test.Commands");
+  @Nullable CodeDocumentation documentation
+) implements CodeClassLike.Typed {
 
-  // Custom
-  TestTypes LIST_HOLDER = create("com.ListHolder");
-  TestTypes CUSTOM_TYPE = create("com.CustomType");
-  TestTypes MY_CLASS = create("com.MyClass");
-  TestTypes DOUBLE = create("util.Double");
-  TestTypes TRIPLE = create("util.Triple");
-  TestTypes EMPTY_TRIPPLE = create("util.EmptyTriple");
+  public static InterfaceBuilder builder(String fqn) {
+    return builder(CodeTypes.of(fqn));
+  }
 
-  static TestTypes create(String fqn) {
-    return () -> CodeTypes.of(fqn);
+  public static InterfaceBuilder builder(ConvertToClassType type) {
+    return new InterfaceBuilder(type.toClassType());
+  }
+
+  @Override
+  public <R> R accept(CodeVisitor<R> visitor) {
+    return visitor.visitInterface(this);
   }
 }

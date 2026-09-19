@@ -49,7 +49,7 @@ public record CodeMethod(
   @Nullable CodeDocumentation documentation,
 
   List<CodeParameterDefinition> parameters,
-  CodeBlock codeBlock
+  @Nullable CodeBlock codeBlock
 ) implements ConvertToMethod, MethodLike {
 
   public static MethodBuilder builder(String name) {

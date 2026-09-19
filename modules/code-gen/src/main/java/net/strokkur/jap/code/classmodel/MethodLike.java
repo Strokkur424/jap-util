@@ -48,5 +48,5 @@ public interface MethodLike extends CodeVisitable, CodeAnnotated {
 
   List<CodeParameterDefinition> parameters();
 
-  CodeBlock codeBlock();
+  @Nullable CodeBlock codeBlock();
 }
