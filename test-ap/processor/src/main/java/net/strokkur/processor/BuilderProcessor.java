@@ -165,7 +165,7 @@ public class BuilderProcessor extends AbstractProcessor implements SourceMapProc
       );
 
       try {
-        genUtil.printJavaFile(builder.build(), element);
+        genUtil.printJavaFile(builder.toClass(), element);
       } catch (IOException e) {
         processingEnv.getMessager().printError("Failed to print Java file: " + e.getMessage(), element);
       }

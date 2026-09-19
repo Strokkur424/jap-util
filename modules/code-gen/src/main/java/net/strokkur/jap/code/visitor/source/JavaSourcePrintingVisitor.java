@@ -569,9 +569,9 @@ public class JavaSourcePrintingVisitor extends AbstractSourcePrintingVisitor {
         return;
       }
 
-      if (statement instanceof TryStatement(
-        CodeBlock tryBlock, List<TryStatement.CatchStatement> catchStatements, @Nullable CodeBlock finallyBlock
-      )) {
+      // @formatter:off
+      if (statement instanceof TryStatement(CodeBlock tryBlock, List<TryStatement.CatchStatement> catchStatements, @Nullable CodeBlock finallyBlock)) {
+        // @formatter:on
         builder.append("try {\n");
         builder.append(tryBlock.accept(this));
         appendIndent(builder);
