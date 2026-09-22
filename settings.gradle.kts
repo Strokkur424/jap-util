@@ -5,18 +5,21 @@ pluginManagement {
   }
 }
 
+//includeBuild("build-src")
+
 plugins {
   id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
 }
 
 rootProject.name = "jap-util"
 
-File(rootDir, "modules").listFiles().forEach {
-  include(it.name)
-  project(":${it.name}").projectDir = it
+fun includeAll(dir: String, name: (String) -> String = { it }) {
+  File(rootDir, dir).listFiles()?.forEach {
+    include(name(it.name))
+    project(":${name(it.name)}").projectDir = it
+  }
 }
-File(rootDir, "test-ap").listFiles().forEach {
-  val name = "test-ap-" + it.name
-  include(name)
-  project(":$name").projectDir = it
-}
+
+includeAll("modules")
+includeAll("internal") { "internal-$it" }
+includeAll("test-ap") { "test-ap-$it" }
