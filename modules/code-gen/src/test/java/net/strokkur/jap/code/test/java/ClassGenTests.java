@@ -55,12 +55,12 @@ class ClassGenTests extends AbstractGenTest {
     final String expectedCode = """
       /// A class holding a single empty, typed List for our custom type.
       @NonNull
-      public final class ListHolder<T extends CustomType> {
+      public final class ListHolder<T extends @NonNull CustomType> {
         private static final int VALUE = 2;
       
         private final List<T> list;
-        private final String[] someArray = null;
-        private final List<String> anotherList = List.of();
+        private final @NonNull String @Nullable [] someArray = null;
+        private final List<@Nullable String> anotherList = List.of();
       
         public static int getValue() {
           return VALUE;
@@ -73,6 +73,11 @@ class ClassGenTests extends AbstractGenTest {
         public List<T> getList() {
           return this.list;
         }
+
+        @Override
+        public @NonNull String @Nullable [] getSomeArray() {
+          return this.someArray;
+        }
       }
       """;
 
@@ -81,6 +86,8 @@ class ClassGenTests extends AbstractGenTest {
       TestTypes.CUSTOM_TYPE,
       JavaTypes.LIST,
       JSpecifyTypes.NON_NULL,
+      JSpecifyTypes.NULLABLE,
+      JavaTypes.OVERRIDE,
       JavaTypes.STRING
     );
 
@@ -88,7 +95,7 @@ class ClassGenTests extends AbstractGenTest {
       .setDocumentation(CodeDocumentation.text("A class holding a single empty, typed List for our custom type."))
       .addAnnotations(JSpecifyTypes.NON_NULL)
       .addModifiers(Modifiers.PUBLIC, Modifiers.FINAL)
-      .addGenericTypes(CodeGenericTypeDefinition.of("T", GenericEnclosure.withExtends(TestTypes.CUSTOM_TYPE)))
+      .addGenericTypes(CodeGenericTypeDefinition.of("T", GenericEnclosure.withExtends(TestTypes.CUSTOM_TYPE.withAnnotations(JSpecifyTypes.NON_NULL))))
 
       .addFields(CodeField.builder(CodePrimitiveType.INT, "VALUE")
         .addModifiers(Modifiers.PRIVATE, Modifiers.STATIC, Modifiers.FINAL)
@@ -99,12 +106,12 @@ class ClassGenTests extends AbstractGenTest {
         .addModifiers(Modifiers.PRIVATE, Modifiers.FINAL)
       )
 
-      .addFields(CodeField.builder(JavaTypes.STRING.toArray(), "someArray")
+      .addFields(CodeField.builder(JavaTypes.STRING.withAnnotations(JSpecifyTypes.NON_NULL).toArray().withAnnotations(JSpecifyTypes.NULLABLE), "someArray")
         .addModifiers(Modifiers.PRIVATE, Modifiers.FINAL)
         .setInitializer(Expressions.nullExpr())
       )
 
-      .addFields(CodeField.builder(JavaTypes.LIST.typed(JavaTypes.STRING), "anotherList")
+      .addFields(CodeField.builder(JavaTypes.LIST.typed(JavaTypes.STRING.withAnnotations(JSpecifyTypes.NULLABLE)), "anotherList")
         .addModifiers(Modifiers.PRIVATE, Modifiers.FINAL)
         .setInitializer(JavaTypes.LIST.chainMethod("of"))
       )
@@ -127,6 +134,13 @@ class ClassGenTests extends AbstractGenTest {
         .addModifiers(Modifiers.PUBLIC)
         .setReturnType(JavaTypes.LIST.typed(generic("T")))
         .setCode(Statements.returnStmt(Expressions.thisExpr().chainField("list")))
+      )
+
+      .addMethods(CodeMethod.builder("getSomeArray")
+        .addAnnotations(JavaTypes.OVERRIDE)
+        .addModifiers(Modifiers.PUBLIC)
+        .setReturnType(JavaTypes.STRING.withAnnotations(JSpecifyTypes.NON_NULL).toArray().withAnnotations(JSpecifyTypes.NULLABLE))
+        .setCode(Statements.returnStmt(Expressions.thisExpr().chainField("someArray")))
       )
 
       .toClass();

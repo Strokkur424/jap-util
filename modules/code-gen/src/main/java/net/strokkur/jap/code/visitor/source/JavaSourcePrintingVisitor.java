@@ -756,9 +756,18 @@ public class JavaSourcePrintingVisitor extends AbstractSourcePrintingVisitor {
   public StringBuilder visitType(CodeType type) {
     return append(builder -> {
       switch (type) {
-        case CodeArrayType(CodeType inner) -> builder.append(inner.accept(this)).append("[]");
+        case CodeArrayType arrayType -> {
+          builder.append(arrayType.inner().accept(this));
+          if (!arrayType.annotations().isEmpty()) {
+            builder.append(" ").append(joining(arrayType.annotations(), " ")).append(" ");
+          }
+          builder.append("[]");
+        }
 
         case CodeClassType classType -> {
+          if (!classType.annotations().isEmpty()) {
+            builder.append(joining(classType.annotations(), " ")).append(" ");
+          }
           builder.append(classType.simpleName());
           if (classType.genericTypes() != null) {
             builder.append("<");
@@ -767,19 +776,28 @@ public class JavaSourcePrintingVisitor extends AbstractSourcePrintingVisitor {
           }
         }
 
-        case CodeGenericType(@Nullable String genericName, @Nullable GenericEnclosure enclosure) -> {
-          if (genericName == null && enclosure instanceof GenericEnclosure.TypeEnclosure(CodeType encloses)) {
+        case CodeGenericType genericType -> {
+          if (genericType.genericName() == null && genericType.enclosure() instanceof GenericEnclosure.TypeEnclosure(CodeType encloses)) {
             builder.append(encloses.accept(this));
             return;
           }
 
-          builder.append(genericName == null ? "?" : genericName);
-          if (enclosure != null) {
-            builder.append(" ").append(enclosure.accept(this));
+          if (!genericType.annotations().isEmpty()) {
+            builder.append(joining(genericType.annotations(), " ")).append(" ");
+          }
+
+          builder.append(genericType.genericName() == null ? "?" : genericType.genericName());
+          if (genericType.enclosure() != null) {
+            builder.append(" ").append(genericType.enclosure().accept(this));
           }
         }
 
-        case CodePrimitiveType(String name, String boxed) -> builder.append(name);
+        case CodePrimitiveType primitiveType -> {
+          if (!primitiveType.annotations().isEmpty()) {
+            builder.append(joining(primitiveType.annotations(), " ")).append(" ");
+          }
+          builder.append(primitiveType.name());
+        }
 
         default -> throw new IllegalArgumentException("Unrecognized type: " + type.getClass());
       }

@@ -23,11 +23,17 @@
  */
 package net.strokkur.jap.code.type;
 
+import net.strokkur.jap.code.annotations.CodeAnnotation;
+import net.strokkur.jap.code.convert.ConvertToAnnotation;
 import net.strokkur.jap.code.expression.source.FieldMethodSource;
+
+import java.util.Arrays;
+import java.util.List;
 
 public record CodePrimitiveType(
   String name,
-  String boxedName
+  String boxedName,
+  List<CodeAnnotation> annotations
 ) implements CodeType, FieldMethodSource {
 
   /// This cannot be used anywhere else except the return value of a method. Nothing
@@ -43,6 +49,10 @@ public record CodePrimitiveType(
   public static final CodePrimitiveType DOUBLE = new CodePrimitiveType("double", "Double");
   public static final CodePrimitiveType BOOL = new CodePrimitiveType("boolean", "Boolean");
 
+  public CodePrimitiveType(String name, String boxedName) {
+    this(name, boxedName, List.of());
+  }
+
   @Override
   public String simpleName() {
     return name;
@@ -53,8 +63,19 @@ public record CodePrimitiveType(
     return name;
   }
 
+  @Override
+  public CodePrimitiveType withAnnotations(ConvertToAnnotation... annotations) {
+    return new CodePrimitiveType(
+      name,
+      boxedName,
+      Arrays.stream(annotations)
+        .map(ConvertToAnnotation::toAnnotation)
+        .toList()
+    );
+  }
+
   public CodeClassType boxed() {
-    return CodeTypes.of("java.lang." + boxedName);
+    return CodeTypes.of("java.lang." + boxedName).withAnnotations(annotations.toArray(ConvertToAnnotation[]::new));
   }
 
   @Override

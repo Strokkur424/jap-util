@@ -24,8 +24,14 @@
 package net.strokkur.jap.source.type;
 
 import net.strokkur.jap.code.type.CodePrimitiveType;
+import net.strokkur.jap.source.annotation.SourceAnnotation;
 
-public record SourcePrimitiveType(CodePrimitiveType codeType) implements SourceType {
+import java.util.List;
+
+public record SourcePrimitiveType(
+  CodePrimitiveType codeType,
+  List<SourceAnnotation> annotations
+) implements SourceType {
   @Override
   public CodePrimitiveType toType() {
     return codeType;

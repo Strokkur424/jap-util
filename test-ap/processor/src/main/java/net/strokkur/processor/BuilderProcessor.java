@@ -98,7 +98,7 @@ public class BuilderProcessor extends AbstractProcessor implements SourceMapProc
       for (SourceRecordComponent component : record.components()) {
         // Add field to class
         final FieldBuilder fieldBuilder = CodeField.builder(
-          component.type(), component.name()
+          component.type().withoutAnnotations(), component.name()
         );
         fieldBuilder.addModifiers(Modifiers.PRIVATE);
 

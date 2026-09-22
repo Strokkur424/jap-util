@@ -23,13 +23,19 @@
  */
 package net.strokkur.jap.code.type.generic;
 
+import net.strokkur.jap.code.annotations.CodeAnnotation;
+import net.strokkur.jap.code.convert.ConvertToAnnotation;
 import net.strokkur.jap.code.convert.ConvertToGenericType;
 import net.strokkur.jap.code.type.CodeType;
 import org.jspecify.annotations.Nullable;
 
+import java.util.Arrays;
+import java.util.List;
+
 public record CodeGenericType(
   @Nullable String genericName,
-  @Nullable GenericEnclosure enclosure
+  @Nullable GenericEnclosure enclosure,
+  List<CodeAnnotation> annotations
 ) implements CodeType, ConvertToGenericType {
 
   public boolean isWildcard() {
@@ -44,6 +50,17 @@ public record CodeGenericType(
   @Override
   public String fullyQualifiedName() {
     return isWildcard() ? "?" : genericName;
+  }
+
+  @Override
+  public CodeGenericType withAnnotations(ConvertToAnnotation... annotations) {
+    return new CodeGenericType(
+      genericName,
+      enclosure,
+      Arrays.stream(annotations)
+        .map(ConvertToAnnotation::toAnnotation)
+        .toList()
+    );
   }
 
   @Override

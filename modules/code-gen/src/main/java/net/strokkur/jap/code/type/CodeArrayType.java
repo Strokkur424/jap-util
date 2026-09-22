@@ -23,13 +23,19 @@
  */
 package net.strokkur.jap.code.type;
 
+import net.strokkur.jap.code.annotations.CodeAnnotation;
+import net.strokkur.jap.code.convert.ConvertToAnnotation;
 import net.strokkur.jap.code.convert.ConvertToGenericType;
 import net.strokkur.jap.code.expression.source.MethodReferenceSource;
 import net.strokkur.jap.code.type.generic.CodeGenericType;
 import net.strokkur.jap.code.type.generic.GenericEnclosure;
 
+import java.util.Arrays;
+import java.util.List;
+
 public record CodeArrayType(
-  CodeType inner
+  CodeType inner,
+  List<CodeAnnotation> annotations
 ) implements CodeType, ConvertToGenericType, MethodReferenceSource {
   @Override
   public String simpleName() {
@@ -42,7 +48,17 @@ public record CodeArrayType(
   }
 
   @Override
+  public CodeArrayType withAnnotations(ConvertToAnnotation... annotations) {
+    return new CodeArrayType(
+      inner,
+      Arrays.stream(annotations)
+        .map(ConvertToAnnotation::toAnnotation)
+        .toList()
+    );
+  }
+
+  @Override
   public CodeGenericType toGenericType() {
-    return new CodeGenericType(null, GenericEnclosure.withType(this));
+    return new CodeGenericType(null, GenericEnclosure.withType(this), List.of());
   }
 }

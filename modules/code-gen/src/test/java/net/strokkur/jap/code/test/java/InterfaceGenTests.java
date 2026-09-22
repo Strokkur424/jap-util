@@ -44,12 +44,12 @@ class InterfaceGenTests extends AbstractGenTest {
     //language=Java
     final String code = """
       @NullUnmarked
-      public interface Triple<L, M, R> extends Double<L, R> {
-        Triple<Void, Void, Void> EMPTY = new EmptyTriple();
+      public interface Triple<L, M, R> extends Double<@Nullable L, R> {
+        Triple<@Nullable Void, Void, Void> EMPTY = new EmptyTriple();
       
         L left();
       
-        M middle();
+        @Nullable M middle();
       
         R right();
       }
@@ -58,6 +58,7 @@ class InterfaceGenTests extends AbstractGenTest {
     final CodeClassType VOID = CodeTypes.of(Void.class);
     final Set<? extends ConvertToClassType> imports = Set.of(
       JSpecifyTypes.NULL_UNMARKED,
+      JSpecifyTypes.NULLABLE,
       TestTypes.TRIPLE,
       TestTypes.EMPTY_TRIPPLE,
       TestTypes.DOUBLE,
@@ -73,18 +74,18 @@ class InterfaceGenTests extends AbstractGenTest {
         CodeGenericTypeDefinition.of("R")
       )
       .extendsInterfaces(
-        TestTypes.DOUBLE.typed(CodeTypes.generic("L"), CodeTypes.generic("R"))
+        TestTypes.DOUBLE.typed(CodeTypes.generic("L").withAnnotations(JSpecifyTypes.NULLABLE), CodeTypes.generic("R"))
       )
 
       .addFields(
         CodeField.builder(
-          TestTypes.TRIPLE.typed(VOID, VOID, VOID),
+          TestTypes.TRIPLE.typed(VOID.withAnnotations(JSpecifyTypes.NULLABLE), VOID, VOID),
           "EMPTY"
         ).setInitializer(TestTypes.EMPTY_TRIPPLE.ctor())
       )
       .addMethods(
         CodeMethod.builder("left").setReturnType(CodeTypes.generic("L")),
-        CodeMethod.builder("middle").setReturnType(CodeTypes.generic("M")),
+        CodeMethod.builder("middle").setReturnType(CodeTypes.generic("M").withAnnotations(JSpecifyTypes.NULLABLE)),
         CodeMethod.builder("right").setReturnType(CodeTypes.generic("R"))
       )
 

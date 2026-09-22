@@ -52,7 +52,7 @@ class MethodGenTests extends AbstractGenTest {
     final String expectedCode = """
       /// Adds a value to a list, returning the list.
       @NonNull
-      private static <T> List<? extends T> add(List<? extends T> list, T value) throws RuntimeException, NullPointerException {
+      private static <T extends @Nullable Object> @NonNull List<@Nullable ? extends T> add(@NonNull List<@Nullable ? extends T> list, T value) throws RuntimeException, NullPointerException {
         list.add(value);
         return list;
       }
@@ -60,17 +60,21 @@ class MethodGenTests extends AbstractGenTest {
 
     final Set<? extends ConvertToClassType> expectedImports = Set.of(
       JSpecifyTypes.NON_NULL,
+      JSpecifyTypes.NULLABLE,
+      JavaTypes.OBJECT,
       JavaTypes.LIST,
       JavaTypes.RUNTIME_EXCEPTION,
       JavaTypes.NULL_POINTER_EXCEPTION
     );
 
-    final CodeType listType = JavaTypes.LIST.typed(CodeTypes.genericWildcardEnclosure(GenericEnclosure.withExtends(generic("T"))));
+    final CodeType listType = JavaTypes.LIST
+      .typed(CodeTypes.genericWildcardEnclosure(GenericEnclosure.withExtends(generic("T"))).withAnnotations(JSpecifyTypes.NULLABLE))
+      .withAnnotations(JSpecifyTypes.NON_NULL);
     final CodeVisitable ast = CodeMethod.builder("add")
       .setDocumentation(CodeDocumentation.text("Adds a value to a list, returning the list."))
       .addAnnotations(JSpecifyTypes.NON_NULL)
       .addModifiers(Modifiers.PRIVATE, Modifiers.STATIC)
-      .addGenerics(CodeGenericTypeDefinition.of("T"))
+      .addGenerics(CodeGenericTypeDefinition.of("T", GenericEnclosure.withExtends(JavaTypes.OBJECT.withAnnotations(JSpecifyTypes.NULLABLE))))
       .setReturnType(listType)
       .addThrowsExceptions(JavaTypes.RUNTIME_EXCEPTION, JavaTypes.NULL_POINTER_EXCEPTION)
       .addParameter(listType, "list")

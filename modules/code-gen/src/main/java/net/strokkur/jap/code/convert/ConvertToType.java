@@ -49,4 +49,12 @@ public interface ConvertToType extends ConvertToFieldMethodSource {
   default FieldMethodSource toFieldMethodSource() {
     return toType();
   }
+
+  default CodeType withAnnotations(ConvertToAnnotation... annotations) {
+    return toType().withAnnotations(annotations);
+  }
+
+  default CodeType withoutAnnotations() {
+    return withAnnotations();
+  }
 }

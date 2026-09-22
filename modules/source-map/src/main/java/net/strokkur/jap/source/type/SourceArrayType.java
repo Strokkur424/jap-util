@@ -23,14 +23,21 @@
  */
 package net.strokkur.jap.source.type;
 
+import net.strokkur.jap.code.convert.ConvertToAnnotation;
 import net.strokkur.jap.code.convert.ConvertToGenericType;
 import net.strokkur.jap.code.type.CodeArrayType;
 import net.strokkur.jap.code.type.generic.CodeGenericType;
+import net.strokkur.jap.source.annotation.SourceAnnotation;
 
-public record SourceArrayType(SourceType inner) implements SourceType, ConvertToGenericType {
+import java.util.List;
+
+public record SourceArrayType(
+  SourceType inner,
+  List<SourceAnnotation> annotations
+) implements SourceType, ConvertToGenericType {
   @Override
   public CodeArrayType toType() {
-    return inner.toArray();
+    return inner.toArray().withAnnotations(annotations.toArray(ConvertToAnnotation[]::new));
   }
 
   @Override

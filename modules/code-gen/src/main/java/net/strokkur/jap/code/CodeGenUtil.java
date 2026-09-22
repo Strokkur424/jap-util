@@ -23,7 +23,7 @@
  */
 package net.strokkur.jap.code;
 
-import net.strokkur.jap.code.classmodel.CodeClass;
+import net.strokkur.jap.code.classmodel.CodeClassLike;
 import net.strokkur.jap.code.documentation.AbstractDocumentationRenderer;
 import net.strokkur.jap.code.documentation.MarkdownJavadocRenderer;
 import net.strokkur.jap.code.documentation.StarJavadocRenderer;
@@ -55,7 +55,7 @@ public final class CodeGenUtil {
     this.processor = processor;
   }
 
-  public void printJavaFile(CodeClass codeClass, Element... originatingElements) throws IOException, IllegalStateException {
+  public void printJavaFile(CodeClassLike codeClass, Element... originatingElements) throws IOException, IllegalStateException {
     if (processor == null) {
       throw new IllegalStateException("No processor provided.");
     }
@@ -70,7 +70,7 @@ public final class CodeGenUtil {
     }
   }
 
-  public static String createJavaFile(CodeClass codeClass) {
+  public static String createJavaFile(CodeClassLike codeClass) {
     // The first step is to gather all imports.
     final Set<CodeClassType> imports = codeClass.accept(IMPORT_VISITOR);
     imports.removeIf(type -> CodePackage.isRedundantImport(codeClass.classType().codePackage(), type.codePackage()));

@@ -70,6 +70,7 @@ import net.strokkur.jap.code.statement.TryStatement;
 import net.strokkur.jap.code.statement.VariableDeclarationStatement;
 import net.strokkur.jap.code.type.CodeArrayType;
 import net.strokkur.jap.code.type.CodeClassType;
+import net.strokkur.jap.code.type.CodePrimitiveType;
 import net.strokkur.jap.code.type.CodeType;
 import net.strokkur.jap.code.type.generic.CodeGenericType;
 import net.strokkur.jap.code.type.generic.CodeGenericTypeDefinition;
@@ -216,13 +217,20 @@ public class ImportGatheringVisitor implements CodeVisitor<Set<CodeClassType>> {
   @Override
   public Set<CodeClassType> visitType(CodeType codeType) {
     return switch (codeType) {
-      case CodeArrayType(CodeType inner) -> inner.accept(this);
-      case CodeGenericType(String genericName, GenericEnclosure enclosure) -> maybeAccept(enclosure);
-      case CodeClassType codeClass -> join(
-        codeClass.genericTypes() == null ? Set.of() : collect(codeClass.genericTypes()),
-        Set.of(codeClass.toTopLevel().withoutGenerics())
+      case CodeArrayType arrayType -> join(
+        collect(arrayType.annotations()),
+        arrayType.inner().accept(this)
       );
-      default -> Set.of();
+      case CodeGenericType genericType -> join(
+        collect(genericType.annotations()),
+        maybeAccept(genericType.enclosure())
+      );
+      case CodeClassType classType -> join(
+        collect(classType.annotations()),
+        classType.genericTypes() == null ? Set.of() : collect(classType.genericTypes()),
+        Set.of(classType.toTopLevel().withoutGenerics())
+      );
+      case CodePrimitiveType primitiveType -> collect(primitiveType.annotations());
     };
   }
 

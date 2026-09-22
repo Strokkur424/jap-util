@@ -24,12 +24,20 @@
 package net.strokkur.jap.source.type;
 
 import net.strokkur.jap.code.type.CodeType;
+import net.strokkur.jap.source.annotation.SourceAnnotation;
+
+import java.util.List;
 
 public final class UnknownType implements SourceType {
   static final UnknownType UNKNOWN = new UnknownType();
 
   @Override
   public CodeType toType() {
+    throw new IllegalArgumentException("Unknown type.");
+  }
+
+  @Override
+  public List<SourceAnnotation> annotations() {
     throw new IllegalArgumentException("Unknown type.");
   }
 

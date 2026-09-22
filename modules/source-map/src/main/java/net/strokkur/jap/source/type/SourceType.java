@@ -25,25 +25,15 @@ package net.strokkur.jap.source.type;
 
 import net.strokkur.jap.code.convert.ConvertToType;
 import net.strokkur.jap.code.type.CodePrimitiveType;
+import net.strokkur.jap.source.annotation.AnnotationsHolder;
 import net.strokkur.jap.source.classmodel.SourceClassLike;
 
+import java.util.List;
+
 public sealed interface SourceType
-  extends ConvertToType
+  extends ConvertToType, AnnotationsHolder
   permits SourceClassLike, ClassLikeType, SourceArrayType, SourceGenericType, SourcePrimitiveType, UnknownType {
 
-  SourceType VOID = primitive(CodePrimitiveType.VOID);
+  SourceType VOID = new SourcePrimitiveType(CodePrimitiveType.VOID, List.of());
   SourceType UNKNOWN = UnknownType.UNKNOWN;
-
-  SourceType BYTE = primitive(CodePrimitiveType.BYTE);
-  SourceType BOOL = primitive(CodePrimitiveType.BOOL);
-  SourceType SHORT = primitive(CodePrimitiveType.SHORT);
-  SourceType CHAR = primitive(CodePrimitiveType.CHAR);
-  SourceType INT = primitive(CodePrimitiveType.INT);
-  SourceType LONG = primitive(CodePrimitiveType.LONG);
-  SourceType FLOAT = primitive(CodePrimitiveType.FLOAT);
-  SourceType DOUBLE = primitive(CodePrimitiveType.DOUBLE);
-
-  static SourcePrimitiveType primitive(CodePrimitiveType type) {
-    return new SourcePrimitiveType(type);
-  }
 }

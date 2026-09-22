@@ -28,9 +28,10 @@ import net.strokkur.jap.code.expression.Expressions;
 import net.strokkur.jap.code.expression.builder.ConstructorInvocationBuilder;
 import net.strokkur.jap.code.expression.source.MethodReferenceSource;
 import net.strokkur.jap.code.type.CodeClassType;
-import net.strokkur.jap.code.type.CodeType;
 import net.strokkur.jap.code.type.generic.CodeGenericType;
 import net.strokkur.jap.code.type.generic.GenericEnclosure;
+
+import java.util.List;
 
 public interface ConvertToClassType extends ConvertToType, ConvertToGenericType, ConvertToFieldMethodSource, ConvertToMethodReferenceSource, ConvertToAnnotation {
   CodeClassType toClassType();
@@ -41,7 +42,7 @@ public interface ConvertToClassType extends ConvertToType, ConvertToGenericType,
   }
 
   @Override
-  default CodeType toType() {
+  default CodeClassType toType() {
     return toClassType();
   }
 
@@ -52,11 +53,21 @@ public interface ConvertToClassType extends ConvertToType, ConvertToGenericType,
 
   @Override
   default CodeGenericType toGenericType() {
-    return new CodeGenericType(null, GenericEnclosure.withType(this));
+    return new CodeGenericType(null, GenericEnclosure.withType(this), List.of());
   }
 
   default CodeClassType typed(ConvertToGenericType... types) {
     return toClassType().typed(types);
+  }
+
+  @Override
+  default CodeClassType withAnnotations(ConvertToAnnotation... annotations) {
+    return toClassType().withAnnotations(annotations);
+  }
+
+  @Override
+  default CodeClassType withoutAnnotations() {
+    return withAnnotations();
   }
 
   default ConstructorInvocationBuilder ctor(ConvertToExpression... parameters) {

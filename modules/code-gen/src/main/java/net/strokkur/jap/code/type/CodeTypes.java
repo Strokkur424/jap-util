@@ -36,23 +36,23 @@ import java.util.List;
 public final class CodeTypes {
 
   public static CodeArrayType asArray(ConvertToType inner) {
-    return new CodeArrayType(inner.toType());
+    return new CodeArrayType(inner.toType(), List.of());
   }
 
   public static CodeGenericType genericWildcard() {
-    return new CodeGenericType(null, null);
+    return new CodeGenericType(null, null, List.of());
   }
 
   public static CodeGenericType genericWildcardEnclosure(GenericEnclosure enclosure) {
-    return new CodeGenericType(null, enclosure);
+    return new CodeGenericType(null, enclosure, List.of());
   }
 
   public static CodeGenericType generic(String genericTypeName) {
-    return new CodeGenericType(genericTypeName, null);
+    return new CodeGenericType(genericTypeName, null, List.of());
   }
 
   public static CodeGenericType genericEnclosure(String genericTypeName, GenericEnclosure enclosure) {
-    return new CodeGenericType(genericTypeName, enclosure);
+    return new CodeGenericType(genericTypeName, enclosure, List.of());
   }
 
   /// A fully qualified name in the form `net.pkg.ClassName$Outer$Inner`.
@@ -105,7 +105,8 @@ public final class CodeTypes {
     return new CodeClassType(
       CodePackage.of(splitPackage.subList(0, splitPackage.size() - 1)),
       String.join(".", namePath).split("<", 1)[0],
-      types
+      types,
+      List.of()
     );
   }
 

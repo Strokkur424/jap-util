@@ -23,6 +23,8 @@
  */
 package net.strokkur.jap.code.type;
 
+import net.strokkur.jap.code.annotations.CodeAnnotation;
+import net.strokkur.jap.code.convert.ConvertToAnnotation;
 import net.strokkur.jap.code.convert.ConvertToClassType;
 import net.strokkur.jap.code.convert.ConvertToGenericType;
 import net.strokkur.jap.code.expression.source.MethodReferenceSource;
@@ -36,7 +38,8 @@ import java.util.stream.Collectors;
 public record CodeClassType(
   CodePackage codePackage,
   String simpleName,
-  @Nullable List<CodeGenericType> genericTypes
+  @Nullable List<CodeGenericType> genericTypes,
+  List<CodeAnnotation> annotations
 ) implements CodeType, ConvertToClassType, MethodReferenceSource, Comparable<CodeClassType> {
 
   /// The value returned from [#name()] may differ from one returned from [#simpleName()]
@@ -56,18 +59,31 @@ public record CodeClassType(
     return codePackage().path() + "." + simpleName();
   }
 
+  @Override
+  public CodeClassType withAnnotations(ConvertToAnnotation... annotations) {
+    return new CodeClassType(
+      codePackage,
+      simpleName,
+      genericTypes,
+      Arrays.stream(annotations)
+        .map(ConvertToAnnotation::toAnnotation)
+        .toList()
+    );
+  }
+
   public CodeClassType toTopLevel() {
     return new CodeClassType(
       codePackage,
       simpleName.split("\\.", 2)[0],
-      genericTypes
+      genericTypes,
+      annotations
     );
   }
 
   @Override
   public CodeClassType withoutGenerics() {
     return new CodeClassType(
-      codePackage, simpleName, null
+      codePackage, simpleName, null, annotations
     );
   }
 
@@ -78,13 +94,14 @@ public record CodeClassType(
   }
 
   @Override
-  public CodeClassType typed(ConvertToGenericType... types) {
+  public CodeClassType typed(ConvertToGenericType... genericTypes) {
     return new CodeClassType(
-      codePackage(),
-      simpleName(),
-      Arrays.stream(types)
+      codePackage,
+      simpleName,
+      Arrays.stream(genericTypes)
         .map(ConvertToGenericType::toGenericType)
-        .toList()
+        .toList(),
+      annotations
     );
   }
 
@@ -94,7 +111,7 @@ public record CodeClassType(
   }
 
   @Override
-  public CodeType toType() {
+  public CodeClassType toType() {
     return this;
   }
 
