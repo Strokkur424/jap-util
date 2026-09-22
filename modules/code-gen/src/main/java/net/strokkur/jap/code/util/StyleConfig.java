@@ -23,6 +23,9 @@
  */
 package net.strokkur.jap.code.util;
 
+import net.strokkur.internal.annotations.ModifyClass;
+
+@ModifyClass
 public record StyleConfig(
   boolean newline,
   boolean multilineParameters,
