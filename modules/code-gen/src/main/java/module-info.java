@@ -24,4 +24,5 @@ module net.strokkur.jap.code {
   exports net.strokkur.jap.code.util;
   exports net.strokkur.jap.code.visitor;
   exports net.strokkur.jap.code.visitor.source;
+  exports net.strokkur.jap.code.type.convert;
 }

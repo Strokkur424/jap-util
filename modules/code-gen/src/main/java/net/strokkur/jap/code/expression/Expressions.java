@@ -24,11 +24,11 @@
 package net.strokkur.jap.code.expression;
 
 import net.strokkur.jap.code.classmodel.CodeBlock;
-import net.strokkur.jap.code.convert.ConvertToClassType;
+import net.strokkur.jap.code.type.convert.ConvertToClassType;
 import net.strokkur.jap.code.convert.ConvertToExpression;
 import net.strokkur.jap.code.convert.ConvertToMethodReferenceSource;
 import net.strokkur.jap.code.convert.ConvertToStatement;
-import net.strokkur.jap.code.convert.ConvertToType;
+import net.strokkur.jap.code.type.convert.ConvertToType;
 import net.strokkur.jap.code.expression.builder.ConstructorInvocationBuilder;
 import net.strokkur.jap.code.expression.builder.MethodInvocationBuilder;
 import net.strokkur.jap.code.expression.simple.CodeBooleanExpression;

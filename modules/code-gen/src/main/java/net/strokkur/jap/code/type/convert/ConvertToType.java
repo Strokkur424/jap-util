@@ -21,12 +21,16 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.strokkur.jap.code.convert;
+package net.strokkur.jap.code.type.convert;
 
+import net.strokkur.jap.code.convert.ConvertToAnnotation;
+import net.strokkur.jap.code.convert.ConvertToFieldMethodSource;
 import net.strokkur.jap.code.expression.source.FieldMethodSource;
 import net.strokkur.jap.code.type.CodeArrayType;
 import net.strokkur.jap.code.type.CodeType;
 import net.strokkur.jap.code.type.CodeTypes;
+
+import java.util.List;
 
 public interface ConvertToType extends ConvertToFieldMethodSource {
   CodeType toType();
@@ -50,8 +54,12 @@ public interface ConvertToType extends ConvertToFieldMethodSource {
     return toType();
   }
 
-  default CodeType withAnnotations(ConvertToAnnotation... annotations) {
+  default CodeType withAnnotations(List<? extends ConvertToAnnotation> annotations) {
     return toType().withAnnotations(annotations);
+  }
+
+  default CodeType withAnnotations(ConvertToAnnotation... annotations) {
+    return withAnnotations(List.of(annotations));
   }
 
   default CodeType withoutAnnotations() {

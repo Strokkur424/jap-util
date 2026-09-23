@@ -23,10 +23,11 @@
  */
 package net.strokkur.jap.code.type;
 
-import net.strokkur.jap.code.convert.ConvertToGenericType;
-import net.strokkur.jap.code.convert.ConvertToType;
+import net.strokkur.jap.code.type.convert.ConvertToGenericType;
+import net.strokkur.jap.code.type.convert.ConvertToType;
 import net.strokkur.jap.code.type.generic.CodeGenericType;
 import net.strokkur.jap.code.type.generic.GenericEnclosure;
+import net.strokkur.jap.code.type.impl.CodeTypeImpl;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -36,7 +37,7 @@ import java.util.List;
 public final class CodeTypes {
 
   public static CodeArrayType asArray(ConvertToType inner) {
-    return new CodeArrayType(inner.toType(), List.of());
+    return CodeTypeImpl.createArray(inner.toType(), List.of());
   }
 
   public static CodeGenericType genericWildcard() {
@@ -102,8 +103,10 @@ public final class CodeTypes {
     final List<String> namePath = new ArrayList<>(List.of(splitPackage.getLast()));
     namePath.addAll(splitInner.subList(1, splitInner.size()));
 
-    return new CodeClassType(
-      CodePackage.of(splitPackage.subList(0, splitPackage.size() - 1)),
+    final String pkg = String.join(".", splitPackage.subList(0, splitPackage.size() - 1));
+
+    return CodeTypeImpl.createClass(
+      pkg.isBlank() ? CodeTypeImpl.createPackageEmpty() : CodeTypeImpl.createPackage(pkg),
       String.join(".", namePath).split("<", 1)[0],
       types,
       List.of()

@@ -23,7 +23,7 @@
  */
 package net.strokkur.jap.code.type.generic;
 
-import net.strokkur.jap.code.convert.ConvertToType;
+import net.strokkur.jap.code.type.convert.ConvertToType;
 import net.strokkur.jap.code.type.CodeType;
 import net.strokkur.jap.code.visitor.CodeVisitable;
 import net.strokkur.jap.code.visitor.CodeVisitor;

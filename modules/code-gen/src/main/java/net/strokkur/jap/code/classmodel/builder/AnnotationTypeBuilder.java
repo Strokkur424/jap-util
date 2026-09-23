@@ -24,7 +24,7 @@
 package net.strokkur.jap.code.classmodel.builder;
 
 import net.strokkur.jap.code.classmodel.CodeAnnotationType;
-import net.strokkur.jap.code.convert.ConvertToClassType;
+import net.strokkur.jap.code.type.convert.ConvertToClassType;
 
 import java.util.List;
 import java.util.Set;

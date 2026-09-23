@@ -23,42 +23,43 @@
  */
 package net.strokkur.jap.code.type;
 
-import net.strokkur.jap.code.annotations.CodeAnnotation;
 import net.strokkur.jap.code.convert.ConvertToAnnotation;
-import net.strokkur.jap.code.convert.ConvertToGenericType;
+import net.strokkur.jap.code.type.convert.ConvertToGenericType;
 import net.strokkur.jap.code.expression.source.MethodReferenceSource;
-import net.strokkur.jap.code.type.generic.CodeGenericType;
-import net.strokkur.jap.code.type.generic.GenericEnclosure;
 
-import java.util.Arrays;
 import java.util.List;
 
-public record CodeArrayType(
-  CodeType inner,
-  List<CodeAnnotation> annotations
-) implements CodeType, ConvertToGenericType, MethodReferenceSource {
+public non-sealed interface CodeArrayType extends CodeType, ConvertToGenericType, MethodReferenceSource {
+
+  //
+  // Access.
+  //
+
+  CodeType inner();
+
+  //
+  // Modification
+  //
+
   @Override
-  public String simpleName() {
+  CodeArrayType withAnnotations(List<? extends ConvertToAnnotation> annotations);
+
+  @Override
+  default CodeArrayType withAnnotations(ConvertToAnnotation... annotations) {
+    return withAnnotations(List.of(annotations));
+  }
+
+  //
+  // Util and interface impl.
+  //
+
+  @Override
+  default String simpleName() {
     return inner().simpleName() + "[]";
   }
 
   @Override
-  public String fullyQualifiedName() {
+  default String fullyQualifiedName() {
     return inner().simpleName() + "[]";
-  }
-
-  @Override
-  public CodeArrayType withAnnotations(ConvertToAnnotation... annotations) {
-    return new CodeArrayType(
-      inner,
-      Arrays.stream(annotations)
-        .map(ConvertToAnnotation::toAnnotation)
-        .toList()
-    );
-  }
-
-  @Override
-  public CodeGenericType toGenericType() {
-    return new CodeGenericType(null, GenericEnclosure.withType(this), List.of());
   }
 }

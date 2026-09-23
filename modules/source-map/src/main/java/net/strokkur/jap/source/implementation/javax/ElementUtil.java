@@ -25,7 +25,7 @@ package net.strokkur.jap.source.implementation.javax;
 
 import com.sun.source.tree.ExpressionTree;
 import net.strokkur.jap.code.convert.ConvertToAnnotation;
-import net.strokkur.jap.code.convert.ConvertToGenericType;
+import net.strokkur.jap.code.type.convert.ConvertToGenericType;
 import net.strokkur.jap.code.type.CodeClassType;
 import net.strokkur.jap.code.type.CodePackage;
 import net.strokkur.jap.code.type.CodePrimitiveType;

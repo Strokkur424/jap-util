@@ -23,7 +23,7 @@
  */
 package net.strokkur.jap.code.annotations;
 
-import net.strokkur.jap.code.convert.ConvertToClassType;
+import net.strokkur.jap.code.type.convert.ConvertToClassType;
 
 import java.util.List;
 

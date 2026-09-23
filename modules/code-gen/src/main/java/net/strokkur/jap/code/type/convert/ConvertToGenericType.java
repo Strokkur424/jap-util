@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.strokkur.jap.code.convert;
+package net.strokkur.jap.code.type.convert;
 
 import net.strokkur.jap.code.type.generic.CodeGenericType;
 

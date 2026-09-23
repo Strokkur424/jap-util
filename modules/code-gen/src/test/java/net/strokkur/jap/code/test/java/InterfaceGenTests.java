@@ -26,7 +26,7 @@ package net.strokkur.jap.code.test.java;
 import net.strokkur.jap.code.classmodel.CodeField;
 import net.strokkur.jap.code.classmodel.CodeInterface;
 import net.strokkur.jap.code.classmodel.CodeMethod;
-import net.strokkur.jap.code.convert.ConvertToClassType;
+import net.strokkur.jap.code.type.convert.ConvertToClassType;
 import net.strokkur.jap.code.test.util.TestTypes;
 import net.strokkur.jap.code.type.CodeClassType;
 import net.strokkur.jap.code.type.CodeTypes;

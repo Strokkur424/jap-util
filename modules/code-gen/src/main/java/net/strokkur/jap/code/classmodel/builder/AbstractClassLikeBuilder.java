@@ -27,7 +27,7 @@ import net.strokkur.jap.code.annotations.CodeAnnotation;
 import net.strokkur.jap.code.classmodel.CodeField;
 import net.strokkur.jap.code.classmodel.CodeMethod;
 import net.strokkur.jap.code.convert.ConvertToAnnotation;
-import net.strokkur.jap.code.convert.ConvertToClassType;
+import net.strokkur.jap.code.type.convert.ConvertToClassType;
 import net.strokkur.jap.code.convert.ConvertToField;
 import net.strokkur.jap.code.convert.ConvertToMethod;
 import net.strokkur.jap.code.documentation.CodeDocumentation;

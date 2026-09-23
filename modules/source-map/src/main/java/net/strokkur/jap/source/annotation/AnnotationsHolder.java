@@ -23,7 +23,7 @@
  */
 package net.strokkur.jap.source.annotation;
 
-import net.strokkur.jap.code.convert.ConvertToClassType;
+import net.strokkur.jap.code.type.convert.ConvertToClassType;
 import net.strokkur.jap.code.type.CodeTypes;
 import net.strokkur.jap.source.classmodel.SourceElement;
 import org.jetbrains.annotations.ApiStatus;

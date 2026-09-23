@@ -23,7 +23,7 @@
  */
 package net.strokkur.jap.source.type;
 
-import net.strokkur.jap.code.convert.ConvertToClassType;
+import net.strokkur.jap.code.type.convert.ConvertToClassType;
 import net.strokkur.jap.code.type.CodeClassType;
 import net.strokkur.jap.source.annotation.SourceAnnotation;
 import net.strokkur.jap.source.classmodel.SourceClassLike;

@@ -25,7 +25,7 @@ package net.strokkur.jap.code.annotations;
 
 import net.strokkur.jap.code.convert.ConvertToAnnotation;
 import net.strokkur.jap.code.convert.ConvertToAnnotationParameter;
-import net.strokkur.jap.code.convert.ConvertToClassType;
+import net.strokkur.jap.code.type.convert.ConvertToClassType;
 import net.strokkur.jap.code.convert.ConvertToExpression;
 import net.strokkur.jap.code.type.CodeClassType;
 import net.strokkur.jap.code.visitor.CodeVisitable;

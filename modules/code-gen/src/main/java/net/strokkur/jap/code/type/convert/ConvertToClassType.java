@@ -21,9 +21,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.strokkur.jap.code.convert;
+package net.strokkur.jap.code.type.convert;
 
 import net.strokkur.jap.code.annotations.CodeAnnotation;
+import net.strokkur.jap.code.convert.ConvertToAnnotation;
+import net.strokkur.jap.code.convert.ConvertToExpression;
+import net.strokkur.jap.code.convert.ConvertToFieldMethodSource;
+import net.strokkur.jap.code.convert.ConvertToMethodReferenceSource;
 import net.strokkur.jap.code.expression.Expressions;
 import net.strokkur.jap.code.expression.builder.ConstructorInvocationBuilder;
 import net.strokkur.jap.code.expression.source.MethodReferenceSource;
@@ -47,15 +51,24 @@ public interface ConvertToClassType extends ConvertToType, ConvertToGenericType,
   }
 
   @Override
-  default CodeClassType withoutGenerics() {
-    return toClassType().withoutGenerics();
-  }
-
-  @Override
   default CodeGenericType toGenericType() {
     return new CodeGenericType(null, GenericEnclosure.withType(this), List.of());
   }
 
+  /// Returns this [CodeClassType] with any generic types cleared.
+  @Override
+  default CodeClassType withoutGenerics() {
+    return toClassType().withoutGenerics();
+  }
+
+  /// Returns this [CodeClassType] typed with the provided generics. If no arguments are provided,
+  /// the type will act as if it had the **diamond operator**: `ArrayList<>`.
+  default CodeClassType typed(List<? extends ConvertToGenericType> types) {
+    return toClassType().typed(types);
+  }
+
+  /// Returns this [CodeClassType] typed with the provided generics. If no arguments are provided,
+  /// the type will act as if it had the **diamond operator**: `ArrayList<>`.
   default CodeClassType typed(ConvertToGenericType... types) {
     return toClassType().typed(types);
   }

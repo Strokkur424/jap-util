@@ -25,7 +25,7 @@ package net.strokkur.jap.code.classmodel;
 
 import net.strokkur.jap.code.annotations.CodeAnnotation;
 import net.strokkur.jap.code.classmodel.builder.ClassBuilder;
-import net.strokkur.jap.code.convert.ConvertToClassType;
+import net.strokkur.jap.code.type.convert.ConvertToClassType;
 import net.strokkur.jap.code.documentation.CodeDocumentation;
 import net.strokkur.jap.code.type.CodeClassType;
 import net.strokkur.jap.code.type.CodeTypes;

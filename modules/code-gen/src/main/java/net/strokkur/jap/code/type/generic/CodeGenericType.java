@@ -25,7 +25,7 @@ package net.strokkur.jap.code.type.generic;
 
 import net.strokkur.jap.code.annotations.CodeAnnotation;
 import net.strokkur.jap.code.convert.ConvertToAnnotation;
-import net.strokkur.jap.code.convert.ConvertToGenericType;
+import net.strokkur.jap.code.type.convert.ConvertToGenericType;
 import net.strokkur.jap.code.type.CodeType;
 import org.jspecify.annotations.Nullable;
 
@@ -53,14 +53,19 @@ public record CodeGenericType(
   }
 
   @Override
-  public CodeGenericType withAnnotations(ConvertToAnnotation... annotations) {
+  public CodeGenericType withAnnotations(List<? extends ConvertToAnnotation> annotations) {
     return new CodeGenericType(
       genericName,
       enclosure,
-      Arrays.stream(annotations)
+      annotations.stream()
         .map(ConvertToAnnotation::toAnnotation)
         .toList()
     );
+  }
+
+  @Override
+  public CodeGenericType withAnnotations(ConvertToAnnotation... annotations) {
+    return withAnnotations(List.of(annotations));
   }
 
   @Override

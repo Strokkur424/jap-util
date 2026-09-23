@@ -23,7 +23,7 @@
  */
 package net.strokkur.jap.code.documentation;
 
-import net.strokkur.jap.code.convert.ConvertToClassType;
+import net.strokkur.jap.code.type.convert.ConvertToClassType;
 import net.strokkur.jap.code.type.CodeClassType;
 import net.strokkur.jap.code.type.CodePackage;
 import org.jetbrains.annotations.Unmodifiable;
