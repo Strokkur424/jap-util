@@ -23,9 +23,9 @@
  */
 package net.strokkur.jap.code.documentation;
 
-import net.strokkur.jap.code.type.convert.ConvertToClassType;
+import net.strokkur.jap.code.classmodel.CodePackage;
 import net.strokkur.jap.code.type.CodeClassType;
-import net.strokkur.jap.code.type.CodePackage;
+import net.strokkur.jap.code.type.convert.ConvertToClassType;
 import org.jetbrains.annotations.Unmodifiable;
 import org.jspecify.annotations.Nullable;
 

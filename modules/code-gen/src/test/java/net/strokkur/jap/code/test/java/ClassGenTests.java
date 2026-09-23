@@ -26,7 +26,6 @@ package net.strokkur.jap.code.test.java;
 import net.strokkur.jap.code.classmodel.CodeClass;
 import net.strokkur.jap.code.classmodel.CodeField;
 import net.strokkur.jap.code.classmodel.CodeMethod;
-import net.strokkur.jap.code.type.convert.ConvertToClassType;
 import net.strokkur.jap.code.documentation.CodeDocumentation;
 import net.strokkur.jap.code.expression.Expressions;
 import net.strokkur.jap.code.statement.Statements;
@@ -34,8 +33,8 @@ import net.strokkur.jap.code.test.util.TestTypes;
 import net.strokkur.jap.code.type.CodeClassType;
 import net.strokkur.jap.code.type.CodePrimitiveType;
 import net.strokkur.jap.code.type.CodeTypes;
-import net.strokkur.jap.code.type.generic.CodeGenericTypeDefinition;
-import net.strokkur.jap.code.type.generic.GenericEnclosure;
+import net.strokkur.jap.code.type.convert.ConvertToClassType;
+import net.strokkur.jap.code.type.generics.CodeGenericTypeDeclaration;
 import net.strokkur.jap.code.type.preset.JSpecifyTypes;
 import net.strokkur.jap.code.type.preset.JavaTypes;
 import net.strokkur.jap.code.util.Modifiers;
@@ -95,7 +94,7 @@ class ClassGenTests extends AbstractGenTest {
       .setDocumentation(CodeDocumentation.text("A class holding a single empty, typed List for our custom type."))
       .addAnnotations(JSpecifyTypes.NON_NULL)
       .addModifiers(Modifiers.PUBLIC, Modifiers.FINAL)
-      .addGenericTypes(CodeGenericTypeDefinition.of("T", GenericEnclosure.withExtends(TestTypes.CUSTOM_TYPE.withAnnotations(JSpecifyTypes.NON_NULL))))
+      .addGenericTypes(CodeGenericTypeDeclaration.ofExtends("T", TestTypes.CUSTOM_TYPE.withAnnotations(JSpecifyTypes.NON_NULL)))
 
       .addFields(CodeField.builder(CodePrimitiveType.INT, "VALUE")
         .addModifiers(Modifiers.PRIVATE, Modifiers.STATIC, Modifiers.FINAL)

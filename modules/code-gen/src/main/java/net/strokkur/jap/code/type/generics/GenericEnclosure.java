@@ -21,27 +21,44 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.strokkur.jap.code.type.generic;
+package net.strokkur.jap.code.type.generics;
 
+import net.strokkur.jap.code.type.convert.ConvertToEnclosable;
 import net.strokkur.jap.code.visitor.CodeVisitable;
 import net.strokkur.jap.code.visitor.CodeVisitor;
-import org.jspecify.annotations.Nullable;
 
-public record CodeGenericTypeDefinition(
-  String name,
-  @Nullable GenericEnclosure enclosure
+public record GenericEnclosure(
+  CodeEnclosable encloses,
+  Type type
 ) implements CodeVisitable {
 
-  public static CodeGenericTypeDefinition of(String name) {
-    return new CodeGenericTypeDefinition(name, null);
+  /// `extends Type`
+  static GenericEnclosure ofExtends(ConvertToEnclosable encloses) {
+    return new GenericEnclosure(encloses.toEnclosable(), Type.EXTENDS);
   }
 
-  public static CodeGenericTypeDefinition of(String name, GenericEnclosure enclosure) {
-    return new CodeGenericTypeDefinition(name, enclosure);
+  /// `super Type`
+  static GenericEnclosure ofSuper(ConvertToEnclosable encloses) {
+    return new GenericEnclosure(encloses.toEnclosable(), Type.SUPER);
+  }
+
+  /// `extends Type`
+  public GenericEnclosure withExtends() {
+    return new GenericEnclosure(encloses, Type.EXTENDS);
+  }
+
+  /// `extends Type`
+  public GenericEnclosure withSuper() {
+    return new GenericEnclosure(encloses, Type.SUPER);
   }
 
   @Override
   public <R> R accept(CodeVisitor<R> visitor) {
-    return visitor.visitGenericTypeDefinition(this);
+    return visitor.visitGenericEnclosure(this);
+  }
+
+  public enum Type {
+    SUPER,
+    EXTENDS
   }
 }

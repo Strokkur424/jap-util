@@ -19,7 +19,7 @@ module net.strokkur.jap.code {
   exports net.strokkur.jap.code.expression.source;
   exports net.strokkur.jap.code.statement;
   exports net.strokkur.jap.code.type;
-  exports net.strokkur.jap.code.type.generic;
+  exports net.strokkur.jap.code.type.generics;
   exports net.strokkur.jap.code.type.preset;
   exports net.strokkur.jap.code.util;
   exports net.strokkur.jap.code.visitor;

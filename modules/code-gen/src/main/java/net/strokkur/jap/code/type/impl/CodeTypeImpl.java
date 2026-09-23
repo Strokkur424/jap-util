@@ -6,7 +6,8 @@ import net.strokkur.jap.code.type.CodeArrayType;
 import net.strokkur.jap.code.type.CodeClassType;
 import net.strokkur.jap.code.type.CodePrimitiveType;
 import net.strokkur.jap.code.type.CodeType;
-import net.strokkur.jap.code.type.generic.CodeGenericType;
+import net.strokkur.jap.code.type.CodeGenericType;
+import net.strokkur.jap.code.type.generics.CodeGenericTypeDefinable;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
@@ -19,7 +20,7 @@ public final class CodeTypeImpl {
   public static CodeClassType createClass(
     CodePackage codePackage,
     String simpleName,
-    @Nullable List<CodeGenericType> genericTypes,
+    @Nullable List<CodeGenericTypeDefinable> genericTypes,
     List<CodeAnnotation> annotations
   ) {
     return new CodeClassTypeImpl(
@@ -49,6 +50,13 @@ public final class CodeTypeImpl {
   public static CodeArrayType createArray(CodeType inner, List<CodeAnnotation> annotations) {
     return new CodeArrayTypeImpl(
       inner,
+      annotations
+    );
+  }
+
+  public static CodeGenericType createGeneric(String name, List<CodeAnnotation> annotations) {
+    return new CodeGenericTypeImpl(
+      name,
       annotations
     );
   }

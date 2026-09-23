@@ -5,13 +5,12 @@ import net.strokkur.jap.code.convert.ConvertToAnnotation;
 import net.strokkur.jap.code.type.CodeArrayType;
 import net.strokkur.jap.code.type.CodeType;
 import net.strokkur.jap.code.type.convert.ConvertToType;
-import net.strokkur.jap.code.type.generic.CodeGenericType;
 import org.jetbrains.annotations.Unmodifiable;
 
 import java.util.List;
 import java.util.Objects;
 
-public class CodeArrayTypeImpl implements CodeArrayType {
+public non-sealed class CodeArrayTypeImpl implements CodeArrayType {
   private final CodeType inner;
   private final List<CodeAnnotation> annotations;
 
@@ -36,11 +35,6 @@ public class CodeArrayTypeImpl implements CodeArrayType {
         .map(ConvertToAnnotation::toAnnotation)
         .toList()
     );
-  }
-
-  @Override
-  public CodeGenericType toGenericType() {
-    throw new IllegalStateException("Not implemented");
   }
 
   @Override

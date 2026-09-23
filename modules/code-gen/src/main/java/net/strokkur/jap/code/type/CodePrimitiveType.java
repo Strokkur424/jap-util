@@ -25,11 +25,14 @@ package net.strokkur.jap.code.type;
 
 import net.strokkur.jap.code.convert.ConvertToAnnotation;
 import net.strokkur.jap.code.expression.source.FieldMethodSource;
+import net.strokkur.jap.code.type.impl.CodePrimitiveTypeImpl;
 import net.strokkur.jap.code.type.impl.CodeTypeImpl;
 
 import java.util.List;
 
-public non-sealed interface CodePrimitiveType extends CodeType, FieldMethodSource {
+public sealed interface CodePrimitiveType
+  extends CodeType, FieldMethodSource
+  permits CodePrimitiveTypeImpl {
 
   /// This type cannot be used anywhere else except the return value of a method.
   /// Nothing specifically enforces this, but the JVM does not allow otherwise.

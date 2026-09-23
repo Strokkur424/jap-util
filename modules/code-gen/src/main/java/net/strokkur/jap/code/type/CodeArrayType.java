@@ -24,14 +24,17 @@
 package net.strokkur.jap.code.type;
 
 import net.strokkur.jap.code.convert.ConvertToAnnotation;
-import net.strokkur.jap.code.type.convert.ConvertToGenericType;
 import net.strokkur.jap.code.expression.source.MethodReferenceSource;
 import net.strokkur.jap.code.type.convert.ConvertToType;
+import net.strokkur.jap.code.type.generics.CodeEnclosable;
+import net.strokkur.jap.code.type.impl.CodeArrayTypeImpl;
 import org.jetbrains.annotations.Contract;
 
 import java.util.List;
 
-public non-sealed interface CodeArrayType extends CodeType, ConvertToGenericType, MethodReferenceSource {
+public sealed interface CodeArrayType
+  extends CodeType, MethodReferenceSource, CodeEnclosable
+  permits CodeArrayTypeImpl {
 
   //
   // Access.

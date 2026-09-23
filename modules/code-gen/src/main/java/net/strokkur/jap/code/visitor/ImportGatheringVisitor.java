@@ -70,11 +70,12 @@ import net.strokkur.jap.code.statement.TryStatement;
 import net.strokkur.jap.code.statement.VariableDeclarationStatement;
 import net.strokkur.jap.code.type.CodeArrayType;
 import net.strokkur.jap.code.type.CodeClassType;
+import net.strokkur.jap.code.type.CodeGenericType;
 import net.strokkur.jap.code.type.CodePrimitiveType;
 import net.strokkur.jap.code.type.CodeType;
-import net.strokkur.jap.code.type.generic.CodeGenericType;
-import net.strokkur.jap.code.type.generic.CodeGenericTypeDefinition;
-import net.strokkur.jap.code.type.generic.GenericEnclosure;
+import net.strokkur.jap.code.type.generics.CodeGenericTypeDeclaration;
+import net.strokkur.jap.code.type.generics.CodeWildcard;
+import net.strokkur.jap.code.type.generics.GenericEnclosure;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Collection;
@@ -221,10 +222,7 @@ public class ImportGatheringVisitor implements CodeVisitor<Set<CodeClassType>> {
         collect(arrayType.annotations()),
         arrayType.inner().accept(this)
       );
-      case CodeGenericType genericType -> join(
-        collect(genericType.annotations()),
-        maybeAccept(genericType.enclosure())
-      );
+      case CodeGenericType genericType -> collect(genericType.annotations());
       case CodeClassType classType -> join(
         collect(classType.annotations()),
         classType.genericTypes() == null ? Set.of() : collect(classType.genericTypes()),
@@ -383,8 +381,16 @@ public class ImportGatheringVisitor implements CodeVisitor<Set<CodeClassType>> {
   }
 
   @Override
-  public Set<CodeClassType> visitGenericTypeDefinition(CodeGenericTypeDefinition genericTypeDefinition) {
-    return maybeAccept(genericTypeDefinition.enclosure());
+  public Set<CodeClassType> visitGenericTypeDeclaration(CodeGenericTypeDeclaration declaration) {
+    return maybeAccept(declaration.enclosure());
+  }
+
+  @Override
+  public Set<CodeClassType> visitWildcard(CodeWildcard wildcard) {
+    return join(
+      maybeAccept(wildcard.enclosure()),
+      collect(wildcard.annotations())
+    );
   }
 
   @Override

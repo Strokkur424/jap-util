@@ -24,11 +24,11 @@
 package net.strokkur.jap.code;
 
 import net.strokkur.jap.code.classmodel.CodeClassLike;
+import net.strokkur.jap.code.classmodel.CodePackage;
 import net.strokkur.jap.code.documentation.AbstractDocumentationRenderer;
 import net.strokkur.jap.code.documentation.MarkdownJavadocRenderer;
 import net.strokkur.jap.code.documentation.StarJavadocRenderer;
 import net.strokkur.jap.code.type.CodeClassType;
-import net.strokkur.jap.code.type.CodePackage;
 import net.strokkur.jap.code.visitor.ImportGatheringVisitor;
 import net.strokkur.jap.code.visitor.source.JavaSourcePrintingVisitor;
 import org.jspecify.annotations.Nullable;
@@ -73,7 +73,7 @@ public final class CodeGenUtil {
   public static String createJavaFile(CodeClassLike codeClass) {
     // The first step is to gather all imports.
     final Set<CodeClassType> imports = codeClass.accept(IMPORT_VISITOR);
-    imports.removeIf(type -> CodePackage.isRedundantImport(codeClass.classType().codePackage(), type.codePackage()));
+    imports.removeIf(type -> !CodePackage.requiresImport(codeClass.classType().codePackage(), type.codePackage()));
 
     final StringBuilder builder = new StringBuilder();
     builder.append("package ").append(codeClass.classType().codePackage().path()).append(";\n");

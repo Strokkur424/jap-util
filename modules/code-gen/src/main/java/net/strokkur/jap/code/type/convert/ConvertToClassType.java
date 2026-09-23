@@ -32,13 +32,16 @@ import net.strokkur.jap.code.expression.Expressions;
 import net.strokkur.jap.code.expression.builder.ConstructorInvocationBuilder;
 import net.strokkur.jap.code.expression.source.MethodReferenceSource;
 import net.strokkur.jap.code.type.CodeClassType;
-import net.strokkur.jap.code.type.CodeType;
-import net.strokkur.jap.code.type.generic.CodeGenericType;
-import net.strokkur.jap.code.type.generic.GenericEnclosure;
+import net.strokkur.jap.code.type.CodeGenericType;
+import net.strokkur.jap.code.type.generics.CodeEnclosable;
+import net.strokkur.jap.code.type.generics.CodeGenericTypeDefinable;
+import net.strokkur.jap.code.type.generics.GenericEnclosure;
 
 import java.util.List;
 
-public interface ConvertToClassType extends ConvertToType, ConvertToGenericType, ConvertToFieldMethodSource, ConvertToMethodReferenceSource, ConvertToAnnotation {
+public interface ConvertToClassType
+  extends ConvertToType, ConvertToFieldMethodSource, ConvertToMethodReferenceSource,
+  ConvertToAnnotation, ConvertToEnclosable, ConvertToGenericTypeDefinable {
 
   /// Converts this class into a [CodeClassType].
   CodeClassType toClassType();
@@ -55,13 +58,13 @@ public interface ConvertToClassType extends ConvertToType, ConvertToGenericType,
 
   /// Returns this [CodeClassType] typed with the provided generics. If no arguments are provided,
   /// the type will act as if it had the **diamond operator**: `ArrayList<>`.
-  default CodeClassType typed(List<? extends ConvertToGenericType> types) {
+  default CodeClassType typed(List<? extends ConvertToGenericTypeDefinable> types) {
     return toClassType().typed(types);
   }
 
   /// Returns this [CodeClassType] typed with the provided generics. If no arguments are provided,
   /// the type will act as if it had the **diamond operator**: `ArrayList<>`.
-  default CodeClassType typed(ConvertToGenericType... types) {
+  default CodeClassType typed(ConvertToGenericTypeDefinable... types) {
     return toClassType().typed(types);
   }
 
@@ -104,12 +107,17 @@ public interface ConvertToClassType extends ConvertToType, ConvertToGenericType,
   }
 
   @Override
-  default CodeGenericType toGenericType() {
-    return new CodeGenericType(null, GenericEnclosure.withType(this), List.of());
+  default CodeAnnotation toAnnotation() {
+    return CodeAnnotation.of(this);
   }
 
   @Override
-  default CodeAnnotation toAnnotation() {
-    return CodeAnnotation.of(this);
+  default CodeEnclosable toEnclosable() {
+    return toClassType();
+  }
+
+  @Override
+  default CodeGenericTypeDefinable toGenericTypeDefinable() {
+    return toClassType();
   }
 }

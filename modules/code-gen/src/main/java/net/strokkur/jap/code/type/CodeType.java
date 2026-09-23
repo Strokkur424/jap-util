@@ -27,7 +27,7 @@ import net.strokkur.jap.code.annotations.CodeAnnotated;
 import net.strokkur.jap.code.convert.ConvertToAnnotation;
 import net.strokkur.jap.code.type.convert.ConvertToType;
 import net.strokkur.jap.code.expression.source.FieldMethodSource;
-import net.strokkur.jap.code.type.generic.CodeGenericType;
+import net.strokkur.jap.code.type.generics.CodeEnclosable;
 import net.strokkur.jap.code.visitor.CodeVisitable;
 import net.strokkur.jap.code.visitor.CodeVisitor;
 
@@ -35,7 +35,7 @@ import java.util.List;
 
 public sealed interface CodeType
   extends CodeAnnotated, ConvertToType, CodeVisitable, FieldMethodSource
-  permits CodeArrayType, CodeClassType, CodePrimitiveType, CodeGenericType {
+  permits CodeArrayType, CodeClassType, CodePrimitiveType, CodeGenericType, CodeEnclosable {
 
   /// A code-representable name of this type, if an import is present.
   String simpleName();

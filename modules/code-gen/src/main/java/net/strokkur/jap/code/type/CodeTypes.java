@@ -23,10 +23,9 @@
  */
 package net.strokkur.jap.code.type;
 
-import net.strokkur.jap.code.type.convert.ConvertToGenericType;
+import net.strokkur.jap.code.type.convert.ConvertToGenericTypeDefinable;
 import net.strokkur.jap.code.type.convert.ConvertToType;
-import net.strokkur.jap.code.type.generic.CodeGenericType;
-import net.strokkur.jap.code.type.generic.GenericEnclosure;
+import net.strokkur.jap.code.type.generics.CodeGenericTypeDefinable;
 import net.strokkur.jap.code.type.impl.CodeTypeImpl;
 import org.jspecify.annotations.Nullable;
 
@@ -40,20 +39,8 @@ public final class CodeTypes {
     return CodeTypeImpl.createArray(inner.toType(), List.of());
   }
 
-  public static CodeGenericType genericWildcard() {
-    return new CodeGenericType(null, null, List.of());
-  }
-
-  public static CodeGenericType genericWildcardEnclosure(GenericEnclosure enclosure) {
-    return new CodeGenericType(null, enclosure, List.of());
-  }
-
-  public static CodeGenericType generic(String genericTypeName) {
-    return new CodeGenericType(genericTypeName, null, List.of());
-  }
-
-  public static CodeGenericType genericEnclosure(String genericTypeName, GenericEnclosure enclosure) {
-    return new CodeGenericType(genericTypeName, enclosure, List.of());
+  public static CodeGenericType generic(String name) {
+    return CodeTypeImpl.createGeneric(name, List.of());
   }
 
   /// A fully qualified name in the form `net.pkg.ClassName$Outer$Inner`.
@@ -66,13 +53,13 @@ public final class CodeTypes {
   }
 
   /// A fully qualified name in the form `net.pkg.ClassName$Outer$Inner`.
-  public static CodeClassType ofTyped(String fqn, ConvertToGenericType... types) {
+  public static CodeClassType ofTyped(String fqn, ConvertToGenericTypeDefinable... types) {
     return ofClass(fqn, Arrays.stream(types)
-      .map(ConvertToGenericType::toGenericType)
+      .map(ConvertToGenericTypeDefinable::toGenericTypeDefinable)
       .toList());
   }
 
-  public static CodeClassType ofTyped(Class<?> clazz, ConvertToGenericType... types) {
+  public static CodeClassType ofTyped(Class<?> clazz, ConvertToGenericTypeDefinable... types) {
     return ofTyped(clazz.getName(), types);
   }
 
@@ -84,9 +71,9 @@ public final class CodeTypes {
   }
 
   /// A fully qualified name in the form `net.pkg.ClassName$Outer$Inner`.
-  /// @deprecated use [#ofTyped(String, ConvertToGenericType...)] instead
+  /// @deprecated use [#ofTyped(String, ConvertToGenericTypeDefinable...)] instead
   @Deprecated(forRemoval = true)
-  public static CodeClassType ofClassTyped(String fullyQualifiedName, ConvertToGenericType... types) {
+  public static CodeClassType ofClassTyped(String fullyQualifiedName, ConvertToGenericTypeDefinable... types) {
     return ofTyped(fullyQualifiedName, types);
   }
 
@@ -96,7 +83,7 @@ public final class CodeTypes {
     return of(clazz.getName());
   }
 
-  private static CodeClassType ofClass(String fullyQualifiedName, @Nullable List<CodeGenericType> types) {
+  private static CodeClassType ofClass(String fullyQualifiedName, @Nullable List<CodeGenericTypeDefinable> types) {
     final List<String> splitInner = List.of(fullyQualifiedName.split("\\$"));
     final List<String> splitPackage = List.of(splitInner.getFirst().split("\\."));
 

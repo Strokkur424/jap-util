@@ -9,7 +9,7 @@ import org.jetbrains.annotations.Unmodifiable;
 import java.util.List;
 import java.util.Objects;
 
-public class CodePrimitiveTypeImpl implements CodePrimitiveType {
+public non-sealed class CodePrimitiveTypeImpl implements CodePrimitiveType {
   private final String name;
   private final String boxedName;
   private final List<CodeAnnotation> annotation;

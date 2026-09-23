@@ -25,11 +25,11 @@ package net.strokkur.jap.code.classmodel;
 
 import net.strokkur.jap.code.annotations.CodeAnnotation;
 import net.strokkur.jap.code.classmodel.builder.ClassBuilder;
-import net.strokkur.jap.code.type.convert.ConvertToClassType;
 import net.strokkur.jap.code.documentation.CodeDocumentation;
 import net.strokkur.jap.code.type.CodeClassType;
 import net.strokkur.jap.code.type.CodeTypes;
-import net.strokkur.jap.code.type.generic.CodeGenericTypeDefinition;
+import net.strokkur.jap.code.type.convert.ConvertToClassType;
+import net.strokkur.jap.code.type.generics.CodeGenericTypeDeclaration;
 import net.strokkur.jap.code.util.Modifiers;
 import net.strokkur.jap.code.visitor.CodeVisitor;
 import org.jspecify.annotations.Nullable;
@@ -39,7 +39,7 @@ import java.util.Set;
 
 public record CodeClass(
   CodeClassType classType,
-  List<CodeGenericTypeDefinition> genericTypes,
+  List<CodeGenericTypeDeclaration> genericTypes,
   Set<Modifiers> modifiers,
   List<CodeAnnotation> annotations,
   @Nullable CodeClassType extendsType,

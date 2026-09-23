@@ -25,13 +25,13 @@ package net.strokkur.jap.code.test.java;
 
 import net.strokkur.jap.code.classmodel.CodeMethod;
 import net.strokkur.jap.code.classmodel.CodeParameterDefinition;
-import net.strokkur.jap.code.type.convert.ConvertToClassType;
 import net.strokkur.jap.code.documentation.CodeDocumentation;
 import net.strokkur.jap.code.statement.Statements;
 import net.strokkur.jap.code.type.CodeType;
 import net.strokkur.jap.code.type.CodeTypes;
-import net.strokkur.jap.code.type.generic.CodeGenericTypeDefinition;
-import net.strokkur.jap.code.type.generic.GenericEnclosure;
+import net.strokkur.jap.code.type.convert.ConvertToClassType;
+import net.strokkur.jap.code.type.generics.CodeGenericTypeDeclaration;
+import net.strokkur.jap.code.type.generics.CodeWildcard;
 import net.strokkur.jap.code.type.preset.JSpecifyTypes;
 import net.strokkur.jap.code.type.preset.JavaTypes;
 import net.strokkur.jap.code.util.Modifiers;
@@ -41,7 +41,6 @@ import org.junit.jupiter.api.Test;
 import java.util.Set;
 
 import static net.strokkur.jap.code.expression.Expressions.variable;
-import static net.strokkur.jap.code.type.CodeTypes.generic;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
 class MethodGenTests extends AbstractGenTest {
@@ -68,17 +67,17 @@ class MethodGenTests extends AbstractGenTest {
     );
 
     final CodeType listType = JavaTypes.LIST
-      .typed(CodeTypes.genericWildcardEnclosure(GenericEnclosure.withExtends(generic("T"))).withAnnotations(JSpecifyTypes.NULLABLE))
+      .typed(CodeWildcard.ofExtendsEnclosure(CodeTypes.generic("T")).withAnnotations(JSpecifyTypes.NULLABLE))
       .withAnnotations(JSpecifyTypes.NON_NULL);
     final CodeVisitable ast = CodeMethod.builder("add")
       .setDocumentation(CodeDocumentation.text("Adds a value to a list, returning the list."))
       .addAnnotations(JSpecifyTypes.NON_NULL)
       .addModifiers(Modifiers.PRIVATE, Modifiers.STATIC)
-      .addGenerics(CodeGenericTypeDefinition.of("T", GenericEnclosure.withExtends(JavaTypes.OBJECT.withAnnotations(JSpecifyTypes.NULLABLE))))
+      .addGenerics(CodeGenericTypeDeclaration.ofExtends("T", JavaTypes.OBJECT.withAnnotations(JSpecifyTypes.NULLABLE)))
       .setReturnType(listType)
       .addThrowsExceptions(JavaTypes.RUNTIME_EXCEPTION, JavaTypes.NULL_POINTER_EXCEPTION)
       .addParameter(listType, "list")
-      .addParameters(CodeParameterDefinition.of(generic("T"), "value"))
+      .addParameters(CodeParameterDefinition.of(CodeTypes.generic("T"), "value"))
       .setCode(
         variable("list").chainMethod("add").addParameters(variable("value")),
         Statements.returnStmt(variable("list"))

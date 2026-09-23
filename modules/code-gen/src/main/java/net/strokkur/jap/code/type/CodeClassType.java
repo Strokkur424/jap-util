@@ -25,15 +25,21 @@ package net.strokkur.jap.code.type;
 
 import net.strokkur.jap.code.classmodel.CodePackage;
 import net.strokkur.jap.code.convert.ConvertToAnnotation;
-import net.strokkur.jap.code.type.convert.ConvertToClassType;
-import net.strokkur.jap.code.type.convert.ConvertToGenericType;
 import net.strokkur.jap.code.expression.source.MethodReferenceSource;
-import net.strokkur.jap.code.type.generic.CodeGenericType;
+import net.strokkur.jap.code.type.convert.ConvertToClassType;
+import net.strokkur.jap.code.type.convert.ConvertToGenericTypeDefinable;
+import net.strokkur.jap.code.type.generics.CodeEnclosable;
+import net.strokkur.jap.code.type.generics.CodeGenericTypeDefinable;
+import net.strokkur.jap.code.type.impl.CodeClassTypeImpl;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.Unmodifiable;
 import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 
-public non-sealed interface CodeClassType extends CodeType, ConvertToClassType, MethodReferenceSource, Comparable<CodeClassType> {
+public sealed interface CodeClassType
+  extends CodeType, ConvertToClassType, MethodReferenceSource, CodeEnclosable, Comparable<CodeClassType>
+  permits CodeClassTypeImpl {
 
   //
   // Access.
@@ -43,7 +49,10 @@ public non-sealed interface CodeClassType extends CodeType, ConvertToClassType, 
 
   CodePackage codePackage();
 
-  @Nullable List<CodeGenericType> genericTypes();
+  @Unmodifiable
+  @Contract(pure = true)
+  @Nullable
+  List<CodeGenericTypeDefinable> genericTypes();
 
   //
   // Modifications.
@@ -64,10 +73,10 @@ public non-sealed interface CodeClassType extends CodeType, ConvertToClassType, 
   CodeClassType withoutGenerics();
 
   @Override
-  CodeClassType typed(List<? extends ConvertToGenericType> types);
+  CodeClassType typed(List<? extends ConvertToGenericTypeDefinable> types);
 
   @Override
-  default CodeClassType typed(ConvertToGenericType... types) {
+  default CodeClassType typed(ConvertToGenericTypeDefinable... types) {
     return typed(List.of(types));
   }
 
@@ -105,6 +114,16 @@ public non-sealed interface CodeClassType extends CodeType, ConvertToClassType, 
 
   @Override
   default CodeClassType toType() {
+    return this;
+  }
+
+  @Override
+  default CodeEnclosable toEnclosable() {
+    return this;
+  }
+
+  @Override
+  default CodeGenericTypeDefinable toGenericTypeDefinable() {
     return this;
   }
 

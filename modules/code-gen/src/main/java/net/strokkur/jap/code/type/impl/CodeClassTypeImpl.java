@@ -3,25 +3,25 @@ package net.strokkur.jap.code.type.impl;
 import net.strokkur.jap.code.annotations.CodeAnnotation;
 import net.strokkur.jap.code.classmodel.CodePackage;
 import net.strokkur.jap.code.convert.ConvertToAnnotation;
-import net.strokkur.jap.code.type.convert.ConvertToGenericType;
 import net.strokkur.jap.code.type.CodeClassType;
-import net.strokkur.jap.code.type.generic.CodeGenericType;
+import net.strokkur.jap.code.type.convert.ConvertToGenericTypeDefinable;
+import net.strokkur.jap.code.type.generics.CodeGenericTypeDefinable;
 import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-public class CodeClassTypeImpl implements CodeClassType {
+public non-sealed class CodeClassTypeImpl implements CodeClassType {
   private final CodePackage codePackage;
   private final String simpleName;
-  private final @Nullable List<CodeGenericType> genericTypes;
+  private final @Nullable List<CodeGenericTypeDefinable> genericTypes;
   private final List<CodeAnnotation> annotations;
 
   protected CodeClassTypeImpl(
     CodePackage codePackage,
     String simpleName,
-    @Nullable List<CodeGenericType> genericTypes,
+    @Nullable List<CodeGenericTypeDefinable> genericTypes,
     List<CodeAnnotation> annotations
   ) {
     this.codePackage = codePackage;
@@ -62,12 +62,12 @@ public class CodeClassTypeImpl implements CodeClassType {
   }
 
   @Override
-  public CodeClassType typed(List<? extends ConvertToGenericType> types) {
+  public CodeClassType typed(List<? extends ConvertToGenericTypeDefinable> types) {
     return new CodeClassTypeImpl(
       codePackage,
       simpleName,
       types.stream()
-        .map(ConvertToGenericType::toGenericType)
+        .map(ConvertToGenericTypeDefinable::toGenericTypeDefinable)
         .toList(),
       annotations
     );
@@ -76,7 +76,7 @@ public class CodeClassTypeImpl implements CodeClassType {
   @Override
   public String toString() {
     return identifiableName() + (genericTypes == null ? "" : genericTypes.stream()
-      .map(CodeGenericType::toString)
+      .map(Object::toString)
       .collect(Collectors.joining(", ", "<", ">"))
     );
   }
@@ -108,7 +108,7 @@ public class CodeClassTypeImpl implements CodeClassType {
   }
 
   @Override
-  public @Nullable List<CodeGenericType> genericTypes() {
+  public @Nullable List<CodeGenericTypeDefinable> genericTypes() {
     return genericTypes;
   }
 

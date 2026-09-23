@@ -24,8 +24,8 @@
 package net.strokkur.jap.code.documentation;
 
 import net.strokkur.jap.code.classmodel.CodeMethod;
+import net.strokkur.jap.code.classmodel.CodePackage;
 import net.strokkur.jap.code.type.CodeClassType;
-import net.strokkur.jap.code.type.CodePackage;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -151,10 +151,11 @@ public class StarJavadocRenderer extends AbstractDocumentationRenderer {
   }
 
   protected String getQualifiedTypeName(CodeClassType type) {
-    if (CodePackage.isRedundantImport(currentPath, type.codePackage()) || existingImports != null && existingImports.contains(type)) {
+    if (CodePackage.requiresImport(currentPath, type.codePackage()) && (existingImports == null || !existingImports.contains(type))) {
+      return type.fullyQualifiedName();
+    } else {
       return type.name();
     }
-    return type.fullyQualifiedName();
   }
 
   public String javadocName(CodeMethod method) {

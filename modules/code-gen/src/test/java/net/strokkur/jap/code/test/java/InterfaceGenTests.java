@@ -30,7 +30,7 @@ import net.strokkur.jap.code.type.convert.ConvertToClassType;
 import net.strokkur.jap.code.test.util.TestTypes;
 import net.strokkur.jap.code.type.CodeClassType;
 import net.strokkur.jap.code.type.CodeTypes;
-import net.strokkur.jap.code.type.generic.CodeGenericTypeDefinition;
+import net.strokkur.jap.code.type.generics.CodeGenericTypeDeclaration;
 import net.strokkur.jap.code.type.preset.JSpecifyTypes;
 import net.strokkur.jap.code.util.Modifiers;
 import org.junit.jupiter.api.Test;
@@ -69,9 +69,9 @@ class InterfaceGenTests extends AbstractGenTest {
       .addAnnotations(JSpecifyTypes.NULL_UNMARKED)
       .addModifiers(Modifiers.PUBLIC)
       .addGenericTypes(
-        CodeGenericTypeDefinition.of("L"),
-        CodeGenericTypeDefinition.of("M"),
-        CodeGenericTypeDefinition.of("R")
+        CodeGenericTypeDeclaration.of("L"),
+        CodeGenericTypeDeclaration.of("M"),
+        CodeGenericTypeDeclaration.of("R")
       )
       .extendsInterfaces(
         TestTypes.DOUBLE.typed(CodeTypes.generic("L").withAnnotations(JSpecifyTypes.NULLABLE), CodeTypes.generic("R"))

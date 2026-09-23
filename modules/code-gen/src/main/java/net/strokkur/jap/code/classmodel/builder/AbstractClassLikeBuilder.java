@@ -27,12 +27,12 @@ import net.strokkur.jap.code.annotations.CodeAnnotation;
 import net.strokkur.jap.code.classmodel.CodeField;
 import net.strokkur.jap.code.classmodel.CodeMethod;
 import net.strokkur.jap.code.convert.ConvertToAnnotation;
-import net.strokkur.jap.code.type.convert.ConvertToClassType;
 import net.strokkur.jap.code.convert.ConvertToField;
 import net.strokkur.jap.code.convert.ConvertToMethod;
 import net.strokkur.jap.code.documentation.CodeDocumentation;
 import net.strokkur.jap.code.type.CodeClassType;
-import net.strokkur.jap.code.type.generic.CodeGenericTypeDefinition;
+import net.strokkur.jap.code.type.convert.ConvertToClassType;
+import net.strokkur.jap.code.type.generics.CodeGenericTypeDeclaration;
 import net.strokkur.jap.code.util.Modifiers;
 import org.jetbrains.annotations.Contract;
 import org.jspecify.annotations.Nullable;
@@ -97,14 +97,14 @@ abstract class AbstractClassLikeBuilder<R extends AbstractClassLikeBuilder<R>> {
   }
 
   abstract static class Typed<R extends Typed<R>> extends AbstractClassLikeBuilder<R> {
-    protected final List<CodeGenericTypeDefinition> genericTypes = new ArrayList<>();
+    protected final List<CodeGenericTypeDeclaration> genericTypes = new ArrayList<>();
 
     Typed(ConvertToClassType type) {
       super(type);
     }
 
     @Contract(value = "_ -> this", mutates = "this")
-    public R addGenericTypes(CodeGenericTypeDefinition... generics) {
+    public R addGenericTypes(CodeGenericTypeDeclaration... generics) {
       this.genericTypes.addAll(List.of(generics));
       return (R) this;
     }

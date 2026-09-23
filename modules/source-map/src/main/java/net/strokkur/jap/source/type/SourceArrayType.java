@@ -26,7 +26,7 @@ package net.strokkur.jap.source.type;
 import net.strokkur.jap.code.convert.ConvertToAnnotation;
 import net.strokkur.jap.code.type.convert.ConvertToGenericType;
 import net.strokkur.jap.code.type.CodeArrayType;
-import net.strokkur.jap.code.type.generic.CodeGenericType;
+import net.strokkur.jap.code.type.CodeGenericType;
 import net.strokkur.jap.source.annotation.SourceAnnotation;
 
 import java.util.List;

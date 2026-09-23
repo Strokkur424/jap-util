@@ -26,11 +26,11 @@ package net.strokkur.jap.code.classmodel.builder;
 import net.strokkur.jap.code.annotations.CodeAnnotation;
 import net.strokkur.jap.code.classmodel.CodeBlock;
 import net.strokkur.jap.code.convert.ConvertToAnnotation;
-import net.strokkur.jap.code.type.convert.ConvertToClassType;
 import net.strokkur.jap.code.convert.ConvertToStatement;
 import net.strokkur.jap.code.documentation.CodeDocumentation;
 import net.strokkur.jap.code.type.CodeClassType;
-import net.strokkur.jap.code.type.generic.CodeGenericTypeDefinition;
+import net.strokkur.jap.code.type.convert.ConvertToClassType;
+import net.strokkur.jap.code.type.generics.CodeGenericTypeDeclaration;
 import net.strokkur.jap.code.util.Modifiers;
 import org.jetbrains.annotations.Contract;
 import org.jspecify.annotations.Nullable;
@@ -47,7 +47,7 @@ abstract class AbstractConstructorLikeBuilder<R extends AbstractConstructorLikeB
   protected @Nullable CodeDocumentation documentation = null;
   protected CodeBlock codeBlock = CodeBlock.of();
 
-  protected final List<CodeGenericTypeDefinition> generics = new ArrayList<>();
+  protected final List<CodeGenericTypeDeclaration> generics = new ArrayList<>();
   protected final List<CodeAnnotation> annotations = new ArrayList<>();
   protected final Set<Modifiers> modifiers = new HashSet<>();
   protected final List<CodeClassType> throwsExceptions = new ArrayList<>();
@@ -78,7 +78,7 @@ abstract class AbstractConstructorLikeBuilder<R extends AbstractConstructorLikeB
   }
 
   @Contract(value = "_ -> this", mutates = "this")
-  public R addGenerics(CodeGenericTypeDefinition... generics) {
+  public R addGenerics(CodeGenericTypeDeclaration... generics) {
     this.generics.addAll(List.of(generics));
     return (R) this;
   }
