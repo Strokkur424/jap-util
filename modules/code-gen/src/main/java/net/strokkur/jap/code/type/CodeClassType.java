@@ -23,108 +23,112 @@
  */
 package net.strokkur.jap.code.type;
 
-import net.strokkur.jap.code.annotations.CodeAnnotation;
+import net.strokkur.jap.code.classmodel.CodePackage;
 import net.strokkur.jap.code.convert.ConvertToAnnotation;
-import net.strokkur.jap.code.convert.ConvertToClassType;
-import net.strokkur.jap.code.convert.ConvertToGenericType;
 import net.strokkur.jap.code.expression.source.MethodReferenceSource;
-import net.strokkur.jap.code.type.generic.CodeGenericType;
+import net.strokkur.jap.code.type.convert.ConvertToClassType;
+import net.strokkur.jap.code.type.convert.ConvertToGenericTypeDefinable;
+import net.strokkur.jap.code.type.generics.CodeEnclosable;
+import net.strokkur.jap.code.type.generics.CodeGenericTypeDefinable;
+import net.strokkur.jap.code.type.impl.CodeClassTypeImpl;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.Unmodifiable;
 import org.jspecify.annotations.Nullable;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
-public record CodeClassType(
-  CodePackage codePackage,
-  String simpleName,
-  @Nullable List<CodeGenericType> genericTypes,
-  List<CodeAnnotation> annotations
-) implements CodeType, ConvertToClassType, MethodReferenceSource, Comparable<CodeClassType> {
+public sealed interface CodeClassType
+  extends CodeType, ConvertToClassType, MethodReferenceSource, CodeEnclosable, Comparable<CodeClassType>
+  permits CodeClassTypeImpl {
+
+  //
+  // Access.
+  //
+
+  String simpleName();
+
+  CodePackage codePackage();
+
+  @Unmodifiable
+  @Contract(pure = true)
+  @Nullable
+  List<CodeGenericTypeDefinable> genericTypes();
+
+  //
+  // Modifications.
+  //
+
+  /// If this [CodeClassType] references an inner class, this method returns the top level class type.
+  CodeClassType toTopLevel();
+
+  @Override
+  CodeClassType withAnnotations(List<? extends ConvertToAnnotation> annotations);
+
+  @Override
+  default CodeClassType withAnnotations(ConvertToAnnotation... annotations) {
+    return withAnnotations(List.of(annotations));
+  }
+
+  @Override
+  CodeClassType withoutGenerics();
+
+  @Override
+  CodeClassType typed(List<? extends ConvertToGenericTypeDefinable> types);
+
+  @Override
+  default CodeClassType typed(ConvertToGenericTypeDefinable... types) {
+    return typed(List.of(types));
+  }
+
+  //
+  // Util methods and interface impl.
+  //
 
   /// The value returned from [#name()] may differ from one returned from [#simpleName()]
   /// in that [#name()] only returns the canonical name of the class itself (`TestClass`),
   /// whilst [#simpleName()] returns the full path, including parent classes, if nested (`UpperClass.TestClass`.)
-  public String name() {
+  default String name() {
     return List.of(simpleName().split("\\.")).getLast();
   }
 
   @Override
-  public CodeClassType toClassType() {
+  default CodeClassType toClassType() {
     return this;
   }
 
   @Override
-  public String fullyQualifiedName() {
+  default String fullyQualifiedName() {
     return codePackage().path() + "." + simpleName();
-  }
-
-  @Override
-  public CodeClassType withAnnotations(ConvertToAnnotation... annotations) {
-    return new CodeClassType(
-      codePackage,
-      simpleName,
-      genericTypes,
-      Arrays.stream(annotations)
-        .map(ConvertToAnnotation::toAnnotation)
-        .toList()
-    );
-  }
-
-  public CodeClassType toTopLevel() {
-    return new CodeClassType(
-      codePackage,
-      simpleName.split("\\.", 2)[0],
-      genericTypes,
-      annotations
-    );
-  }
-
-  @Override
-  public CodeClassType withoutGenerics() {
-    return new CodeClassType(
-      codePackage, simpleName, null, annotations
-    );
   }
 
   /// A name in the format `com.package.name.ParentClass$NestedClass`. This string
   /// is intended to be usable inside [CodeTypes#of(String)].
-  public String identifiableName() {
-    return codePackage.path() + "." + simpleName.replace('.', '$');
+  default String identifiableName() {
+    return codePackage().path() + "." + simpleName().replace('.', '$');
   }
 
   @Override
-  public CodeClassType typed(ConvertToGenericType... genericTypes) {
-    return new CodeClassType(
-      codePackage,
-      simpleName,
-      Arrays.stream(genericTypes)
-        .map(ConvertToGenericType::toGenericType)
-        .toList(),
-      annotations
-    );
-  }
-
-  @Override
-  public MethodReferenceSource toMethodReferenceSource() {
+  default MethodReferenceSource toMethodReferenceSource() {
     return this;
   }
 
   @Override
-  public CodeClassType toType() {
+  default CodeClassType toType() {
     return this;
   }
 
   @Override
-  public int compareTo(CodeClassType other) {
+  default CodeEnclosable toEnclosable() {
+    return this;
+  }
+
+  @Override
+  default CodeGenericTypeDefinable toGenericTypeDefinable() {
+    return this;
+  }
+
+  @Override
+  default int compareTo(CodeClassType other) {
     return fullyQualifiedName().compareTo(other.fullyQualifiedName());
-  }
-
-  @Override
-  public String toString() {
-    return identifiableName() + (genericTypes == null ? "" : genericTypes.stream()
-      .map(CodeGenericType::toString)
-      .collect(Collectors.joining(", ", "<", ">"))
-    );
   }
 }

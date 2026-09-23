@@ -83,17 +83,19 @@ import net.strokkur.jap.code.statement.TryStatement;
 import net.strokkur.jap.code.statement.VariableDeclarationStatement;
 import net.strokkur.jap.code.type.CodeArrayType;
 import net.strokkur.jap.code.type.CodeClassType;
+import net.strokkur.jap.code.type.CodeGenericType;
 import net.strokkur.jap.code.type.CodePrimitiveType;
 import net.strokkur.jap.code.type.CodeType;
-import net.strokkur.jap.code.type.generic.CodeGenericType;
-import net.strokkur.jap.code.type.generic.CodeGenericTypeDefinition;
-import net.strokkur.jap.code.type.generic.GenericEnclosure;
+import net.strokkur.jap.code.type.generics.CodeGenericTypeDeclaration;
+import net.strokkur.jap.code.type.generics.CodeWildcard;
+import net.strokkur.jap.code.type.generics.GenericEnclosure;
 import net.strokkur.jap.code.util.Modifiers;
 import net.strokkur.jap.code.util.StyleConfig;
 import net.strokkur.jap.code.visitor.CodeVisitable;
 import org.jspecify.annotations.Nullable;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -777,19 +779,10 @@ public class JavaSourcePrintingVisitor extends AbstractSourcePrintingVisitor {
         }
 
         case CodeGenericType genericType -> {
-          if (genericType.genericName() == null && genericType.enclosure() instanceof GenericEnclosure.TypeEnclosure(CodeType encloses)) {
-            builder.append(encloses.accept(this));
-            return;
-          }
-
           if (!genericType.annotations().isEmpty()) {
             builder.append(joining(genericType.annotations(), " ")).append(" ");
           }
-
-          builder.append(genericType.genericName() == null ? "?" : genericType.genericName());
-          if (genericType.enclosure() != null) {
-            builder.append(" ").append(genericType.enclosure().accept(this));
-          }
+          builder.append(genericType.name());
         }
 
         case CodePrimitiveType primitiveType -> {
@@ -798,8 +791,6 @@ public class JavaSourcePrintingVisitor extends AbstractSourcePrintingVisitor {
           }
           builder.append(primitiveType.name());
         }
-
-        default -> throw new IllegalArgumentException("Unrecognized type: " + type.getClass());
       }
     });
   }
@@ -814,12 +805,25 @@ public class JavaSourcePrintingVisitor extends AbstractSourcePrintingVisitor {
   }
 
   @Override
-  public StringBuilder visitGenericTypeDefinition(CodeGenericTypeDefinition genericTypeDefinition) {
+  public StringBuilder visitWildcard(CodeWildcard wildcard) {
     return append(builder -> {
-      builder.append(genericTypeDefinition.name());
-      if (genericTypeDefinition.enclosure() != null) {
-        builder.append(" ");
-        builder.append(genericTypeDefinition.enclosure().accept(this));
+      if (wildcard.hasAnnotations()) {
+        builder.append(joining(wildcard.annotations(), " ")).append(' ');
+      }
+      if (wildcard.enclosure() != null) {
+        builder.append("? ").append(wildcard.enclosure().accept(this));
+      } else {
+        builder.append('?');
+      }
+    });
+  }
+
+  @Override
+  public StringBuilder visitGenericTypeDeclaration(CodeGenericTypeDeclaration declaration) {
+    return append(builder -> {
+      builder.append(declaration.genericTypeName());
+      if (declaration.enclosure() != null) {
+        builder.append(' ').append(declaration.enclosure().accept(this));
       }
     });
   }
@@ -827,15 +831,8 @@ public class JavaSourcePrintingVisitor extends AbstractSourcePrintingVisitor {
   @Override
   public StringBuilder visitGenericEnclosure(GenericEnclosure enclosure) {
     return append(builder -> {
-      switch (enclosure) {
-        case GenericEnclosure.ExtendsEnclosure(CodeType encloses) -> {
-          builder.append("extends ").append(encloses.accept(this));
-        }
-        case GenericEnclosure.SuperEnclosure(CodeType encloses) -> {
-          builder.append("super ").append(encloses.accept(this));
-        }
-        case GenericEnclosure.TypeEnclosure(CodeType encloses) -> builder.append(encloses.accept(this));
-      }
+      builder.append(enclosure.type().name().toLowerCase(Locale.ROOT)).append(' ');
+      builder.append(enclosure.encloses().accept(this));
     });
   }
 

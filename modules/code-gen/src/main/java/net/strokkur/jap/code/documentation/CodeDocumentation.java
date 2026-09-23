@@ -24,7 +24,7 @@
 package net.strokkur.jap.code.documentation;
 
 import net.strokkur.jap.code.classmodel.CodeMethod;
-import net.strokkur.jap.code.convert.ConvertToClassType;
+import net.strokkur.jap.code.type.convert.ConvertToClassType;
 import net.strokkur.jap.code.convert.ConvertToMethod;
 import net.strokkur.jap.code.type.CodeClassType;
 import net.strokkur.jap.code.visitor.CodeVisitable;

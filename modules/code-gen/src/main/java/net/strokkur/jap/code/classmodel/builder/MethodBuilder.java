@@ -28,17 +28,17 @@ import net.strokkur.jap.code.classmodel.CodeBlock;
 import net.strokkur.jap.code.classmodel.CodeMethod;
 import net.strokkur.jap.code.classmodel.CodeParameterDefinition;
 import net.strokkur.jap.code.convert.ConvertToAnnotation;
-import net.strokkur.jap.code.convert.ConvertToClassType;
 import net.strokkur.jap.code.convert.ConvertToExpression;
 import net.strokkur.jap.code.convert.ConvertToMethod;
 import net.strokkur.jap.code.convert.ConvertToStatement;
-import net.strokkur.jap.code.convert.ConvertToType;
 import net.strokkur.jap.code.documentation.CodeDocumentation;
 import net.strokkur.jap.code.expression.CodeExpression;
 import net.strokkur.jap.code.type.CodeClassType;
 import net.strokkur.jap.code.type.CodePrimitiveType;
 import net.strokkur.jap.code.type.CodeType;
-import net.strokkur.jap.code.type.generic.CodeGenericTypeDefinition;
+import net.strokkur.jap.code.type.convert.ConvertToClassType;
+import net.strokkur.jap.code.type.convert.ConvertToType;
+import net.strokkur.jap.code.type.generics.CodeGenericTypeDeclaration;
 import net.strokkur.jap.code.util.Modifiers;
 import org.jspecify.annotations.Nullable;
 
@@ -56,7 +56,7 @@ public class MethodBuilder implements ConvertToMethod {
   private @Nullable List<ConvertToStatement> code = null;
   private @Nullable CodeExpression defaults = null;
 
-  private final List<CodeGenericTypeDefinition> generics = new ArrayList<>();
+  private final List<CodeGenericTypeDeclaration> generics = new ArrayList<>();
   private final List<CodeAnnotation> annotations = new ArrayList<>();
   private final Set<Modifiers> modifiers = new HashSet<>();
   private final List<CodeClassType> throwsExceptions = new ArrayList<>();
@@ -107,7 +107,7 @@ public class MethodBuilder implements ConvertToMethod {
     return this;
   }
 
-  public MethodBuilder addGenerics(CodeGenericTypeDefinition... generics) {
+  public MethodBuilder addGenerics(CodeGenericTypeDeclaration... generics) {
     this.generics.addAll(List.of(generics));
     return this;
   }

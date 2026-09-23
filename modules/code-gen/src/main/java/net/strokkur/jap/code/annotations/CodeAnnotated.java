@@ -23,12 +23,16 @@
  */
 package net.strokkur.jap.code.annotations;
 
-import net.strokkur.jap.code.convert.ConvertToClassType;
+import net.strokkur.jap.code.type.convert.ConvertToClassType;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.Unmodifiable;
 
 import java.util.List;
 
 public interface CodeAnnotated {
 
+  @Contract(pure = true)
+  @Unmodifiable
   List<CodeAnnotation> annotations();
 
   default List<CodeAnnotation> annotationsType(ConvertToClassType type) {

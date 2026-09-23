@@ -23,63 +23,64 @@
  */
 package net.strokkur.jap.code.type;
 
-import net.strokkur.jap.code.annotations.CodeAnnotation;
 import net.strokkur.jap.code.convert.ConvertToAnnotation;
 import net.strokkur.jap.code.expression.source.FieldMethodSource;
+import net.strokkur.jap.code.type.impl.CodePrimitiveTypeImpl;
+import net.strokkur.jap.code.type.impl.CodeTypeImpl;
 
-import java.util.Arrays;
 import java.util.List;
 
-public record CodePrimitiveType(
-  String name,
-  String boxedName,
-  List<CodeAnnotation> annotations
-) implements CodeType, FieldMethodSource {
+public sealed interface CodePrimitiveType
+  extends CodeType, FieldMethodSource
+  permits CodePrimitiveTypeImpl {
 
-  /// This cannot be used anywhere else except the return value of a method. Nothing
-  /// has to specifically enforce this, but the JVM does not allow otherwise.
-  public static final CodePrimitiveType VOID = new CodePrimitiveType("void", "Void");
+  /// This type cannot be used anywhere else except the return value of a method.
+  /// Nothing specifically enforces this, but the JVM does not allow otherwise.
+  CodePrimitiveType VOID = CodeTypeImpl.createPrimitive("void", "Void", List.of());
 
-  public static final CodePrimitiveType BYTE = new CodePrimitiveType("byte", "Byte");
-  public static final CodePrimitiveType CHAR = new CodePrimitiveType("char", "Character");
-  public static final CodePrimitiveType SHORT = new CodePrimitiveType("short", "Short");
-  public static final CodePrimitiveType INT = new CodePrimitiveType("int", "Integer");
-  public static final CodePrimitiveType LONG = new CodePrimitiveType("long", "Long");
-  public static final CodePrimitiveType FLOAT = new CodePrimitiveType("float", "Float");
-  public static final CodePrimitiveType DOUBLE = new CodePrimitiveType("double", "Double");
-  public static final CodePrimitiveType BOOL = new CodePrimitiveType("boolean", "Boolean");
+  CodePrimitiveType BYTE = CodeTypeImpl.createPrimitive("byte", "Byte", List.of());
+  CodePrimitiveType CHAR = CodeTypeImpl.createPrimitive("char", "Character", List.of());
+  CodePrimitiveType SHORT = CodeTypeImpl.createPrimitive("short", "Short", List.of());
+  CodePrimitiveType INT = CodeTypeImpl.createPrimitive("int", "Integer", List.of());
+  CodePrimitiveType LONG = CodeTypeImpl.createPrimitive("long", "Long", List.of());
+  CodePrimitiveType FLOAT = CodeTypeImpl.createPrimitive("float", "Float", List.of());
+  CodePrimitiveType DOUBLE = CodeTypeImpl.createPrimitive("double", "Double", List.of());
+  CodePrimitiveType BOOL = CodeTypeImpl.createPrimitive("boolean", "Boolean", List.of());
 
-  public CodePrimitiveType(String name, String boxedName) {
-    this(name, boxedName, List.of());
+  //
+  // Access.
+  //
+
+  String name();
+
+  CodeClassType boxedType();
+
+  //
+  // Modification.
+  //
+
+  @Override
+  CodePrimitiveType withAnnotations(List<? extends ConvertToAnnotation> annotations);
+
+  @Override
+  default CodePrimitiveType withAnnotations(ConvertToAnnotation... annotations) {
+    return withAnnotations(List.of(annotations));
   }
 
   @Override
-  public String simpleName() {
-    return name;
+  CodePrimitiveType withoutAnnotations();
+
+  //
+  // Util and interface impl.
+  //
+
+  @Override
+  default String simpleName() {
+    return name();
   }
 
   @Override
-  public String fullyQualifiedName() {
-    return name;
-  }
-
-  @Override
-  public CodePrimitiveType withAnnotations(ConvertToAnnotation... annotations) {
-    return new CodePrimitiveType(
-      name,
-      boxedName,
-      Arrays.stream(annotations)
-        .map(ConvertToAnnotation::toAnnotation)
-        .toList()
-    );
-  }
-
-  public CodeClassType boxed() {
-    return CodeTypes.of("java.lang." + boxedName).withAnnotations(annotations.toArray(ConvertToAnnotation[]::new));
-  }
-
-  @Override
-  public String toString() {
-    return name;
+  default String fullyQualifiedName() {
+    return name();
   }
 }

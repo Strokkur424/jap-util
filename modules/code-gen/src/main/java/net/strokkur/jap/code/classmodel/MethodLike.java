@@ -27,7 +27,7 @@ import net.strokkur.jap.code.annotations.CodeAnnotated;
 import net.strokkur.jap.code.annotations.CodeAnnotation;
 import net.strokkur.jap.code.documentation.CodeDocumentation;
 import net.strokkur.jap.code.type.CodeClassType;
-import net.strokkur.jap.code.type.generic.CodeGenericTypeDefinition;
+import net.strokkur.jap.code.type.generics.CodeGenericTypeDeclaration;
 import net.strokkur.jap.code.util.Modifiers;
 import net.strokkur.jap.code.visitor.CodeVisitable;
 import org.jspecify.annotations.Nullable;
@@ -36,7 +36,7 @@ import java.util.List;
 import java.util.Set;
 
 public interface MethodLike extends CodeVisitable, CodeAnnotated {
-  List<CodeGenericTypeDefinition> generics();
+  List<CodeGenericTypeDeclaration> generics();
 
   List<CodeAnnotation> annotations();
 

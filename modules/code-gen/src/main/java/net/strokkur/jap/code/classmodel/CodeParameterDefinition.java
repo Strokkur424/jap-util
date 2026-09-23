@@ -26,7 +26,7 @@ package net.strokkur.jap.code.classmodel;
 import net.strokkur.jap.code.annotations.CodeAnnotated;
 import net.strokkur.jap.code.annotations.CodeAnnotation;
 import net.strokkur.jap.code.convert.ConvertToAnnotation;
-import net.strokkur.jap.code.convert.ConvertToType;
+import net.strokkur.jap.code.type.convert.ConvertToType;
 import net.strokkur.jap.code.type.CodeType;
 import net.strokkur.jap.code.visitor.CodeVisitable;
 import net.strokkur.jap.code.visitor.CodeVisitor;

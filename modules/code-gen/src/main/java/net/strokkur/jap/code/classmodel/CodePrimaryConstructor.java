@@ -26,11 +26,11 @@ package net.strokkur.jap.code.classmodel;
 import net.strokkur.jap.code.annotations.CodeAnnotated;
 import net.strokkur.jap.code.annotations.CodeAnnotation;
 import net.strokkur.jap.code.classmodel.builder.PrimaryConstructorBuilder;
-import net.strokkur.jap.code.convert.ConvertToClassType;
 import net.strokkur.jap.code.convert.ConvertToPrimaryConstructor;
 import net.strokkur.jap.code.documentation.CodeDocumentation;
 import net.strokkur.jap.code.type.CodeClassType;
-import net.strokkur.jap.code.type.generic.CodeGenericTypeDefinition;
+import net.strokkur.jap.code.type.convert.ConvertToClassType;
+import net.strokkur.jap.code.type.generics.CodeGenericTypeDeclaration;
 import net.strokkur.jap.code.util.Modifiers;
 import net.strokkur.jap.code.visitor.CodeVisitable;
 import net.strokkur.jap.code.visitor.CodeVisitor;
@@ -41,7 +41,7 @@ import java.util.Set;
 
 public record CodePrimaryConstructor(
   CodeClassType type,
-  List<CodeGenericTypeDefinition> generics,
+  List<CodeGenericTypeDeclaration> generics,
 
   List<CodeAnnotation> annotations,
   Set<Modifiers> modifiers,

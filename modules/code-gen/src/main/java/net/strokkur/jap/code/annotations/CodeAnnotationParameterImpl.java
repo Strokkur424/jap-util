@@ -1,7 +1,7 @@
 /*
  * This file is part of code-gen, licensed under the MIT License.
  *
- * Copyright (c) 2025 Strokkur24
+ * Copyright (c) 2026 Strokkur24
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,48 +21,57 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.strokkur.jap.code.type;
+package net.strokkur.jap.code.annotations;
 
-import org.jspecify.annotations.Nullable;
+import net.strokkur.jap.code.CodeGenUtil;
+import net.strokkur.jap.code.convert.ConvertToExpression;
+import net.strokkur.jap.code.expression.CodeExpression;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Objects;
 
-public record CodePackage(String[] paths) implements Comparable<CodePackage> {
-  private static final CodePackage JAVA_LANG = new CodePackage(new String[]{"java", "lang"});
+public class CodeAnnotationParameterImpl implements CodeAnnotationParameter {
+  private final String name;
+  private final CodeExpression expression;
 
-  public static CodePackage of(String packageString) {
-    return new CodePackage(packageString.split("\\."));
-  }
-
-  public static CodePackage of(List<String> packages) {
-    return new CodePackage(packages.toArray(String[]::new));
-  }
-
-  public String path() {
-    return String.join(".", paths);
-  }
-
-  public static boolean isRedundantImport(@Nullable CodePackage maybeRoot, CodePackage other) {
-    return other.equals(JAVA_LANG) || Objects.equals(maybeRoot, other);
+  protected CodeAnnotationParameterImpl(String name, CodeExpression expression) {
+    this.name = name;
+    this.expression = expression;
   }
 
   @Override
-  public int compareTo(CodePackage o) {
-    return path().compareTo(o.path());
+  public String name() {
+    return name;
+  }
+
+  @Override
+  public CodeExpression expression() {
+    return expression;
+  }
+
+  @Override
+  public CodeAnnotationParameter withName(String name) {
+    return new CodeAnnotationParameterImpl(name, expression);
+  }
+
+  @Override
+  public CodeAnnotationParameter withExpression(ConvertToExpression expression) {
+    return new CodeAnnotationParameterImpl(name, expression.toExpression());
+  }
+
+  @Override
+  public String toString() {
+    return CodeGenUtil.generateJavaStub(this);
   }
 
   @Override
   public boolean equals(Object o) {
-    if (!(o instanceof CodePackage(String[] otherPaths))) {
-      return false;
-    }
-    return Objects.deepEquals(paths(), otherPaths);
+    return o instanceof final CodeAnnotationParameter that
+      && Objects.equals(name, that.name())
+      && Objects.equals(expression, that.expression());
   }
 
   @Override
   public int hashCode() {
-    return Arrays.hashCode(paths());
+    return Objects.hash(name, expression);
   }
 }

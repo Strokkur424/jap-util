@@ -36,6 +36,8 @@ import net.strokkur.jap.code.expression.bool.NeqExpression;
 import net.strokkur.jap.code.expression.bool.OrExpression;
 import net.strokkur.jap.code.statement.CodeStatement;
 import net.strokkur.jap.code.statement.Statements;
+import net.strokkur.jap.code.type.convert.ConvertToClassType;
+import net.strokkur.jap.code.type.convert.ConvertToType;
 import org.jspecify.annotations.Nullable;
 
 public interface ConvertToExpression extends ConvertToStatement {
