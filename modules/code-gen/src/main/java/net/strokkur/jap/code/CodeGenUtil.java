@@ -29,6 +29,7 @@ import net.strokkur.jap.code.documentation.AbstractDocumentationRenderer;
 import net.strokkur.jap.code.documentation.MarkdownJavadocRenderer;
 import net.strokkur.jap.code.documentation.StarJavadocRenderer;
 import net.strokkur.jap.code.type.CodeClassType;
+import net.strokkur.jap.code.visitor.CodeVisitable;
 import net.strokkur.jap.code.visitor.ImportGatheringVisitor;
 import net.strokkur.jap.code.visitor.source.JavaSourcePrintingVisitor;
 import org.jspecify.annotations.Nullable;
@@ -88,6 +89,13 @@ public final class CodeGenUtil {
     final JavaSourcePrintingVisitor printer = new JavaSourcePrintingVisitor(() -> javadocRenderer(ctx), "  ", "  ");
     builder.append(codeClass.accept(printer));
     return builder.toString();
+  }
+
+  public static String generateJavaStub(CodeVisitable visitable) {
+    final Set<CodeClassType> imports = visitable.accept(IMPORT_VISITOR);
+    final AbstractDocumentationRenderer.Context ctx = AbstractDocumentationRenderer.createContext(null, imports);
+    final JavaSourcePrintingVisitor printer = new JavaSourcePrintingVisitor(() -> javadocRenderer(ctx), "  ", "  ");
+    return visitable.accept(printer).toString();
   }
 
   private static AbstractDocumentationRenderer javadocRenderer(AbstractDocumentationRenderer.Context ctx) {

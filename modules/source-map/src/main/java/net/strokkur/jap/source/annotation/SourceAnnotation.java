@@ -23,41 +23,55 @@
  */
 package net.strokkur.jap.source.annotation;
 
-import net.strokkur.jap.code.annotations.CodeAnnotation;
-import net.strokkur.jap.code.convert.ConvertToAnnotation;
-import net.strokkur.jap.code.type.CodeClassType;
+import net.strokkur.jap.code.annotations.CodeAnnotationImpl;
+import net.strokkur.jap.code.annotations.CodeAnnotationParameter;
 import net.strokkur.jap.source.classmodel.SourceAnnotationInterface;
 import net.strokkur.jap.source.util.Lazy;
 
 import java.lang.annotation.Annotation;
 import java.util.List;
 
-public record SourceAnnotation(
-  Lazy<? extends Annotation> valueGeneric,
-  SourceAnnotationInterface source,
-  List<SourceAnnotationParameter> parameters
-) implements ConvertToAnnotation {
+public final class SourceAnnotation extends CodeAnnotationImpl {
+  private final Lazy<? extends Annotation> valueGeneric;
+  private final SourceAnnotationInterface source;
+  private final List<SourceAnnotationParameter> parameters;
+
+  public SourceAnnotation(
+    Lazy<? extends Annotation> valueGeneric,
+    SourceAnnotationInterface source,
+    List<SourceAnnotationParameter> parameters
+  ) {
+    super(
+      source.toClassType(),
+      parameters.stream()
+        .map(CodeAnnotationParameter.class::cast)
+        .toList()
+    );
+    this.valueGeneric = valueGeneric;
+    this.source = source;
+    this.parameters = parameters;
+  }
+
   public <T extends Annotation> T value(Class<T> type) {
     return type.cast(valueGeneric.get());
   }
 
-  public CodeClassType type() {
-    return source().toClassType();
-  }
-
-  public boolean isSet(String named) {
-    return parameters.stream()
-      .anyMatch(param -> param.name().equals(named));
-  }
-
+  @Override
   public SourceAnnotationParameter parameter(String named) {
-    return parameters.stream()
+    return sourceParameters().stream()
       .filter(param -> param.name().equals(named))
       .findFirst().orElseThrow();
   }
 
-  @Override
-  public CodeAnnotation toAnnotation() {
-    return CodeAnnotation.of(source, parameters);
+  public Lazy<? extends Annotation> valueGeneric() {
+    return valueGeneric;
+  }
+
+  public SourceAnnotationInterface source() {
+    return source;
+  }
+
+  public List<SourceAnnotationParameter> sourceParameters() {
+    return parameters;
   }
 }
