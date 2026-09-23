@@ -33,24 +33,14 @@ import net.strokkur.jap.code.type.CodeTypes;
 import java.util.List;
 
 public interface ConvertToType extends ConvertToFieldMethodSource {
+
   CodeType toType();
 
+  //
+  // Modification
+  //
+
   default CodeType withoutGenerics() {
-    return toType();
-  }
-
-  default boolean isType(ConvertToType other) {
-    final CodeType thisType = toType();
-    final CodeType otherType = other.toType();
-    return thisType.equals(otherType);
-  }
-
-  default CodeArrayType toArray() {
-    return CodeTypes.asArray(toType());
-  }
-
-  @Override
-  default FieldMethodSource toFieldMethodSource() {
     return toType();
   }
 
@@ -64,5 +54,28 @@ public interface ConvertToType extends ConvertToFieldMethodSource {
 
   default CodeType withoutAnnotations() {
     return withAnnotations();
+  }
+
+  //
+  // Util
+  //
+
+  default boolean isType(ConvertToType other) {
+    final CodeType thisType = toType();
+    final CodeType otherType = other.toType();
+    return thisType.equals(otherType);
+  }
+
+  default CodeArrayType toArray() {
+    return CodeTypes.asArray(toType());
+  }
+
+  //
+  // Interface impl
+  //
+
+  @Override
+  default FieldMethodSource toFieldMethodSource() {
+    return toType();
   }
 }
