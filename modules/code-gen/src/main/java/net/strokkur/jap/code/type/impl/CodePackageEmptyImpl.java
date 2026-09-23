@@ -5,7 +5,7 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.Objects;
 
-final class CodePackageEmptyImpl implements CodePackage {
+public final class CodePackageEmptyImpl implements CodePackage {
   static CodePackage INSTANCE = new CodePackageEmptyImpl();
 
   private CodePackageEmptyImpl() {

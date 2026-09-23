@@ -4,7 +4,12 @@ import net.strokkur.jap.code.classmodel.CodePackage;
 
 import java.util.Objects;
 
-record CodePackageImpl(String packageString) implements CodePackage {
+public class CodePackageImpl implements CodePackage {
+  private final String packageString;
+
+  protected CodePackageImpl(String packageString) {
+    this.packageString = packageString;
+  }
 
   @Override
   public String path() {
@@ -32,5 +37,9 @@ record CodePackageImpl(String packageString) implements CodePackage {
   @Override
   public int hashCode() {
     return Objects.hashCode(path());
+  }
+
+  public String packageString() {
+    return packageString;
   }
 }

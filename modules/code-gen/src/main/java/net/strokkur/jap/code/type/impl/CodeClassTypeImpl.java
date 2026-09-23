@@ -12,12 +12,23 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-record CodeClassTypeImpl(
-  CodePackage codePackage,
-  String simpleName,
-  @Nullable List<CodeGenericType> genericTypes,
-  List<CodeAnnotation> annotations
-) implements CodeClassType {
+public class CodeClassTypeImpl implements CodeClassType {
+  private final CodePackage codePackage;
+  private final String simpleName;
+  private final @Nullable List<CodeGenericType> genericTypes;
+  private final List<CodeAnnotation> annotations;
+
+  protected CodeClassTypeImpl(
+    CodePackage codePackage,
+    String simpleName,
+    @Nullable List<CodeGenericType> genericTypes,
+    List<CodeAnnotation> annotations
+  ) {
+    this.codePackage = codePackage;
+    this.simpleName = simpleName;
+    this.genericTypes = genericTypes;
+    this.annotations = annotations;
+  }
 
   @Override
   public CodeClassType withAnnotations(List<? extends ConvertToAnnotation> annotations) {
@@ -84,5 +95,25 @@ record CodeClassTypeImpl(
   @Override
   public int hashCode() {
     return Objects.hash(codePackage(), simpleName(), genericTypes(), annotations());
+  }
+
+  @Override
+  public CodePackage codePackage() {
+    return codePackage;
+  }
+
+  @Override
+  public String simpleName() {
+    return simpleName;
+  }
+
+  @Override
+  public @Nullable List<CodeGenericType> genericTypes() {
+    return genericTypes;
+  }
+
+  @Override
+  public List<CodeAnnotation> annotations() {
+    return annotations;
   }
 }

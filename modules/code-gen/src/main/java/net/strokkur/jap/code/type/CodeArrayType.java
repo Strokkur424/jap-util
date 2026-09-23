@@ -26,6 +26,8 @@ package net.strokkur.jap.code.type;
 import net.strokkur.jap.code.convert.ConvertToAnnotation;
 import net.strokkur.jap.code.type.convert.ConvertToGenericType;
 import net.strokkur.jap.code.expression.source.MethodReferenceSource;
+import net.strokkur.jap.code.type.convert.ConvertToType;
+import org.jetbrains.annotations.Contract;
 
 import java.util.List;
 
@@ -35,11 +37,14 @@ public non-sealed interface CodeArrayType extends CodeType, ConvertToGenericType
   // Access.
   //
 
+  @Contract(pure = true)
   CodeType inner();
 
   //
   // Modification
   //
+
+  CodeArrayType withInner(ConvertToType inner);
 
   @Override
   CodeArrayType withAnnotations(List<? extends ConvertToAnnotation> annotations);
