@@ -23,28 +23,27 @@
  */
 package net.strokkur.jap.code.annotations;
 
-import net.strokkur.jap.code.convert.ConvertToAnnotationParameter;
 import net.strokkur.jap.code.convert.ConvertToExpression;
 import net.strokkur.jap.code.expression.CodeExpression;
 import net.strokkur.jap.code.visitor.CodeVisitable;
 import net.strokkur.jap.code.visitor.CodeVisitor;
 
-public record CodeAnnotationParameter(
-  String name,
-  CodeExpression value
-) implements ConvertToAnnotationParameter, CodeVisitable {
+public interface CodeAnnotationParameter extends CodeVisitable {
 
-  public static CodeAnnotationParameter of(String name, ConvertToExpression expression) {
-    return new CodeAnnotationParameter(name, expression.toExpression());
+  static CodeAnnotationParameter of(String name, ConvertToExpression expression) {
+    return new CodeAnnotationParameterImpl(name, expression.toExpression());
   }
 
-  @Override
-  public CodeAnnotationParameter toAnnotationParameter() {
-    return this;
-  }
+  CodeAnnotationParameter withName(String name);
+
+  CodeAnnotationParameter withExpression(ConvertToExpression expression);
 
   @Override
-  public <R> R accept(CodeVisitor<R> visitor) {
+  default <R> R accept(CodeVisitor<R> visitor) {
     return visitor.visitAnnotationParameter(this);
   }
+
+  String name();
+
+  CodeExpression expression();
 }

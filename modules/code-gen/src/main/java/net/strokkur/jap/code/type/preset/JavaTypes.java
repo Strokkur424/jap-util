@@ -23,7 +23,7 @@
  */
 package net.strokkur.jap.code.type.preset;
 
-import net.strokkur.jap.code.convert.ConvertToClassType;
+import net.strokkur.jap.code.type.convert.ConvertToClassType;
 import net.strokkur.jap.code.type.CodeTypes;
 
 import java.lang.reflect.Method;

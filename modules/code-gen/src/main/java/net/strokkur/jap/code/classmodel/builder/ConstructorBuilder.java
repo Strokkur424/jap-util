@@ -27,7 +27,7 @@ import net.strokkur.jap.code.classmodel.CodeConstructor;
 import net.strokkur.jap.code.classmodel.CodeParameterDefinition;
 import net.strokkur.jap.code.convert.ConvertToAnnotation;
 import net.strokkur.jap.code.convert.ConvertToConstructor;
-import net.strokkur.jap.code.convert.ConvertToType;
+import net.strokkur.jap.code.type.convert.ConvertToType;
 import net.strokkur.jap.code.type.CodeClassType;
 import org.jetbrains.annotations.Contract;
 

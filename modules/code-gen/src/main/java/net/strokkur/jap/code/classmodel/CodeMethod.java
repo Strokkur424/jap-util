@@ -30,7 +30,7 @@ import net.strokkur.jap.code.documentation.CodeDocumentation;
 import net.strokkur.jap.code.expression.CodeExpression;
 import net.strokkur.jap.code.type.CodeClassType;
 import net.strokkur.jap.code.type.CodeType;
-import net.strokkur.jap.code.type.generic.CodeGenericTypeDefinition;
+import net.strokkur.jap.code.type.generics.CodeGenericTypeDeclaration;
 import net.strokkur.jap.code.util.Modifiers;
 import net.strokkur.jap.code.visitor.CodeVisitor;
 import org.jspecify.annotations.Nullable;
@@ -41,7 +41,7 @@ import java.util.Set;
 public record CodeMethod(
   CodeType returnType,
   String name,
-  List<CodeGenericTypeDefinition> generics,
+  List<CodeGenericTypeDeclaration> generics,
 
   List<CodeAnnotation> annotations,
   Set<Modifiers> modifiers,

@@ -23,16 +23,26 @@
  */
 package net.strokkur.jap.source.annotation;
 
-import net.strokkur.jap.code.annotations.CodeAnnotationParameter;
-import net.strokkur.jap.code.convert.ConvertToAnnotationParameter;
+import net.strokkur.jap.code.annotations.CodeAnnotationParameterImpl;
 import net.strokkur.jap.code.convert.ConvertToExpression;
+import net.strokkur.jap.code.expression.CodeExpression;
 import net.strokkur.jap.code.type.CodeClassType;
 
-public record SourceAnnotationParameter(
-  String name,
-  Object value,
-  ConvertToExpression expression
-) implements ConvertToAnnotationParameter {
+public final class SourceAnnotationParameter extends CodeAnnotationParameterImpl {
+  private final Object value;
+  private final ConvertToExpression expression;
+
+  public SourceAnnotationParameter(
+    String name,
+    Object value,
+    ConvertToExpression expression
+  ) {
+    //noinspection DataFlowIssue
+    super(name, null);
+    this.value = value;
+    this.expression = expression;
+  }
+
   public CodeClassType classValue() {
     if (value instanceof CodeClassType type) {
       return type;
@@ -40,8 +50,12 @@ public record SourceAnnotationParameter(
     throw new IllegalArgumentException("Expected Class, found " + value.getClass());
   }
 
+  public Object value() {
+    return value;
+  }
+
   @Override
-  public CodeAnnotationParameter toAnnotationParameter() {
-    return CodeAnnotationParameter.of(name, expression);
+  public CodeExpression expression() {
+    return expression.toExpression();
   }
 }

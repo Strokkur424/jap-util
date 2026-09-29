@@ -23,10 +23,10 @@
  */
 package net.strokkur.jap.code.classmodel;
 
-import net.strokkur.jap.code.type.generic.CodeGenericTypeDefinition;
+import net.strokkur.jap.code.type.generics.CodeGenericTypeDeclaration;
 
 import java.util.List;
 
 public interface CodeClassLikeTyped extends CodeClassLike {
-  List<CodeGenericTypeDefinition> genericTypes();
+  List<CodeGenericTypeDeclaration> genericTypes();
 }

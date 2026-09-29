@@ -42,8 +42,9 @@ import net.strokkur.jap.code.documentation.CodeDocumentation;
 import net.strokkur.jap.code.expression.CodeExpression;
 import net.strokkur.jap.code.statement.CodeStatement;
 import net.strokkur.jap.code.type.CodeType;
-import net.strokkur.jap.code.type.generic.CodeGenericTypeDefinition;
-import net.strokkur.jap.code.type.generic.GenericEnclosure;
+import net.strokkur.jap.code.type.generics.CodeGenericTypeDeclaration;
+import net.strokkur.jap.code.type.generics.CodeWildcard;
+import net.strokkur.jap.code.type.generics.GenericEnclosure;
 
 public interface CodeVisitor<R> {
   R visitAnnotation(CodeAnnotation annotation);
@@ -82,9 +83,11 @@ public interface CodeVisitor<R> {
 
   R visitCodeBlock(CodeBlock block);
 
-  R visitGenericTypeDefinition(CodeGenericTypeDefinition genericTypeDefinition);
+  R visitGenericTypeDeclaration(CodeGenericTypeDeclaration declaration);
 
   R visitGenericEnclosure(GenericEnclosure enclosure);
+
+  R visitWildcard(CodeWildcard wildcard);
 
   R visitDocumentation(CodeDocumentation documentation);
 }

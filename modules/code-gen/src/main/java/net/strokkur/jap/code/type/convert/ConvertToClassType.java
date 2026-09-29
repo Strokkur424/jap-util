@@ -21,43 +21,56 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.strokkur.jap.code.convert;
+package net.strokkur.jap.code.type.convert;
 
 import net.strokkur.jap.code.annotations.CodeAnnotation;
+import net.strokkur.jap.code.convert.ConvertToAnnotation;
+import net.strokkur.jap.code.convert.ConvertToExpression;
+import net.strokkur.jap.code.convert.ConvertToFieldMethodSource;
+import net.strokkur.jap.code.convert.ConvertToMethodReferenceSource;
 import net.strokkur.jap.code.expression.Expressions;
 import net.strokkur.jap.code.expression.builder.ConstructorInvocationBuilder;
 import net.strokkur.jap.code.expression.source.MethodReferenceSource;
 import net.strokkur.jap.code.type.CodeClassType;
-import net.strokkur.jap.code.type.generic.CodeGenericType;
-import net.strokkur.jap.code.type.generic.GenericEnclosure;
+import net.strokkur.jap.code.type.CodeGenericType;
+import net.strokkur.jap.code.type.generics.CodeEnclosable;
+import net.strokkur.jap.code.type.generics.CodeGenericTypeDefinable;
+import net.strokkur.jap.code.type.generics.GenericEnclosure;
 
 import java.util.List;
 
-public interface ConvertToClassType extends ConvertToType, ConvertToGenericType, ConvertToFieldMethodSource, ConvertToMethodReferenceSource, ConvertToAnnotation {
+public interface ConvertToClassType
+  extends ConvertToType, ConvertToFieldMethodSource, ConvertToMethodReferenceSource,
+  ConvertToAnnotation, ConvertToEnclosable, ConvertToGenericTypeDefinable {
+
+  /// Converts this class into a [CodeClassType].
   CodeClassType toClassType();
 
-  @Override
-  default MethodReferenceSource toMethodReferenceSource() {
-    return toClassType();
-  }
+  //
+  // Modification
+  //
 
-  @Override
-  default CodeClassType toType() {
-    return toClassType();
-  }
-
+  /// Returns this [CodeClassType] with any generic types cleared.
   @Override
   default CodeClassType withoutGenerics() {
     return toClassType().withoutGenerics();
   }
 
-  @Override
-  default CodeGenericType toGenericType() {
-    return new CodeGenericType(null, GenericEnclosure.withType(this), List.of());
+  /// Returns this [CodeClassType] typed with the provided generics. If no arguments are provided,
+  /// the type will act as if it had the **diamond operator**: `ArrayList<>`.
+  default CodeClassType typed(List<? extends ConvertToGenericTypeDefinable> types) {
+    return toClassType().typed(types);
   }
 
-  default CodeClassType typed(ConvertToGenericType... types) {
+  /// Returns this [CodeClassType] typed with the provided generics. If no arguments are provided,
+  /// the type will act as if it had the **diamond operator**: `ArrayList<>`.
+  default CodeClassType typed(ConvertToGenericTypeDefinable... types) {
     return toClassType().typed(types);
+  }
+
+  @Override
+  default CodeClassType withAnnotations(List<? extends ConvertToAnnotation> annotations) {
+    return toClassType().withAnnotations(annotations);
   }
 
   @Override
@@ -70,13 +83,41 @@ public interface ConvertToClassType extends ConvertToType, ConvertToGenericType,
     return withAnnotations();
   }
 
+  //
+  // Util
+  //
+
   default ConstructorInvocationBuilder ctor(ConvertToExpression... parameters) {
     return Expressions.ctorInvocation(this)
       .addParameters(parameters);
   }
 
+  //
+  // Interface impl
+  //
+
+  @Override
+  default MethodReferenceSource toMethodReferenceSource() {
+    return toClassType();
+  }
+
+  @Override
+  default CodeClassType toType() {
+    return toClassType();
+  }
+
   @Override
   default CodeAnnotation toAnnotation() {
     return CodeAnnotation.of(this);
+  }
+
+  @Override
+  default CodeEnclosable toEnclosable() {
+    return toClassType();
+  }
+
+  @Override
+  default CodeGenericTypeDefinable toGenericTypeDefinable() {
+    return toClassType();
   }
 }

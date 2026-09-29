@@ -26,13 +26,13 @@ package net.strokkur.jap.code.test.java;
 import net.strokkur.jap.code.classmodel.CodeField;
 import net.strokkur.jap.code.classmodel.CodeMethod;
 import net.strokkur.jap.code.classmodel.CodeRecord;
-import net.strokkur.jap.code.convert.ConvertToClassType;
+import net.strokkur.jap.code.type.convert.ConvertToClassType;
 import net.strokkur.jap.code.documentation.CodeDocumentation;
 import net.strokkur.jap.code.expression.Expressions;
 import net.strokkur.jap.code.statement.Statements;
 import net.strokkur.jap.code.test.util.TestTypes;
 import net.strokkur.jap.code.type.CodeTypes;
-import net.strokkur.jap.code.type.generic.CodeGenericTypeDefinition;
+import net.strokkur.jap.code.type.generics.CodeGenericTypeDeclaration;
 import net.strokkur.jap.code.type.preset.JSpecifyTypes;
 import net.strokkur.jap.code.type.preset.JavaTypes;
 import net.strokkur.jap.code.util.Modifiers;
@@ -90,9 +90,9 @@ class RecordGenTests extends AbstractGenTest {
       .addAnnotations(JSpecifyTypes.NULL_MARKED)
       .addModifiers(Modifiers.PUBLIC)
       .addGenericTypes(
-        CodeGenericTypeDefinition.of("L"),
-        CodeGenericTypeDefinition.of("M"),
-        CodeGenericTypeDefinition.of("R")
+        CodeGenericTypeDeclaration.of("L"),
+        CodeGenericTypeDeclaration.of("M"),
+        CodeGenericTypeDeclaration.of("R")
       )
       .addComponent(JavaTypes.STRING, "tripleName", JSpecifyTypes.NULLABLE)
       .addComponent(CodeTypes.generic("L"), "left")
@@ -117,7 +117,7 @@ class RecordGenTests extends AbstractGenTest {
       .addMethods(CodeMethod.builder("of")
         .setDocumentation(CodeDocumentation.text("Constructs a Triple with all three same values."))
         .addModifiers(Modifiers.PUBLIC, Modifiers.STATIC)
-        .addGenerics(CodeGenericTypeDefinition.of("S"))
+        .addGenerics(CodeGenericTypeDeclaration.of("S"))
         .setReturnType(TestTypes.TRIPLE.typed(CodeTypes.generic("S"), CodeTypes.generic("S"), CodeTypes.generic("S")))
         .addParameter(CodeTypes.generic("S"), "same")
         .setCode(

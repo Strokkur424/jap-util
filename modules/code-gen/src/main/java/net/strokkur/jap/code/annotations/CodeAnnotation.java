@@ -23,43 +23,50 @@
  */
 package net.strokkur.jap.code.annotations;
 
-import net.strokkur.jap.code.convert.ConvertToAnnotation;
-import net.strokkur.jap.code.convert.ConvertToAnnotationParameter;
-import net.strokkur.jap.code.convert.ConvertToClassType;
 import net.strokkur.jap.code.convert.ConvertToExpression;
 import net.strokkur.jap.code.type.CodeClassType;
+import net.strokkur.jap.code.type.convert.ConvertToClassType;
 import net.strokkur.jap.code.visitor.CodeVisitable;
 import net.strokkur.jap.code.visitor.CodeVisitor;
 
 import java.util.List;
 
-public record CodeAnnotation(
-  CodeClassType type,
-  List<CodeAnnotationParameter> parameters
-) implements ConvertToAnnotation, CodeVisitable {
+public interface CodeAnnotation extends CodeVisitable {
 
-  public static CodeAnnotation of(ConvertToClassType type, ConvertToExpression valueExpression) {
-    return new CodeAnnotation(type.toClassType(), List.of(CodeAnnotationParameter.of("value", valueExpression)));
+  static CodeAnnotation of(ConvertToClassType type, ConvertToExpression valueExpression) {
+    return new CodeAnnotationImpl(type.toClassType(), List.of(CodeAnnotationParameter.of("value", valueExpression)));
   }
 
-  public static CodeAnnotation of(ConvertToClassType type, ConvertToAnnotationParameter... parameters) {
+  static CodeAnnotation of(ConvertToClassType type, CodeAnnotationParameter... parameters) {
     return of(type.toClassType(), List.of(parameters));
   }
 
-  public static CodeAnnotation of(ConvertToClassType type, List<? extends ConvertToAnnotationParameter> parameters) {
-    final List<CodeAnnotationParameter> parameterList = parameters.stream()
-      .map(ConvertToAnnotationParameter::toAnnotationParameter)
-      .toList();
-    return new CodeAnnotation(type.toClassType(), parameterList);
+  static CodeAnnotation of(ConvertToClassType type, List<? extends CodeAnnotationParameter> parameters) {
+    return new CodeAnnotationImpl(
+      type.toClassType(),
+      parameters.stream()
+        .map(CodeAnnotationParameter.class::cast)
+        .toList()
+    );
+  }
+
+  CodeClassType type();
+
+  List<CodeAnnotationParameter> parameters();
+
+  default boolean isSet(String named) {
+    return parameters().stream()
+      .anyMatch(param -> param.name().equals(named));
+  }
+
+  default CodeAnnotationParameter parameter(String named) {
+    return parameters().stream()
+      .filter(param -> param.name().equals(named))
+      .findFirst().orElseThrow();
   }
 
   @Override
-  public CodeAnnotation toAnnotation() {
-    return this;
-  }
-
-  @Override
-  public <R> R accept(CodeVisitor<R> visitor) {
+  default <R> R accept(CodeVisitor<R> visitor) {
     return visitor.visitAnnotation(this);
   }
 }

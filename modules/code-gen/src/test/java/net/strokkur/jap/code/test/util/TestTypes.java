@@ -23,7 +23,7 @@
  */
 package net.strokkur.jap.code.test.util;
 
-import net.strokkur.jap.code.convert.ConvertToClassType;
+import net.strokkur.jap.code.type.convert.ConvertToClassType;
 import net.strokkur.jap.code.type.CodeTypes;
 
 public interface TestTypes extends ConvertToClassType {

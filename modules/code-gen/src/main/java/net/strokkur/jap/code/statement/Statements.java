@@ -24,10 +24,10 @@
 package net.strokkur.jap.code.statement;
 
 import net.strokkur.jap.code.classmodel.CodeBlock;
-import net.strokkur.jap.code.convert.ConvertToClassType;
+import net.strokkur.jap.code.type.convert.ConvertToClassType;
 import net.strokkur.jap.code.convert.ConvertToExpression;
 import net.strokkur.jap.code.convert.ConvertToStatement;
-import net.strokkur.jap.code.convert.ConvertToType;
+import net.strokkur.jap.code.type.convert.ConvertToType;
 import org.jspecify.annotations.Nullable;
 
 import java.util.List;

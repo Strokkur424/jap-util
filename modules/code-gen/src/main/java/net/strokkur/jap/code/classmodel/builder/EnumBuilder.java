@@ -26,7 +26,7 @@ package net.strokkur.jap.code.classmodel.builder;
 import net.strokkur.jap.code.classmodel.CodeConstructor;
 import net.strokkur.jap.code.classmodel.CodeEnum;
 import net.strokkur.jap.code.classmodel.CodeEnumValue;
-import net.strokkur.jap.code.convert.ConvertToClassType;
+import net.strokkur.jap.code.type.convert.ConvertToClassType;
 import net.strokkur.jap.code.convert.ConvertToConstructor;
 import net.strokkur.jap.code.convert.ConvertToExpression;
 import net.strokkur.jap.code.documentation.CodeDocumentation;

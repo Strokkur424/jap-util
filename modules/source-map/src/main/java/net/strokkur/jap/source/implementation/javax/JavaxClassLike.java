@@ -25,7 +25,7 @@ package net.strokkur.jap.source.implementation.javax;
 
 import net.strokkur.jap.code.type.CodeClassType;
 import net.strokkur.jap.code.type.CodePackage;
-import net.strokkur.jap.code.type.generic.CodeGenericTypeDefinition;
+import net.strokkur.jap.code.type.generics.CodeGenericTypeDefinition;
 import net.strokkur.jap.code.util.Modifiers;
 import net.strokkur.jap.source.SourceMapProcessor;
 import net.strokkur.jap.source.annotation.SourceAnnotation;

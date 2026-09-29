@@ -26,10 +26,10 @@ package net.strokkur.jap.code.test.java;
 import net.strokkur.jap.code.annotations.CodeAnnotation;
 import net.strokkur.jap.code.classmodel.CodeClass;
 import net.strokkur.jap.code.classmodel.CodeConstructor;
-import net.strokkur.jap.code.convert.ConvertToClassType;
+import net.strokkur.jap.code.type.convert.ConvertToClassType;
 import net.strokkur.jap.code.documentation.CodeDocumentation;
 import net.strokkur.jap.code.test.util.TestTypes;
-import net.strokkur.jap.code.type.generic.CodeGenericTypeDefinition;
+import net.strokkur.jap.code.type.generics.CodeGenericTypeDeclaration;
 import net.strokkur.jap.code.type.preset.JSpecifyTypes;
 import net.strokkur.jap.code.type.preset.JavaTypes;
 import net.strokkur.jap.code.util.Modifiers;
@@ -71,7 +71,7 @@ class ConstructorGenTests extends AbstractGenTest {
         .setDocumentation(CodeDocumentation.text("Creates an instance."))
         .addAnnotations(CodeAnnotation.of(JSpecifyTypes.NULLABLE))
         .addModifiers(Modifiers.PUBLIC)
-        .addGenerics(CodeGenericTypeDefinition.of("T"))
+        .addGenerics(CodeGenericTypeDeclaration.of("T"))
         .addParameter(
           JavaTypes.LIST.typed(generic("T")),
           "genericList",
