@@ -91,6 +91,7 @@ import net.strokkur.jap.code.type.generic.GenericEnclosure;
 import net.strokkur.jap.code.util.Modifiers;
 import net.strokkur.jap.code.util.StyleConfig;
 import net.strokkur.jap.code.visitor.CodeVisitable;
+import net.strokkur.jap.code.visitor.imports.GatheredImports;
 import org.jspecify.annotations.Nullable;
 
 import java.util.List;
@@ -100,8 +101,13 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class JavaSourcePrintingVisitor extends AbstractSourcePrintingVisitor {
-  public JavaSourcePrintingVisitor(Supplier<AbstractDocumentationRenderer> javadocPrintingVisitor, String indent, String continuationIndent) {
-    super(javadocPrintingVisitor, indent, continuationIndent);
+  public JavaSourcePrintingVisitor(
+    Supplier<AbstractDocumentationRenderer> documentationRenderer,
+    GatheredImports imports,
+    String indentString,
+    String continuationIndentString
+  ) {
+    super(documentationRenderer, imports, indentString, continuationIndentString);
   }
 
   //<editor-fold desc="Utilities"
@@ -768,7 +774,11 @@ public class JavaSourcePrintingVisitor extends AbstractSourcePrintingVisitor {
           if (!classType.annotations().isEmpty()) {
             builder.append(joining(classType.annotations(), " ")).append(" ");
           }
-          builder.append(classType.simpleName());
+          if (imports.hasImport(classType)) {
+            builder.append(classType.simpleName());
+          } else {
+            builder.append(classType.fullyQualifiedName());
+          }
           if (classType.genericTypes() != null) {
             builder.append("<");
             builder.append(joining(classType.genericTypes()));
@@ -777,7 +787,9 @@ public class JavaSourcePrintingVisitor extends AbstractSourcePrintingVisitor {
         }
 
         case CodeGenericType genericType -> {
+          //@formatter:off
           if (genericType.genericName() == null && genericType.enclosure() instanceof GenericEnclosure.TypeEnclosure(CodeType encloses)) {
+            //@formatter:on
             builder.append(encloses.accept(this));
             return;
           }

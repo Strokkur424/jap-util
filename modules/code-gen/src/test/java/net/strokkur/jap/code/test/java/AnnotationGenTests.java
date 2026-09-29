@@ -26,7 +26,9 @@ package net.strokkur.jap.code.test.java;
 import net.strokkur.jap.code.annotations.CodeAnnotation;
 import net.strokkur.jap.code.annotations.CodeAnnotationParameter;
 import net.strokkur.jap.code.expression.Expressions;
+import net.strokkur.jap.code.type.CodeTypes;
 import net.strokkur.jap.code.type.preset.JSpecifyTypes;
+import net.strokkur.jap.code.type.preset.JavaTypes;
 import org.junit.jupiter.api.Test;
 
 import java.util.Set;
@@ -52,6 +54,18 @@ class AnnotationGenTests extends AbstractGenTest {
         JSpecifyTypes.NULL_MARKED,
         CodeAnnotationParameter.of("value", Expressions.intExpr(5)),
         CodeAnnotationParameter.of("id", Expressions.intExpr(1))
+      )
+    );
+  }
+
+  @Test
+  void testDuplicateAnnotationNames() {
+    check(
+      Set.of(JSpecifyTypes.NULLABLE, JavaTypes.STRING),
+      "@Nullable @org.jetbrains.Nullable String",
+      JavaTypes.STRING.withAnnotations(
+        JSpecifyTypes.NULLABLE,
+        CodeTypes.of("org.jetbrains.Nullable")
       )
     );
   }

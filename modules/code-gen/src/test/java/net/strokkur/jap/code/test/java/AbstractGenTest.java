@@ -25,10 +25,10 @@ package net.strokkur.jap.code.test.java;
 
 import net.strokkur.jap.code.convert.ConvertToClassType;
 import net.strokkur.jap.code.documentation.MarkdownJavadocRenderer;
-import net.strokkur.jap.code.type.CodeClassType;
 import net.strokkur.jap.code.type.CodeType;
 import net.strokkur.jap.code.visitor.CodeVisitable;
-import net.strokkur.jap.code.visitor.ImportGatheringVisitor;
+import net.strokkur.jap.code.visitor.imports.GatheredImports;
+import net.strokkur.jap.code.visitor.imports.ImportGatheringVisitor;
 import net.strokkur.jap.code.visitor.source.JavaSourcePrintingVisitor;
 
 import java.lang.reflect.Constructor;
@@ -41,19 +41,27 @@ import static org.junit.jupiter.api.Assertions.assertLinesMatch;
 
 abstract class AbstractGenTest {
   protected final void check(Set<? extends ConvertToClassType> imports, String code, CodeVisitable ast) {
-    checkCode(code, ast);
-    checkImports(imports, ast);
+    final GatheredImports gathered = ast.accept(new ImportGatheringVisitor());
+    checkCode(code, ast, gathered);
+    checkImports(imports, gathered);
   }
 
   protected final void checkCode(String expected, CodeVisitable ast) {
-    final JavaSourcePrintingVisitor visitor = new JavaSourcePrintingVisitor(MarkdownJavadocRenderer::new, "  ", "   ");
+    checkCode(expected, ast, GatheredImports.all());
+  }
+
+  private void checkCode(String expected, CodeVisitable ast, GatheredImports imports) {
+    final JavaSourcePrintingVisitor visitor = new JavaSourcePrintingVisitor(MarkdownJavadocRenderer::new, imports, "  ", "   ");
     final String actual = ast.accept(visitor).toString();
     assertEquals(expected, actual);
   }
 
   protected final void checkImports(Set<? extends ConvertToClassType> expectedSet, CodeVisitable ast) {
-    final Set<CodeClassType> packages = ast.accept(new ImportGatheringVisitor());
-    final Set<String> imports = packages.stream().map(CodeType::fullyQualifiedName).collect(Collectors.toSet());
+    checkImports(expectedSet, ast.accept(new ImportGatheringVisitor()));
+  }
+
+  private void checkImports(Set<? extends ConvertToClassType> expectedSet, GatheredImports gathered) {
+    final Set<String> imports = gathered.imports().stream().map(CodeType::fullyQualifiedName).collect(Collectors.toSet());
 
     if (expectedSet.isEmpty()) {
       assertEquals(0, imports.size());

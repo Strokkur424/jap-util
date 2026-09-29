@@ -29,7 +29,8 @@ import net.strokkur.jap.code.documentation.MarkdownJavadocRenderer;
 import net.strokkur.jap.code.documentation.StarJavadocRenderer;
 import net.strokkur.jap.code.type.CodeClassType;
 import net.strokkur.jap.code.type.CodePackage;
-import net.strokkur.jap.code.visitor.ImportGatheringVisitor;
+import net.strokkur.jap.code.visitor.imports.GatheredImports;
+import net.strokkur.jap.code.visitor.imports.ImportGatheringVisitor;
 import net.strokkur.jap.code.visitor.source.JavaSourcePrintingVisitor;
 import org.jspecify.annotations.Nullable;
 
@@ -38,6 +39,7 @@ import javax.lang.model.element.Element;
 import javax.tools.JavaFileObject;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -72,7 +74,8 @@ public final class CodeGenUtil {
 
   public static String createJavaFile(CodeClassLike codeClass) {
     // The first step is to gather all imports.
-    final Set<CodeClassType> imports = codeClass.accept(IMPORT_VISITOR);
+    final GatheredImports gathered = codeClass.accept(IMPORT_VISITOR);
+    final Set<CodeClassType> imports = new HashSet<>(gathered.imports());
     imports.removeIf(type -> CodePackage.isRedundantImport(codeClass.classType().codePackage(), type.codePackage()));
 
     final StringBuilder builder = new StringBuilder();
@@ -85,7 +88,7 @@ public final class CodeGenUtil {
       imports
     );
 
-    final JavaSourcePrintingVisitor printer = new JavaSourcePrintingVisitor(() -> javadocRenderer(ctx), "  ", "  ");
+    final JavaSourcePrintingVisitor printer = new JavaSourcePrintingVisitor(() -> javadocRenderer(ctx), gathered, "  ", "  ");
     builder.append(codeClass.accept(printer));
     return builder.toString();
   }

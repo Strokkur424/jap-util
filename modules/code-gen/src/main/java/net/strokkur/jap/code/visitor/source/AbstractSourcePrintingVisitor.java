@@ -32,6 +32,7 @@ import net.strokkur.jap.code.util.Modifiers;
 import net.strokkur.jap.code.util.StyleConfig;
 import net.strokkur.jap.code.visitor.CodeVisitable;
 import net.strokkur.jap.code.visitor.CodeVisitor;
+import net.strokkur.jap.code.visitor.imports.GatheredImports;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Collection;
@@ -44,6 +45,7 @@ import java.util.stream.Collectors;
 
 public abstract class AbstractSourcePrintingVisitor implements CodeVisitor<StringBuilder> {
   protected final Supplier<AbstractDocumentationRenderer> documentationRenderer;
+  protected final GatheredImports imports;
   private final String indentString;
   private final String continuationIndentString;
 
@@ -53,8 +55,14 @@ public abstract class AbstractSourcePrintingVisitor implements CodeVisitor<Strin
   private int lineBlockIndent = 0;
   private int lineWrapIndent = 0;
 
-  public AbstractSourcePrintingVisitor(Supplier<AbstractDocumentationRenderer> documentationRenderer, String indentString, String continuationIndentString) {
+  public AbstractSourcePrintingVisitor(
+    Supplier<AbstractDocumentationRenderer> documentationRenderer,
+    GatheredImports imports,
+    String indentString,
+    String continuationIndentString
+  ) {
     this.documentationRenderer = documentationRenderer;
+    this.imports = imports;
     this.indentString = indentString;
     this.continuationIndentString = continuationIndentString;
   }

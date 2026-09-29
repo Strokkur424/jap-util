@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.strokkur.jap.code.visitor;
+package net.strokkur.jap.code.visitor.imports;
 
 import net.strokkur.jap.code.annotations.CodeAnnotation;
 import net.strokkur.jap.code.annotations.CodeAnnotationParameter;
@@ -75,40 +75,37 @@ import net.strokkur.jap.code.type.CodeType;
 import net.strokkur.jap.code.type.generic.CodeGenericType;
 import net.strokkur.jap.code.type.generic.CodeGenericTypeDefinition;
 import net.strokkur.jap.code.type.generic.GenericEnclosure;
+import net.strokkur.jap.code.visitor.CodeVisitable;
+import net.strokkur.jap.code.visitor.CodeVisitor;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class ImportGatheringVisitor implements CodeVisitor<Set<CodeClassType>> {
+public class ImportGatheringVisitor implements CodeVisitor<GatheredImports> {
 
-  @SafeVarargs
-  private Set<CodeClassType> join(Set<CodeClassType>... all) {
-    return Stream.of(all)
-      .flatMap(Collection::stream)
-      .collect(Collectors.toSet());
+  private GatheredImports join(GatheredImports... all) {
+    return Stream.of(all).collect(GatheredImports.collector());
   }
 
-  private Set<CodeClassType> maybeAccept(@Nullable CodeVisitable visitable) {
+  private GatheredImports maybeAccept(@Nullable CodeVisitable visitable) {
     if (visitable != null) {
       return visitable.accept(this);
     } else {
-      return Set.of();
+      return GatheredImports.empty();
     }
   }
 
-  private <S extends CodeVisitable> Set<CodeClassType> collect(Collection<S> collection) {
+  private <S extends CodeVisitable> GatheredImports collect(Collection<S> collection) {
     return collection.stream()
-      .flatMap(visitable -> visitable.accept(this).stream())
-      .collect(Collectors.toSet());
+      .map(visitable -> visitable.accept(this))
+      .collect(GatheredImports.collector());
   }
 
-  private Set<CodeClassType> acceptClassLike(CodeClassLike classLike) {
-    final Set<CodeClassType> base = join(
-      Set.of(classLike.classType()),
+  private GatheredImports acceptClassLike(CodeClassLike classLike) {
+    final GatheredImports base = join(
+      classLike.classType().accept(this),
       maybeAccept(classLike.documentation()),
       collect(classLike.methods()),
       collect(classLike.fields()),
@@ -122,7 +119,7 @@ public class ImportGatheringVisitor implements CodeVisitor<Set<CodeClassType>> {
   }
 
   @Override
-  public Set<CodeClassType> visitClass(CodeClass codeClass) {
+  public GatheredImports visitClass(CodeClass codeClass) {
     return join(
       acceptClassLike(codeClass),
       collect(codeClass.constructors()),
@@ -132,7 +129,7 @@ public class ImportGatheringVisitor implements CodeVisitor<Set<CodeClassType>> {
   }
 
   @Override
-  public Set<CodeClassType> visitInterface(CodeInterface codeInterface) {
+  public GatheredImports visitInterface(CodeInterface codeInterface) {
     return join(
       acceptClassLike(codeInterface),
       collect(codeInterface.extendsTypes())
@@ -140,7 +137,7 @@ public class ImportGatheringVisitor implements CodeVisitor<Set<CodeClassType>> {
   }
 
   @Override
-  public Set<CodeClassType> visitEnum(CodeEnum codeEnum) {
+  public GatheredImports visitEnum(CodeEnum codeEnum) {
     return join(
       acceptClassLike(codeEnum),
       collect(codeEnum.values()),
@@ -149,12 +146,12 @@ public class ImportGatheringVisitor implements CodeVisitor<Set<CodeClassType>> {
   }
 
   @Override
-  public Set<CodeClassType> visitEnumValue(CodeEnumValue enumValue) {
+  public GatheredImports visitEnumValue(CodeEnumValue enumValue) {
     return join(collect(enumValue.parameters()), maybeAccept(enumValue.documentation()));
   }
 
   @Override
-  public Set<CodeClassType> visitRecord(CodeRecord record) {
+  public GatheredImports visitRecord(CodeRecord record) {
     return join(
       acceptClassLike(record),
       collect(record.components()),
@@ -165,7 +162,7 @@ public class ImportGatheringVisitor implements CodeVisitor<Set<CodeClassType>> {
   }
 
   @Override
-  public Set<CodeClassType> visitRecordComponent(CodeRecordComponent recordComponent) {
+  public GatheredImports visitRecordComponent(CodeRecordComponent recordComponent) {
     return join(
       maybeAccept(recordComponent.type()),
       collect(recordComponent.annotations())
@@ -173,12 +170,12 @@ public class ImportGatheringVisitor implements CodeVisitor<Set<CodeClassType>> {
   }
 
   @Override
-  public Set<CodeClassType> visitAnnotationType(CodeAnnotationType annotationType) {
+  public GatheredImports visitAnnotationType(CodeAnnotationType annotationType) {
     return acceptClassLike(annotationType);
   }
 
   @Override
-  public Set<CodeClassType> visitMethod(CodeMethod codeMethod) {
+  public GatheredImports visitMethod(CodeMethod codeMethod) {
     return join(
       maybeAccept(codeMethod.documentation()),
       collect(codeMethod.parameters()),
@@ -192,7 +189,7 @@ public class ImportGatheringVisitor implements CodeVisitor<Set<CodeClassType>> {
   }
 
   @Override
-  public Set<CodeClassType> visitPrimaryConstructor(CodePrimaryConstructor ctor) {
+  public GatheredImports visitPrimaryConstructor(CodePrimaryConstructor ctor) {
     return join(
       maybeAccept(ctor.documentation()),
       collect(ctor.annotations()),
@@ -203,7 +200,7 @@ public class ImportGatheringVisitor implements CodeVisitor<Set<CodeClassType>> {
   }
 
   @Override
-  public Set<CodeClassType> visitConstructor(CodeConstructor ctor) {
+  public GatheredImports visitConstructor(CodeConstructor ctor) {
     return join(
       maybeAccept(ctor.documentation()),
       collect(ctor.annotations()),
@@ -215,7 +212,7 @@ public class ImportGatheringVisitor implements CodeVisitor<Set<CodeClassType>> {
   }
 
   @Override
-  public Set<CodeClassType> visitType(CodeType codeType) {
+  public GatheredImports visitType(CodeType codeType) {
     return switch (codeType) {
       case CodeArrayType arrayType -> join(
         collect(arrayType.annotations()),
@@ -227,15 +224,15 @@ public class ImportGatheringVisitor implements CodeVisitor<Set<CodeClassType>> {
       );
       case CodeClassType classType -> join(
         collect(classType.annotations()),
-        classType.genericTypes() == null ? Set.of() : collect(classType.genericTypes()),
-        Set.of(classType.toTopLevel().withoutGenerics())
+        classType.genericTypes() == null ? GatheredImports.empty() : collect(classType.genericTypes()),
+        GatheredImports.of(classType)
       );
       case CodePrimitiveType primitiveType -> collect(primitiveType.annotations());
     };
   }
 
   @Override
-  public Set<CodeClassType> visitAnnotation(CodeAnnotation codeAnnotation) {
+  public GatheredImports visitAnnotation(CodeAnnotation codeAnnotation) {
     return join(
       codeAnnotation.type().accept(this),
       collect(codeAnnotation.parameters())
@@ -243,7 +240,7 @@ public class ImportGatheringVisitor implements CodeVisitor<Set<CodeClassType>> {
   }
 
   @Override
-  public Set<CodeClassType> visitField(CodeField codeField) {
+  public GatheredImports visitField(CodeField codeField) {
     return join(
       maybeAccept(codeField.initializer()),
       collect(codeField.annotations()),
@@ -252,14 +249,14 @@ public class ImportGatheringVisitor implements CodeVisitor<Set<CodeClassType>> {
   }
 
   @Override
-  public Set<CodeClassType> visitExpression(CodeExpression expression) {
+  public GatheredImports visitExpression(CodeExpression expression) {
     return switch (expression) {
 
       // Simple expressions do not require any imports.
-      case SimpleExpression ignored -> Set.of();
+      case SimpleExpression ignored -> GatheredImports.empty();
 
       case ConstructorInvocation ctor -> join(
-        Set.of(ctor.type()),
+        ctor.type().accept(this),
         collect(ctor.parameters()),
         maybeAccept(ctor.source())
       );
@@ -272,7 +269,7 @@ public class ImportGatheringVisitor implements CodeVisitor<Set<CodeClassType>> {
       );
 
       case InstanceOfExpr inst -> join(
-        Set.of(inst.classType()),
+        inst.classType().accept(this),
         inst.source().accept(this)
       );
 
@@ -324,11 +321,11 @@ public class ImportGatheringVisitor implements CodeVisitor<Set<CodeClassType>> {
   }
 
   @Override
-  public Set<CodeClassType> visitStatement(CodeStatement statement) {
+  public GatheredImports visitStatement(CodeStatement statement) {
     return switch (statement) {
 
-      case BlankStatement ignored -> Set.of();
-      case CommentStatement ignored -> Set.of();
+      case BlankStatement ignored -> GatheredImports.empty();
+      case CommentStatement ignored -> GatheredImports.empty();
 
       case ExpressionStatement expr -> expr.expression().accept(this);
 
@@ -352,11 +349,11 @@ public class ImportGatheringVisitor implements CodeVisitor<Set<CodeClassType>> {
       ) -> join(
         tryBlock.accept(this),
         catchStatements.stream()
-          .flatMap(catchStmt -> join(
+          .map(catchStmt -> join(
             collect(catchStmt.exceptionTypes()),
             catchStmt.catchBlock().accept(this)
-          ).stream())
-          .collect(Collectors.toSet()),
+          ))
+          .collect(GatheredImports.collector()),
         maybeAccept(finallyBlock)
       );
 
@@ -365,12 +362,12 @@ public class ImportGatheringVisitor implements CodeVisitor<Set<CodeClassType>> {
   }
 
   @Override
-  public Set<CodeClassType> visitAnnotationParameter(CodeAnnotationParameter annotationParameter) {
+  public GatheredImports visitAnnotationParameter(CodeAnnotationParameter annotationParameter) {
     return annotationParameter.value().accept(this);
   }
 
   @Override
-  public Set<CodeClassType> visitParameterDefinition(CodeParameterDefinition parameter) {
+  public GatheredImports visitParameterDefinition(CodeParameterDefinition parameter) {
     return join(
       collect(parameter.annotations()),
       parameter.type().accept(this)
@@ -378,31 +375,31 @@ public class ImportGatheringVisitor implements CodeVisitor<Set<CodeClassType>> {
   }
 
   @Override
-  public Set<CodeClassType> visitCodeBlock(CodeBlock block) {
+  public GatheredImports visitCodeBlock(CodeBlock block) {
     return collect(block.statements());
   }
 
   @Override
-  public Set<CodeClassType> visitGenericTypeDefinition(CodeGenericTypeDefinition genericTypeDefinition) {
+  public GatheredImports visitGenericTypeDefinition(CodeGenericTypeDefinition genericTypeDefinition) {
     return maybeAccept(genericTypeDefinition.enclosure());
   }
 
   @Override
-  public Set<CodeClassType> visitGenericEnclosure(GenericEnclosure enclosure) {
+  public GatheredImports visitGenericEnclosure(GenericEnclosure enclosure) {
     return enclosure.encloses().accept(this);
   }
 
   @Override
-  public Set<CodeClassType> visitDocumentation(CodeDocumentation documentation) {
+  public GatheredImports visitDocumentation(CodeDocumentation documentation) {
     return switch (documentation) {
-      case CodeDocumentation.ClassReference classReference -> Set.of(classReference.codeClass());
-      case CodeDocumentation.ClassReferenceMeta classReferenceMeta -> Set.of(classReferenceMeta.type());
+      case CodeDocumentation.ClassReference classReference -> classReference.codeClass().accept(this);
+      case CodeDocumentation.ClassReferenceMeta classReferenceMeta -> classReferenceMeta.type().accept(this);
       case CodeDocumentation.MethodReference methodReference -> maybeAccept(methodReference.source());
       case CodeDocumentation.MethodReferenceMeta methodReferenceMeta -> maybeAccept(methodReferenceMeta.source());
       //@formatter:off
       case CodeDocumentation.DocumentationComponentList documentationComponentList -> collect(documentationComponentList.components());
       //@formatter:on
-      default -> Set.of();
+      default -> GatheredImports.empty();
     };
   }
 }
