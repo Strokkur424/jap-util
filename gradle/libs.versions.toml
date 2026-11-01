@@ -1,6 +1,7 @@
 [versions]
 jspecify = "1.0.0"
 jetbrains-annotations = "24.0.0"
+auto-service = "1.0.1"
 
 junit = "6.0.3"
 
@@ -10,6 +11,8 @@ strokk-conventions = "0.1.2"
 [libraries]
 jetbrains-annotations = { module = "org.jetbrains:annotations", version.ref = "jetbrains-annotations" }
 jspecify = { module = "org.jspecify:jspecify", version.ref = "jspecify" }
+auto-service = { module = "com.google.auto.service:auto-service", version.ref = "auto-service" }
+auto-service-annotations = { module = "com.google.auto.service:auto-service-annotations", version.ref = "auto-service" }
 
 # Junit
 junit-bom = { module = "org.junit:junit-bom", version.ref = "junit" }
