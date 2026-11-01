@@ -30,6 +30,7 @@ import net.strokkur.jap.code.convert.ConvertToMethodReferenceSource;
 import net.strokkur.jap.code.convert.ConvertToStatement;
 import net.strokkur.jap.code.convert.ConvertToType;
 import net.strokkur.jap.code.expression.builder.ConstructorInvocationBuilder;
+import net.strokkur.jap.code.expression.builder.EnhancedSwitchExpressionBuilder;
 import net.strokkur.jap.code.expression.builder.MethodInvocationBuilder;
 import net.strokkur.jap.code.expression.simple.CodeBooleanExpression;
 import net.strokkur.jap.code.expression.simple.CodeDoubleExpression;
@@ -164,6 +165,10 @@ public final class Expressions {
 
   public static MultilineLambda lambda(List<String> lambdaParameters, CodeBlock lambdaBlock) {
     return new MultilineLambda(lambdaParameters, lambdaBlock);
+  }
+
+  public static EnhancedSwitchExpressionBuilder enhancedSwitch(ConvertToExpression head) {
+    return new EnhancedSwitchExpressionBuilder().head(head);
   }
 
   private Expressions() throws IllegalAccessError {

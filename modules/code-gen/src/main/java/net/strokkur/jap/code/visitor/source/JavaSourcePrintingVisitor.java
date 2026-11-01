@@ -48,6 +48,7 @@ import net.strokkur.jap.code.expression.CastExpression;
 import net.strokkur.jap.code.expression.CodeExpression;
 import net.strokkur.jap.code.expression.ConcatExpression;
 import net.strokkur.jap.code.expression.ConstructorInvocation;
+import net.strokkur.jap.code.expression.EnhancedSwitchExpression;
 import net.strokkur.jap.code.expression.FieldAccess;
 import net.strokkur.jap.code.expression.InstanceOfExpr;
 import net.strokkur.jap.code.expression.MethodInvocation;
@@ -639,6 +640,15 @@ public class JavaSourcePrintingVisitor extends AbstractSourcePrintingVisitor {
           builder.append(codeExpression.accept(this));
         }
 
+        case EnhancedSwitchExpression(CodeExpression head, List<EnhancedSwitchExpression.Branch> branches) -> {
+          builder.append("switch (");
+          builder.append(head.accept(this));
+          builder.append(") {\n");
+          appendIndented(() -> builder.append(joining(branches, "")));
+          appendIndent(builder);
+          builder.append("}");
+        }
+
         case ConcatExpression(List<CodeExpression> expressions) -> builder.append(joining(expressions, " + "));
 
         case UnaryMinusExpression(CodeExpression expr) -> {
@@ -662,6 +672,45 @@ public class JavaSourcePrintingVisitor extends AbstractSourcePrintingVisitor {
       builder.append(".");
     }
     return hasLambdaBlock;
+  }
+
+  @Override
+  public StringBuilder visitEnhancedSwitchBranch(EnhancedSwitchExpression.Branch branch) {
+    return append(builder -> {
+      appendIndent(builder);
+      switch (branch) {
+        case EnhancedSwitchExpression.CaseBlockBranch caseBlockBranch -> {
+          builder.append("case ").append(caseBlockBranch.cond().accept(this)).append(" -> {\n");
+          builder.append(caseBlockBranch.block().accept(this));
+          appendIndent(builder);
+          builder.append("}\n");
+        }
+        case EnhancedSwitchExpression.CaseExpressionBranch caseExpressionBranch -> {
+          builder.append("case ").append(caseExpressionBranch.cond().accept(this)).append(" -> ");
+          builder.append(caseExpressionBranch.expr().accept(this)).append(";\n");
+        }
+        case EnhancedSwitchExpression.DefaultBlockBranch defaultBlockBranch -> {
+          builder.append("default -> {\n");
+          builder.append(defaultBlockBranch.block().accept(this));
+          appendIndent(builder);
+          builder.append("}\n");
+        }
+        case EnhancedSwitchExpression.DefaultExpressionBranch defaultExpressionBranch -> {
+          builder.append("default -> ");
+          builder.append(defaultExpressionBranch.expr().accept(this)).append(";\n");
+        }
+        case EnhancedSwitchExpression.NullBlockBranch nullBlockBranch -> {
+          builder.append("case null -> {\n");
+          builder.append(nullBlockBranch.block().accept(this));
+          appendIndent(builder);
+          builder.append("}\n");
+        }
+        case EnhancedSwitchExpression.NullExpressionBranch nullExpressionBranch -> {
+          builder.append("case null -> ");
+          builder.append(nullExpressionBranch.expr().accept(this)).append(";\n");
+        }
+      }
+    });
   }
 
   @Override

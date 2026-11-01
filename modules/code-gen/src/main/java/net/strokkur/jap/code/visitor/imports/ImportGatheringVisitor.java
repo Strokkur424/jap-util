@@ -46,6 +46,7 @@ import net.strokkur.jap.code.expression.CastExpression;
 import net.strokkur.jap.code.expression.CodeExpression;
 import net.strokkur.jap.code.expression.ConcatExpression;
 import net.strokkur.jap.code.expression.ConstructorInvocation;
+import net.strokkur.jap.code.expression.EnhancedSwitchExpression;
 import net.strokkur.jap.code.expression.FieldAccess;
 import net.strokkur.jap.code.expression.InstanceOfExpr;
 import net.strokkur.jap.code.expression.MethodInvocation;
@@ -89,6 +90,10 @@ public class ImportGatheringVisitor implements CodeVisitor<GatheredImports> {
     return Stream.of(all).collect(GatheredImports.collector());
   }
 
+  private GatheredImports join(CodeVisitable... all) {
+    return Stream.of(all).map(v -> v.accept(this)).collect(GatheredImports.collector());
+  }
+
   private GatheredImports maybeAccept(@Nullable CodeVisitable visitable) {
     if (visitable != null) {
       return visitable.accept(this);
@@ -97,7 +102,7 @@ public class ImportGatheringVisitor implements CodeVisitor<GatheredImports> {
     }
   }
 
-  private <S extends CodeVisitable> GatheredImports collect(Collection<S> collection) {
+  private GatheredImports collect(Collection<? extends CodeVisitable> collection) {
     return collection.stream()
       .map(visitable -> visitable.accept(this))
       .collect(GatheredImports.collector());
@@ -284,6 +289,10 @@ public class ImportGatheringVisitor implements CodeVisitor<GatheredImports> {
 
       case SingleLineLambda lamb -> lamb.lambdaExpression().accept(this);
 
+      case EnhancedSwitchExpression enhancedSwitch -> join(
+        enhancedSwitch.head().accept(this), collect(enhancedSwitch.branches())
+      );
+
       case AssignExpression(CodeExpression leftSide, CodeExpression rightSide) -> join(
         leftSide.accept(this),
         rightSide.accept(this)
@@ -317,6 +326,18 @@ public class ImportGatheringVisitor implements CodeVisitor<GatheredImports> {
 
       default ->
         throw new IllegalArgumentException("Expression of type " + expression.getClass() + " was not handled.");
+    };
+  }
+
+  @Override
+  public GatheredImports visitEnhancedSwitchBranch(EnhancedSwitchExpression.Branch switchBranch) {
+    return switch (switchBranch) {
+      case EnhancedSwitchExpression.CaseBlockBranch branch -> join(branch.cond(), branch.block());
+      case EnhancedSwitchExpression.CaseExpressionBranch branch -> join(branch.cond(), branch.expr());
+      case EnhancedSwitchExpression.DefaultBlockBranch branch -> branch.block().accept(this);
+      case EnhancedSwitchExpression.DefaultExpressionBranch branch -> branch.expr().accept(this);
+      case EnhancedSwitchExpression.NullBlockBranch branch -> branch.block().accept(this);
+      case EnhancedSwitchExpression.NullExpressionBranch branch -> branch.expr().accept(this);
     };
   }
 
