@@ -40,7 +40,7 @@ import net.strokkur.jap.code.classmodel.CodeRecord;
 import net.strokkur.jap.code.classmodel.CodeRecordComponent;
 import net.strokkur.jap.code.documentation.CodeDocumentation;
 import net.strokkur.jap.code.expression.CodeExpression;
-import net.strokkur.jap.code.expression.EnhancedSwitchExpression;
+import net.strokkur.jap.code.expression.switchexpr.SwitchBranch;
 import net.strokkur.jap.code.statement.CodeStatement;
 import net.strokkur.jap.code.type.CodeType;
 import net.strokkur.jap.code.type.generic.CodeGenericTypeDefinition;
@@ -79,7 +79,9 @@ public interface CodeVisitor<R> {
 
   R visitStatement(CodeStatement statement);
 
-  R visitEnhancedSwitchBranch(EnhancedSwitchExpression.Branch branch);
+  R visitEnhancedSwitchBranch(SwitchBranch branch);
+
+  R visitMatch(SwitchBranch.Match match);
 
   R visitType(CodeType type);
 

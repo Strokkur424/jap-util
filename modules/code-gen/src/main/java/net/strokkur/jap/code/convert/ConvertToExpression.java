@@ -28,6 +28,7 @@ import net.strokkur.jap.code.expression.CodeExpression;
 import net.strokkur.jap.code.expression.ConcatExpression;
 import net.strokkur.jap.code.expression.Expressions;
 import net.strokkur.jap.code.expression.InstanceOfExpr;
+import net.strokkur.jap.code.expression.ThrowExpression;
 import net.strokkur.jap.code.expression.UnaryMinusExpression;
 import net.strokkur.jap.code.expression.bool.AndExpression;
 import net.strokkur.jap.code.expression.bool.BooleanExpressions;
@@ -60,6 +61,10 @@ public interface ConvertToExpression extends ConvertToStatement {
 
   default CodeStatement throwStmt() {
     return Statements.throwStatement(this);
+  }
+
+  default CodeExpression throwExpr() {
+    return new ThrowExpression(this.toExpression());
   }
 
   default CodeExpression assign(ConvertToExpression right) {

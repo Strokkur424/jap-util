@@ -42,6 +42,7 @@ public interface JavaTypes extends ConvertToClassType {
   JavaTypes OBJECT = create(Object.class);
   JavaTypes STRING = create(String.class);
   JavaTypes NUMBER = create(Number.class);
+  JavaTypes CLASS = create(Class.class);
 
   JavaTypes INTEGER = create(Integer.class);
   JavaTypes LONG = create(Long.class);

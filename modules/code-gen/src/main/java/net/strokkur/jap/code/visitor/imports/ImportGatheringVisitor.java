@@ -46,13 +46,13 @@ import net.strokkur.jap.code.expression.CastExpression;
 import net.strokkur.jap.code.expression.CodeExpression;
 import net.strokkur.jap.code.expression.ConcatExpression;
 import net.strokkur.jap.code.expression.ConstructorInvocation;
-import net.strokkur.jap.code.expression.EnhancedSwitchExpression;
 import net.strokkur.jap.code.expression.FieldAccess;
 import net.strokkur.jap.code.expression.InstanceOfExpr;
 import net.strokkur.jap.code.expression.MethodInvocation;
 import net.strokkur.jap.code.expression.MethodReference;
 import net.strokkur.jap.code.expression.MultilineLambda;
 import net.strokkur.jap.code.expression.SingleLineLambda;
+import net.strokkur.jap.code.expression.ThrowExpression;
 import net.strokkur.jap.code.expression.UnaryMinusExpression;
 import net.strokkur.jap.code.expression.bool.AndExpression;
 import net.strokkur.jap.code.expression.bool.EqExpression;
@@ -60,13 +60,14 @@ import net.strokkur.jap.code.expression.bool.NeqExpression;
 import net.strokkur.jap.code.expression.bool.NotExpression;
 import net.strokkur.jap.code.expression.bool.OrExpression;
 import net.strokkur.jap.code.expression.simple.SimpleExpression;
+import net.strokkur.jap.code.expression.switchexpr.EnhancedSwitchExpression;
+import net.strokkur.jap.code.expression.switchexpr.SwitchBranch;
 import net.strokkur.jap.code.statement.BlankStatement;
 import net.strokkur.jap.code.statement.CodeStatement;
 import net.strokkur.jap.code.statement.CommentStatement;
 import net.strokkur.jap.code.statement.ExpressionStatement;
 import net.strokkur.jap.code.statement.IfStatement;
 import net.strokkur.jap.code.statement.ReturnStatement;
-import net.strokkur.jap.code.statement.ThrowStatement;
 import net.strokkur.jap.code.statement.TryStatement;
 import net.strokkur.jap.code.statement.VariableDeclarationStatement;
 import net.strokkur.jap.code.type.CodeArrayType;
@@ -283,6 +284,8 @@ public class ImportGatheringVisitor implements CodeVisitor<GatheredImports> {
         collect(inv.parameters())
       );
 
+      case ThrowExpression throwExpr -> throwExpr.inner().accept(this);
+
       case MethodReference ref -> ref.source().accept(this);
 
       case MultilineLambda lamb -> lamb.lambdaBlock().accept(this);
@@ -290,7 +293,9 @@ public class ImportGatheringVisitor implements CodeVisitor<GatheredImports> {
       case SingleLineLambda lamb -> lamb.lambdaExpression().accept(this);
 
       case EnhancedSwitchExpression enhancedSwitch -> join(
-        enhancedSwitch.head().accept(this), collect(enhancedSwitch.branches())
+        enhancedSwitch.head().accept(this),
+        collect(enhancedSwitch.branches()),
+        maybeAccept(enhancedSwitch.defaultBranch())
       );
 
       case AssignExpression(CodeExpression leftSide, CodeExpression rightSide) -> join(
@@ -330,14 +335,18 @@ public class ImportGatheringVisitor implements CodeVisitor<GatheredImports> {
   }
 
   @Override
-  public GatheredImports visitEnhancedSwitchBranch(EnhancedSwitchExpression.Branch switchBranch) {
-    return switch (switchBranch) {
-      case EnhancedSwitchExpression.CaseBlockBranch branch -> join(branch.cond(), branch.block());
-      case EnhancedSwitchExpression.CaseExpressionBranch branch -> join(branch.cond(), branch.expr());
-      case EnhancedSwitchExpression.DefaultBlockBranch branch -> branch.block().accept(this);
-      case EnhancedSwitchExpression.DefaultExpressionBranch branch -> branch.expr().accept(this);
-      case EnhancedSwitchExpression.NullBlockBranch branch -> branch.block().accept(this);
-      case EnhancedSwitchExpression.NullExpressionBranch branch -> branch.expr().accept(this);
+  public GatheredImports visitEnhancedSwitchBranch(SwitchBranch branch) {
+    return switch (branch) {
+      case SwitchBranch.CaseBranch caseBranch -> join(caseBranch.condition(), caseBranch.operation());
+      default -> branch.operation().accept(this);
+    };
+  }
+
+  @Override
+  public GatheredImports visitMatch(SwitchBranch.Match match) {
+    return switch (match) {
+      case SwitchBranch.MatchExpr matchExpr -> matchExpr.expr().accept(this);
+      case SwitchBranch.MatchType matchType -> join(matchType.classType().accept(this), maybeAccept(matchType.when()));
     };
   }
 
@@ -351,8 +360,6 @@ public class ImportGatheringVisitor implements CodeVisitor<GatheredImports> {
       case ExpressionStatement expr -> expr.expression().accept(this);
 
       case ReturnStatement ret -> maybeAccept(ret.returnExpression());
-
-      case ThrowStatement throwStmt -> throwStmt.throwExpression().accept(this);
 
       case VariableDeclarationStatement variableDec -> join(
         variableDec.variableType().accept(this),

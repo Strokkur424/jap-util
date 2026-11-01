@@ -21,47 +21,48 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.strokkur.jap.code.expression;
+package net.strokkur.jap.code.expression.switchexpr;
 
-import net.strokkur.jap.code.classmodel.CodeBlock;
+import net.strokkur.jap.code.expression.CodeExpression;
+import net.strokkur.jap.code.type.CodeClassType;
 import net.strokkur.jap.code.visitor.CodeVisitable;
 import net.strokkur.jap.code.visitor.CodeVisitor;
+import org.jetbrains.annotations.ApiStatus;
+import org.jspecify.annotations.Nullable;
 
-import java.util.List;
+public sealed interface SwitchBranch extends CodeVisitable permits SwitchBranch.CaseBranch, DefaultBranchImpl {
+  CodeVisitable operation();
 
-public record EnhancedSwitchExpression(
-  CodeExpression head,
-  List<Branch> branches
-) implements CodeExpression {
+  @ApiStatus.Internal
+  static CaseBranch caseBranch(Match match, CodeVisitable operation) {
+    return new ConditionalBranchImpl(match, operation);
+  }
 
-  public sealed interface Branch extends CodeVisitable {
+  @ApiStatus.Internal
+  static SwitchBranch defaultBranch(CodeVisitable operation) {
+    return new DefaultBranchImpl(operation);
+  }
+
+  @Override
+  default <R> R accept(CodeVisitor<R> visitor) {
+    return visitor.visitEnhancedSwitchBranch(this);
+  }
+
+  sealed interface CaseBranch extends SwitchBranch permits ConditionalBranchImpl {
+    CodeVisitable condition();
+  }
+
+  sealed interface Match extends CodeVisitable {
     @Override
-    default <R> R accept(CodeVisitor<R> visitor) {
-      return visitor.visitEnhancedSwitchBranch(this);
+    default  <R> R accept(CodeVisitor<R> visitor) {
+      return visitor.visitMatch(this);
     }
   }
 
-  public record CaseExpressionBranch(CodeExpression cond, CodeExpression expr) implements Branch {
+  record MatchExpr(CodeExpression expr) implements Match {
 
   }
 
-  public record CaseBlockBranch(CodeExpression cond, CodeBlock block) implements Branch {
-
-  }
-
-  public record DefaultExpressionBranch(CodeExpression expr) implements Branch {
-
-  }
-
-  public record DefaultBlockBranch(CodeBlock block) implements Branch {
-
-  }
-
-  public record NullExpressionBranch(CodeExpression expr) implements Branch {
-
-  }
-
-  public record NullBlockBranch(CodeBlock block) implements Branch {
-
+  record MatchType(CodeClassType classType, String name, @Nullable CodeExpression when) implements Match {
   }
 }

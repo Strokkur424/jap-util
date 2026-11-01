@@ -48,7 +48,6 @@ import net.strokkur.jap.code.expression.CastExpression;
 import net.strokkur.jap.code.expression.CodeExpression;
 import net.strokkur.jap.code.expression.ConcatExpression;
 import net.strokkur.jap.code.expression.ConstructorInvocation;
-import net.strokkur.jap.code.expression.EnhancedSwitchExpression;
 import net.strokkur.jap.code.expression.FieldAccess;
 import net.strokkur.jap.code.expression.InstanceOfExpr;
 import net.strokkur.jap.code.expression.MethodInvocation;
@@ -56,6 +55,7 @@ import net.strokkur.jap.code.expression.MethodReference;
 import net.strokkur.jap.code.expression.MultilineLambda;
 import net.strokkur.jap.code.expression.RequiresBracketsOnAccess;
 import net.strokkur.jap.code.expression.SingleLineLambda;
+import net.strokkur.jap.code.expression.ThrowExpression;
 import net.strokkur.jap.code.expression.UnaryMinusExpression;
 import net.strokkur.jap.code.expression.bool.AndExpression;
 import net.strokkur.jap.code.expression.bool.EqExpression;
@@ -73,13 +73,14 @@ import net.strokkur.jap.code.expression.simple.CodeStringExpression;
 import net.strokkur.jap.code.expression.simple.CodeVariableExpression;
 import net.strokkur.jap.code.expression.source.FieldMethodSource;
 import net.strokkur.jap.code.expression.source.MethodReferenceSource;
+import net.strokkur.jap.code.expression.switchexpr.EnhancedSwitchExpression;
+import net.strokkur.jap.code.expression.switchexpr.SwitchBranch;
 import net.strokkur.jap.code.statement.BlankStatement;
 import net.strokkur.jap.code.statement.CodeStatement;
 import net.strokkur.jap.code.statement.CommentStatement;
 import net.strokkur.jap.code.statement.ExpressionStatement;
 import net.strokkur.jap.code.statement.IfStatement;
 import net.strokkur.jap.code.statement.ReturnStatement;
-import net.strokkur.jap.code.statement.ThrowStatement;
 import net.strokkur.jap.code.statement.TryStatement;
 import net.strokkur.jap.code.statement.VariableDeclarationStatement;
 import net.strokkur.jap.code.type.CodeArrayType;
@@ -625,6 +626,10 @@ public class JavaSourcePrintingVisitor extends AbstractSourcePrintingVisitor {
             .append(methodName);
         }
 
+        case ThrowExpression(CodeExpression inner) -> {
+          builder.append("throw").append(" ").append(inner.accept(this));
+        }
+
         case MultilineLambda(List<String> lambdaParameters, CodeBlock lambdaBlock) -> {
           appendLambdaHead(builder, lambdaParameters);
           builder.append("{\n");
@@ -640,11 +645,18 @@ public class JavaSourcePrintingVisitor extends AbstractSourcePrintingVisitor {
           builder.append(codeExpression.accept(this));
         }
 
-        case EnhancedSwitchExpression(CodeExpression head, List<EnhancedSwitchExpression.Branch> branches) -> {
+        case EnhancedSwitchExpression(
+          CodeExpression head, List<SwitchBranch.CaseBranch> branches, @Nullable SwitchBranch defaultBranch
+        ) -> {
           builder.append("switch (");
           builder.append(head.accept(this));
           builder.append(") {\n");
-          appendIndented(() -> builder.append(joining(branches, "")));
+          appendIndented(() -> {
+            builder.append(joining(branches, ""));
+            if (defaultBranch != null) {
+              builder.append(defaultBranch.accept(this));
+            }
+          });
           appendIndent(builder);
           builder.append("}");
         }
@@ -675,42 +687,40 @@ public class JavaSourcePrintingVisitor extends AbstractSourcePrintingVisitor {
   }
 
   @Override
-  public StringBuilder visitEnhancedSwitchBranch(EnhancedSwitchExpression.Branch branch) {
+  public StringBuilder visitEnhancedSwitchBranch(SwitchBranch branch) {
     return append(builder -> {
       appendIndent(builder);
-      switch (branch) {
-        case EnhancedSwitchExpression.CaseBlockBranch caseBlockBranch -> {
-          builder.append("case ").append(caseBlockBranch.cond().accept(this)).append(" -> {\n");
-          builder.append(caseBlockBranch.block().accept(this));
-          appendIndent(builder);
-          builder.append("}\n");
-        }
-        case EnhancedSwitchExpression.CaseExpressionBranch caseExpressionBranch -> {
-          builder.append("case ").append(caseExpressionBranch.cond().accept(this)).append(" -> ");
-          builder.append(caseExpressionBranch.expr().accept(this)).append(";\n");
-        }
-        case EnhancedSwitchExpression.DefaultBlockBranch defaultBlockBranch -> {
-          builder.append("default -> {\n");
-          builder.append(defaultBlockBranch.block().accept(this));
-          appendIndent(builder);
-          builder.append("}\n");
-        }
-        case EnhancedSwitchExpression.DefaultExpressionBranch defaultExpressionBranch -> {
-          builder.append("default -> ");
-          builder.append(defaultExpressionBranch.expr().accept(this)).append(";\n");
-        }
-        case EnhancedSwitchExpression.NullBlockBranch nullBlockBranch -> {
-          builder.append("case null -> {\n");
-          builder.append(nullBlockBranch.block().accept(this));
-          appendIndent(builder);
-          builder.append("}\n");
-        }
-        case EnhancedSwitchExpression.NullExpressionBranch nullExpressionBranch -> {
-          builder.append("case null -> ");
-          builder.append(nullExpressionBranch.expr().accept(this)).append(";\n");
-        }
+      if (branch instanceof SwitchBranch.CaseBranch caseBranch) {
+        builder.append("case ").append(caseBranch.condition().accept(this));
+      } else {
+        builder.append("default");
+      }
+
+      builder.append(" -> ");
+      if (branch.operation() instanceof CodeBlock) {
+        builder.append("{\n");
+        builder.append(branch.operation().accept(this));
+        appendIndent(builder);
+        builder.append("}\n");
+      } else {
+        builder.append(branch.operation().accept(this));
+        builder.append(";\n");
       }
     });
+  }
+
+  @Override
+  public StringBuilder visitMatch(SwitchBranch.Match match) {
+    return switch (match) {
+      case SwitchBranch.MatchExpr matchExpr -> matchExpr.expr().accept(this);
+      case SwitchBranch.MatchType matchType -> append(builder -> {
+        builder.append(matchType.classType().accept(this));
+        builder.append(" ").append(matchType.name());
+        if (matchType.when() != null) {
+          builder.append(" when ").append(matchType.when().accept(this));
+        }
+      });
+    };
   }
 
   @Override
@@ -782,10 +792,6 @@ public class JavaSourcePrintingVisitor extends AbstractSourcePrintingVisitor {
           if (returnExpression != null) {
             builder.append(" ").append(returnExpression.accept(this));
           }
-        }
-
-        case ThrowStatement(CodeExpression throwExpression) -> {
-          builder.append("throw").append(" ").append(throwExpression.accept(this));
         }
 
         case VariableDeclarationStatement(

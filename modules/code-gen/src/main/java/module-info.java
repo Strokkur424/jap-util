@@ -17,6 +17,7 @@ module net.strokkur.jap.code {
   exports net.strokkur.jap.code.expression.builder;
   exports net.strokkur.jap.code.expression.simple;
   exports net.strokkur.jap.code.expression.source;
+  exports net.strokkur.jap.code.expression.switchexpr;
   exports net.strokkur.jap.code.statement;
   exports net.strokkur.jap.code.type;
   exports net.strokkur.jap.code.type.generic;

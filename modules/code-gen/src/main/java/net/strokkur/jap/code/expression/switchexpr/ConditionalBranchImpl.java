@@ -21,11 +21,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package net.strokkur.jap.code.statement;
+package net.strokkur.jap.code.expression.switchexpr;
 
-import net.strokkur.jap.code.expression.CodeExpression;
+import net.strokkur.jap.code.visitor.CodeVisitable;
 
-public record ThrowStatement(
-  CodeExpression throwExpression
-) implements CodeStatement {
+public record ConditionalBranchImpl(
+  SwitchBranch.Match condition,
+  CodeVisitable operation
+) implements SwitchBranch.CaseBranch {
 }

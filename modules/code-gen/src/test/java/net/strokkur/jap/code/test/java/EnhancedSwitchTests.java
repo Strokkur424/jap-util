@@ -55,9 +55,7 @@ class EnhancedSwitchTests extends AbstractGenTest {
           IO.println("Give me a second...");
           wait(50l);
         }
-        case null -> {
-          throw new IllegalArgumentException("Why null?");
-        }
+        case null -> throw new IllegalArgumentException("Why null?");
         default -> IO.println("Nice. Just nice.");
       }""";
 
@@ -65,13 +63,13 @@ class EnhancedSwitchTests extends AbstractGenTest {
       Set.of(CodeTypes.of(IllegalArgumentException.class)),
       expected,
       enhancedSwitch(variable("val"))
-        .caseExpr(string("Boom!"), variable("IO").chainMethod("println", string("Explosion!!")))
-        .caseBlock(string("Chill"),
+        .branchInline(string("Boom!"), variable("IO").chainMethod("println", string("Explosion!!")))
+        .branchBlock(string("Chill"),
           variable("IO").chainMethod("println", string("Give me a second...")),
           methodInvocation("wait", Expressions.longExpr(50))
         )
-        .nullBlock(CodeTypes.of(IllegalArgumentException.class).ctor(string("Why null?")).throwStmt())
-        .defaultExpr(variable("IO").chainMethod("println", string("Nice. Just nice.")))
+        .branchInline(Expressions.nullExpr(), CodeTypes.of(IllegalArgumentException.class).ctor(string("Why null?")).throwExpr())
+        .defaultInline(variable("IO").chainMethod("println", string("Nice. Just nice.")))
         .toEnhancedSwitch()
     );
   }
@@ -93,9 +91,9 @@ class EnhancedSwitchTests extends AbstractGenTest {
         JavaTypes.STRING,
         "out",
         enhancedSwitch(variable("val"))
-          .caseExpr(intExpr(10), string("Ten"))
-          .caseExpr(intExpr(5), string("Five"))
-          .defaultExpr(string("idfk"))
+          .branchInline(intExpr(10), string("Ten"))
+          .branchInline(intExpr(5), string("Five"))
+          .defaultInline(string("idfk"))
       )
     );
   }
@@ -105,8 +103,8 @@ class EnhancedSwitchTests extends AbstractGenTest {
     final String expected = """
       public static <U> U construct(Class<U> clazz) {
         return switch (clazz) {
-          case MyType.class -> (U) new MyType();
-          case OtherType.class -> (U) new OtherType();
+          case Class c when c == MyType.class -> (U) new MyType();
+          case Class c when c == OtherType.class -> (U) new OtherType();
           default -> {
             LOGGER.error("Invalid type: " + clazz.getName());
             throw new IllegalArgumentException(clazz.getName() + " is not a valid class type");
@@ -119,7 +117,7 @@ class EnhancedSwitchTests extends AbstractGenTest {
     final CodeClassType otherType = CodeTypes.of("test.OtherType");
 
     check(
-      Set.of(CodeTypes.of(Class.class), myType, otherType, CodeTypes.of(IllegalArgumentException.class)),
+      Set.of(JavaTypes.CLASS, myType, otherType, CodeTypes.of(IllegalArgumentException.class)),
       expected,
 
       CodeMethod.builder("construct")
@@ -131,12 +129,8 @@ class EnhancedSwitchTests extends AbstractGenTest {
           "clazz"
         )
         .addCode(returnStmt(enhancedSwitch(variable("clazz"))
-          .caseExpr(myType.chainField("class"), Expressions.cast(
-            myType.ctor(), generic("U")
-          ))
-          .caseExpr(otherType.chainField("class"), Expressions.cast(
-            otherType.ctor(), generic("U")
-          ))
+          .branchInline(JavaTypes.CLASS, "c", variable("c").eq(myType.chainField("class")), Expressions.cast(myType.ctor(), generic("U")))
+          .branchInline(JavaTypes.CLASS, "c", variable("c").eq(otherType.chainField("class")), Expressions.cast(otherType.ctor(), generic("U")))
           .defaultBlock(
             fieldAccess("LOGGER").chainMethod("error", string("Invalid type: ").concat(variable("clazz").chainMethod("getName"))),
             CodeTypes.of(IllegalArgumentException.class).ctor(variable("clazz").chainMethod("getName").concat(" is not a valid class type")).throwStmt()

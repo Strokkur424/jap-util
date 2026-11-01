@@ -28,6 +28,7 @@ import net.strokkur.jap.code.convert.ConvertToClassType;
 import net.strokkur.jap.code.convert.ConvertToExpression;
 import net.strokkur.jap.code.convert.ConvertToStatement;
 import net.strokkur.jap.code.convert.ConvertToType;
+import net.strokkur.jap.code.expression.ThrowExpression;
 import org.jspecify.annotations.Nullable;
 
 import java.util.List;
@@ -59,7 +60,7 @@ public final class Statements {
   }
 
   public static CodeStatement throwStatement(ConvertToExpression throwExpression) {
-    return new ThrowStatement(throwExpression.toExpression());
+    return new ThrowExpression(throwExpression.toExpression()).toStatement();
   }
 
   public static CodeStatement blank() {
